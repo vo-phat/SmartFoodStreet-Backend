@@ -1,0 +1,83 @@
+spring:
+  application:
+    name: Smart Food Street
+  # -----------------------
+  # Database MYSQL
+  # -----------------------
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  # -----------------------
+  #   Set time zone
+  # -----------------------
+  jackson:
+    time-zone: Asia/Ho_Chi_Minh
+
+  # -----------------------
+  #   Cloudinary
+  # -----------------------
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+  # -----------------------
+  #   Unicode + Mail
+  # -----------------------
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        mime:
+          charset: UTF-8
+          allow utf8: true
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  # -----------------------
+  #   API KEY GEMINI
+  # -----------------------
+  ai:
+    openai:
+      api-key: ${GROQ_API_KEY}
+      base-url: https://api.groq.com/openai
+      chat:
+        completions-path: /v1/chat/completions
+        options:
+          model: llama-3.1-8b-instant
+          temperature: 0.7
+
+# -----------------------
+# Server
+# -----------------------
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+# -----------------------
+#   JWT Settings
+# -----------------------
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000
+  refresh-expiration: 1209600000
+
+# -----------------------
+#   Cloudinary Keys
+# -----------------------
+cloudinary:
+  cloud_name: ${CLOUDINARY_NAME}
+  api_key: ${CLOUDINARY_KEY}
+  api_secret: ${CLOUDINARY_SECRET}
