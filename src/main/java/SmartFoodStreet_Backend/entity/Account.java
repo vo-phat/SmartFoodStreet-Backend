@@ -5,12 +5,15 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
 @Table(name = "accounts")
 public class Account {
@@ -28,17 +31,18 @@ public class Account {
 
     String email;
 
-    @Enumerated(EnumType.STRING)
-    Role role = Role.STAFF;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "account_roles",
+            joinColumns = @JoinColumn(name = "account_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    Set<Role> roles = new HashSet<>();
 
     @Column(name = "is_active")
     Boolean isActive = true;
 
     @Column(name = "created_at")
     Timestamp createdAt = new Timestamp(System.currentTimeMillis());
-
-    public enum Role {
-        ADMIN, STAFF
-    }
 
 }

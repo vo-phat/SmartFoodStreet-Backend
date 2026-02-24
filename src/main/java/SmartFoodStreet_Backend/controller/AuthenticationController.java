@@ -1,16 +1,19 @@
 package SmartFoodStreet_Backend.controller;
 
 import SmartFoodStreet_Backend.common.response.ApiResponse;
-import SmartFoodStreet_Backend.dto.authentication.request.LoginRequest;
-import SmartFoodStreet_Backend.dto.authentication.request.RegisterRequest;
+import SmartFoodStreet_Backend.dto.authentication.request.*;
+import SmartFoodStreet_Backend.dto.authentication.response.IntrospectResponse;
 import SmartFoodStreet_Backend.dto.authentication.response.LoginResponse;
 import SmartFoodStreet_Backend.dto.authentication.response.RegisterResponse;
 import SmartFoodStreet_Backend.service.AuthenticationService;
+import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.ParseException;
 
 @RestController()
 @RequestMapping("/auth")
@@ -19,7 +22,7 @@ public class AuthenticationController {
     public final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    ApiResponse<RegisterResponse> register (@RequestBody RegisterRequest registerRequest){
+    ApiResponse<RegisterResponse> register(@RequestBody RegisterRequest registerRequest) {
         RegisterResponse registerResponse = authenticationService.register(registerRequest);
 
         return ApiResponse.<RegisterResponse>builder()
@@ -28,11 +31,36 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    ApiResponse<LoginResponse> login (@RequestBody LoginRequest loginRequest){
+    ApiResponse<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         LoginResponse loginResponse = authenticationService.login(loginRequest);
 
         return ApiResponse.<LoginResponse>builder()
                 .result(loginResponse)
+                .build();
+    }
+
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest logoutRequest) throws ParseException, JOSEException {
+        authenticationService.logout(logoutRequest);
+
+        return ApiResponse.<Void>builder()
+                .message("Logout successfully")
+                .build();
+    }
+
+    @PostMapping("/introspect")
+    ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request)
+            throws ParseException, JOSEException {
+        var result = authenticationService.introspect(request);
+        return ApiResponse.<IntrospectResponse>builder().result(result).build();
+    }
+
+    @PostMapping("/refresh")
+    ApiResponse<LoginResponse> refreshToken(@RequestBody RefreshRequest request)
+            throws ParseException, JOSEException {
+        var result = authenticationService.refreshToken(request);
+        return ApiResponse.<LoginResponse>builder()
+                .result(result)
                 .build();
     }
 }

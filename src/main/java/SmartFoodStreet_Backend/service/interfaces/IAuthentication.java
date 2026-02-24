@@ -1,14 +1,28 @@
 package SmartFoodStreet_Backend.service.interfaces;
 
-import SmartFoodStreet_Backend.dto.authentication.request.LoginRequest;
-import SmartFoodStreet_Backend.dto.authentication.request.RegisterRequest;
+import SmartFoodStreet_Backend.dto.authentication.request.*;
+import SmartFoodStreet_Backend.dto.authentication.response.IntrospectResponse;
 import SmartFoodStreet_Backend.dto.authentication.response.LoginResponse;
 import SmartFoodStreet_Backend.dto.authentication.response.RegisterResponse;
+import SmartFoodStreet_Backend.entity.Account;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jwt.SignedJWT;
+
+import java.text.ParseException;
 
 public interface IAuthentication {
-    RegisterResponse register (RegisterRequest registerRequest);
+    IntrospectResponse introspect(IntrospectRequest request) throws ParseException, JOSEException;
 
-    LoginResponse login (LoginRequest loginRequest);
+    RegisterResponse register(RegisterRequest registerRequest);
 
-    String generateToken (String userName);
+    LoginResponse login(LoginRequest loginRequest);
+
+    void logout(LogoutRequest token);
+
+    SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException;
+
+    String generateToken(Account account);
+
+    LoginResponse refreshToken(RefreshRequest requestRequest) throws ParseException, JOSEException;
+
 }

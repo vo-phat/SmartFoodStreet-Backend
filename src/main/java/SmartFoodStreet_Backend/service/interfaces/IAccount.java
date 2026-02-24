@@ -13,6 +13,8 @@ public interface IAccount {
 
     Account getAccount(int accountId);
 
+    Account getAccountByUserName(String userName);
+
     Account updateAccount(int accountId, AccountUpdateRequest accountUpdateRequest);
 
     void deleteAccount(int accountId);

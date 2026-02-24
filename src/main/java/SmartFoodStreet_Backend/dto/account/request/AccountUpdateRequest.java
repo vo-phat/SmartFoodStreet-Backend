@@ -1,12 +1,13 @@
 package SmartFoodStreet_Backend.dto.account.request;
 
-import SmartFoodStreet_Backend.entity.Account;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -19,9 +20,8 @@ public class AccountUpdateRequest {
     @Email(message = "INVALID_EMAIL")
     String email;
 
-    @NotBlank(message = "INVALID_ROLE")
-    Account.Role role;
+    List<String> roles;
 
-    @NotBlank(message = "INVALID_IS_ACTIVE")
+    @NotNull(message = "INVALID_IS_ACTIVE")
     Boolean isActive;
 }
