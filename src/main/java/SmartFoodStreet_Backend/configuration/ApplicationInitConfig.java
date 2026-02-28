@@ -37,10 +37,10 @@ public class ApplicationInitConfig {
                         return roleRepository.save(role);
                     });
 
-            Role staffRole = roleRepository.findByName("STAFF")
+            Role vendorRole = roleRepository.findByName("VENDOR")
                     .orElseGet(() -> {
                         Role role = Role.builder()
-                                .name("STAFF")
+                                .name("VENDOR")
                                 .description("Can manage daily operations but cannot manage system configuration")
                                 .build();
                         return roleRepository.save(role);
@@ -65,21 +65,21 @@ public class ApplicationInitConfig {
                 log.warn("Admin account created with default password: admin");
             }
 
-            if (accountRepository.findByUserName("staff").isEmpty()) {
+            if (accountRepository.findByUserName("vendor").isEmpty()) {
 
-                Account staffAccount = Account.builder()
-                        .userName("staff")
-                        .password(encoder.encode("staff"))
-                        .fullName("Staff")
-                        .email("staff@sv.sgu.edu.vn")
+                Account vendorAccount = Account.builder()
+                        .userName("vendor")
+                        .password(encoder.encode("vendor"))
+                        .fullName("Vendor")
+                        .email("vendor@sv.sgu.edu.vn")
                         .isActive(true)
                         .createdAt(new Timestamp(System.currentTimeMillis()))
-                        .roles(Set.of(staffRole))
+                        .roles(Set.of(vendorRole))
                         .build();
 
-                accountRepository.save(staffAccount);
+                accountRepository.save(vendorAccount);
 
-                log.warn("Staff account created with default password: staff");
+                log.warn("Vendor account created with default password: vendor");
             }
         };
     }

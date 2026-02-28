@@ -11,5 +11,5 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PermissionCreatedEvent {
-    Integer permissionId;
+    long permissionId;
 }

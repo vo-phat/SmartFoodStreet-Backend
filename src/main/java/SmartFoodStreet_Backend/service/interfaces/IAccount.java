@@ -11,11 +11,11 @@ public interface IAccount {
 
     List<Account> getAccounts();
 
-    Account getAccount(int accountId);
+    Account getAccount(long accountId);
 
     Account getAccountByUserName(String userName);
 
-    Account updateAccount(int accountId, AccountUpdateRequest accountUpdateRequest);
+    Account updateAccount(long accountId, AccountUpdateRequest accountUpdateRequest);
 
-    void deleteAccount(int accountId);
+    void deleteAccount(long accountId);
 }

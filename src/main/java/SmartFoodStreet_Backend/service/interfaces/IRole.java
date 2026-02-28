@@ -8,7 +8,7 @@ import java.util.List;
 public interface IRole {
     RoleResponse createRole(RoleRequest roleRequest);
 
-    RoleResponse updateRole(Integer roleId, RoleRequest roleRequest);
+    RoleResponse updateRole(long roleId, RoleRequest roleRequest);
 
     List<RoleResponse> getAll();
 

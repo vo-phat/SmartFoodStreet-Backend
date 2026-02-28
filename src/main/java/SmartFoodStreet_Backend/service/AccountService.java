@@ -38,6 +38,7 @@ public class AccountService implements IAccount {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public Account createAccount(AccountCreationRequest request) {
 
         if (accountRepository.existsByUserName(request.getUserName())) {
@@ -71,7 +72,7 @@ public class AccountService implements IAccount {
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
-    public Account getAccount(int accountId) {
+    public Account getAccount(long accountId) {
         return accountRepository.findById(accountId).orElseThrow(() -> new RuntimeException(ErrorCode.USER_NOT_EXISTS.getMessage()));
     }
 
@@ -84,7 +85,7 @@ public class AccountService implements IAccount {
     @Override
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public Account updateAccount(int accountId, AccountUpdateRequest request) {
+    public Account updateAccount(long accountId, AccountUpdateRequest request) {
 
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTS));
@@ -122,7 +123,7 @@ public class AccountService implements IAccount {
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteAccount(int accountId) {
+    public void deleteAccount(long accountId) {
         accountRepository.deleteById(accountId);
     }
 }

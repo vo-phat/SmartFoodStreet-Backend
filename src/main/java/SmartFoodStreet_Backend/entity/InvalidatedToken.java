@@ -15,7 +15,7 @@ import java.sql.Date;
 @Getter
 @Setter
 @Builder
-@Table(name = "invalidated_token")
+@Table(name = "invalidated_tokens")
 public class InvalidatedToken {
     @Id
     String id;

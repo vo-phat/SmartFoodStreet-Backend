@@ -43,7 +43,7 @@ public class AccountController {
     }
 
     @GetMapping("/{accountId}")
-    public ApiResponse<Account> getAccount(@PathVariable int accountId) {
+    public ApiResponse<Account> getAccount(@PathVariable long accountId) {
         return ApiResponse.<Account>builder()
                 .result(accountService.getAccount(accountId))
                 .build();
@@ -59,14 +59,14 @@ public class AccountController {
     }
 
     @PutMapping("/{accountId}")
-    public ApiResponse<Account> updateAccount(@PathVariable int accountId, @RequestBody @Valid AccountUpdateRequest accountUpdateRequest) {
+    public ApiResponse<Account> updateAccount(@PathVariable long accountId, @RequestBody @Valid AccountUpdateRequest accountUpdateRequest) {
         return ApiResponse.<Account>builder()
                 .result(accountService.updateAccount(accountId, accountUpdateRequest))
                 .build();
     }
 
-    @DeleteMapping("{accountId}")
-    public ApiResponse<Void> deleteAccount(@PathVariable int accountId) {
+    @DeleteMapping("/{accountId}")
+    public ApiResponse<Void> deleteAccount(@PathVariable long accountId) {
         accountService.deleteAccount(accountId);
         return ApiResponse.<Void>builder()
                 .message("Delete successfully")

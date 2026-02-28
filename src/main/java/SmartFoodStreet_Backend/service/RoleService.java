@@ -65,7 +65,7 @@ public class RoleService implements IRole {
 
     @Override
     @Transactional
-    public RoleResponse updateRole(Integer roleId, RoleRequest request) {
+    public RoleResponse updateRole(long roleId, RoleRequest request) {
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
 
