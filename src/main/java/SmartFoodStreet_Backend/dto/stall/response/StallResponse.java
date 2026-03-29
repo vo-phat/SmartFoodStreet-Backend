@@ -27,6 +27,7 @@ public class StallResponse {
     Integer cooldownSeconds;
 
     Double recommendationScore;
+    String stallImage;
 
     Boolean isActive;
 }

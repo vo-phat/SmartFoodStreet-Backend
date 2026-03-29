@@ -138,6 +138,7 @@ public class RoleService implements IRole {
     }
 
     @Override
+    @Transactional
     public void deleteRole(String roleName) {
         Role role = roleRepository.findByName(roleName)
                 .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));

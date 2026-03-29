@@ -37,7 +37,6 @@ public class FoodStreetController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<FoodStreetResponse> update(
             @PathVariable Long id,
             @RequestBody FoodStreetUpdateRequest request) {

@@ -20,4 +20,5 @@ public class StallCreationRequest {
     Integer radius;
     Integer priority;
     Integer cooldownSeconds;
+    String stallImage;
 }

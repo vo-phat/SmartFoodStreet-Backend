@@ -15,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -52,6 +53,7 @@ public class PermissionService implements IPermission {
     }
 
     @Override
+    @Transactional
     public void deletePermission (String permissionName) {
         Permission permission = permissionRepository.findByName(permissionName)
                         .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));

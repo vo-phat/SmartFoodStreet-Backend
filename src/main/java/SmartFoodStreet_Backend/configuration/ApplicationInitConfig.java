@@ -62,7 +62,7 @@ public class ApplicationInitConfig {
 
                 accountRepository.save(adminAccount);
 
-                log.warn("Admin account created with default password: admin");
+                log.warn("Admin account created with default password: admin => {}", encoder.encode("admin"));
             }
 
             if (accountRepository.findByUserName("vendor").isEmpty()) {
@@ -79,7 +79,8 @@ public class ApplicationInitConfig {
 
                 accountRepository.save(vendorAccount);
 
-                log.warn("Vendor account created with default password: vendor");
+                log.warn("Vendor account created with default password: vendor => {}", encoder.encode("vendor"));
+                log.warn("customer bcrypt is => {}", encoder.encode("customer"));
             }
         };
     }

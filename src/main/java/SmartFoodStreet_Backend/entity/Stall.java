@@ -41,6 +41,7 @@ public class Stall {
     Integer cooldownSeconds;
 
     Double recommendationScore;
+    String stallImage;
 
     Boolean isActive;
 
