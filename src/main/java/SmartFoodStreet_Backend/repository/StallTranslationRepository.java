@@ -16,4 +16,7 @@ public interface StallTranslationRepository extends JpaRepository<StallTranslati
     boolean existsByStallIdAndLanguageCode(@NotNull Long stallId, @NotBlank String languageCode);
 
     List<StallTranslation> findByStallId(Long stallId);
+
+    // Dùng cho Fallback: Lấy bản dịch đầu tiên bất kỳ của Stall nếu không tìm thấy ngôn ngữ yêu cầu
+    Optional<StallTranslation> findFirstByStallId(Long stallId);
 }

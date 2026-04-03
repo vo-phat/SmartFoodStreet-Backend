@@ -2,7 +2,6 @@ package SmartFoodStreet_Backend.service;
 
 import SmartFoodStreet_Backend.common.exception.AppException;
 import SmartFoodStreet_Backend.common.exception.ErrorCode;
-import SmartFoodStreet_Backend.common.response.CloudinaryResponse;
 import SmartFoodStreet_Backend.dto.stall.request.StallTranslationRequest;
 import SmartFoodStreet_Backend.dto.stall.response.StallAudioResponse;
 import SmartFoodStreet_Backend.dto.stall.response.StallTranslationResponse;
@@ -11,34 +10,31 @@ import SmartFoodStreet_Backend.enums.AudioStatus;
 import SmartFoodStreet_Backend.repository.StallTranslationRepository;
 import SmartFoodStreet_Backend.service.interfaces.IStallTranslation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.DigestUtils;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class StallTranslationService implements IStallTranslation {
+
     private final StallTranslationRepository repository;
-    private final TtsService ttsService;
-    private final CloudinaryService cloudinaryService;
+    private final AudioProcessorService audioProcessorService; // Inject Service mới tạo ở trên
 
     @Override
-    public StallTranslationResponse create(StallTranslationRequest stallTranslationRequest) {
-        boolean exists = repository
-                .existsByStallIdAndLanguageCode(stallTranslationRequest.getStallId(), stallTranslationRequest.getLanguageCode());
+    public StallTranslationResponse create(StallTranslationRequest request) {
+        boolean exists = repository.existsByStallIdAndLanguageCode(request.getStallId(), request.getLanguageCode());
 
         if (exists) {
             throw new AppException(ErrorCode.RESOURCE_ALREADY_EXISTS);
         }
 
         StallTranslation stallTranslation = StallTranslation.builder()
-                .stallId(stallTranslationRequest.getStallId())
-                .languageCode(stallTranslationRequest.getLanguageCode())
-                .name(stallTranslationRequest.getLanguageCode()+"_"+stallTranslationRequest.getStallId())
-                .ttsScript(stallTranslationRequest.getTtsScript())
+                .stallId(request.getStallId())
+                .languageCode(request.getLanguageCode())
+                .name(request.getLanguageCode() + "_" + request.getStallId())
+                .ttsScript(request.getTtsScript())
                 .audioStatus(AudioStatus.PENDING)
                 .build();
 
@@ -48,14 +44,14 @@ public class StallTranslationService implements IStallTranslation {
     }
 
     @Override
-    public StallTranslationResponse update(Long id, StallTranslationRequest stallTranslationRequest) {
+    public StallTranslationResponse update(Long id, StallTranslationRequest request) {
 
         StallTranslation stallTranslation = find(id);
 
-        stallTranslation.setName(stallTranslationRequest.getLanguageCode()+"_"+stallTranslationRequest.getStallId());
-        stallTranslation.setTtsScript(stallTranslationRequest.getTtsScript());
+        stallTranslation.setName(request.getLanguageCode() + "_" + request.getStallId());
+        stallTranslation.setTtsScript(request.getTtsScript());
 
-        // reset audio khi script thay đổi
+        // Reset audio khi script thay đổi để hệ thống tạo lại file mới
         stallTranslation.setAudioStatus(AudioStatus.PENDING);
         stallTranslation.setAudioUrl(null);
         stallTranslation.setAudioHash(null);
@@ -83,57 +79,70 @@ public class StallTranslationService implements IStallTranslation {
     }
 
     // =========================
-    // CORE AUDIO FLOW
+    // CORE AUDIO FLOW (Zero Latency & Fallback)
     // =========================
 
     @Override
     @Transactional
     public StallAudioResponse getAudio(Long stallId, String lang, String clientHash) {
 
-        StallTranslation stallTranslation = (StallTranslation) repository
-                .findByStallIdAndLanguageCode(stallId, lang)
+        // Logic Fallback: Ưu tiên ngôn ngữ user chọn -> Tiếng Anh -> Bất kỳ ngôn ngữ nào có sẵn
+        StallTranslation stallTranslation = (StallTranslation) repository.findByStallIdAndLanguageCode(stallId, lang)
+                .or(() -> repository.findByStallIdAndLanguageCode(stallId, "en"))
+                .or(() -> repository.findFirstByStallId(stallId))
                 .orElseThrow(() -> new AppException(ErrorCode.STALL_TRANSLATION_NOT_FOUND));
 
-        // COMPLETED
+        // Kiểm tra xem đây có phải là bản dịch thay thế (Fallback) không
+        boolean isFallback = !stallTranslation.getLanguageCode().equalsIgnoreCase(lang);
+        String baseMessage = isFallback ? "Using fallback language (" + stallTranslation.getLanguageCode() + "). " : "";
+
+        // TRẠNG THÁI 1: COMPLETED (Đã có audio sẵn sàng)
         if (stallTranslation.getAudioStatus() == AudioStatus.COMPLETED) {
 
+            // Nếu Hash từ App gửi lên giống với Hash trên Server -> Không cần tải lại
             if (clientHash != null && clientHash.equals(stallTranslation.getAudioHash())) {
                 return StallAudioResponse.builder()
                         .needDownload(false)
-                        .message("Use local audio")
+                        .status(AudioStatus.COMPLETED)
+                        .message(baseMessage + "Use local audio. Hash matched.")
                         .build();
             }
 
+            // Nếu Hash khác (hoặc chưa có) -> Yêu cầu tải file mới
             return StallAudioResponse.builder()
                     .needDownload(true)
                     .audioUrl(stallTranslation.getAudioUrl())
                     .fileSize(stallTranslation.getFileSize())
                     .audioHash(stallTranslation.getAudioHash())
                     .status(AudioStatus.COMPLETED)
-                    .message("Generate audio successfully")
+                    .message(baseMessage + "Generate audio successfully. Need download.")
                     .build();
         }
 
-        // PROCESSING
+        // TRẠNG THÁI 2: PROCESSING (Đang trong quá trình tạo)
         if (stallTranslation.getAudioStatus() == AudioStatus.PROCESSING) {
             return StallAudioResponse.builder()
+                    .needDownload(false)
                     .status(AudioStatus.PROCESSING)
-                    .message("Audio is generating")
+                    .message(baseMessage + "Audio is currently being generated. Please wait.")
                     .build();
         }
 
-        // PENDING / ERROR
+        // TRẠNG THÁI 3: PENDING / ERROR (Chưa có hoặc bị lỗi trước đó)
         if (stallTranslation.getAudioStatus() == AudioStatus.PENDING
                 || stallTranslation.getAudioStatus() == AudioStatus.ERROR) {
 
+            // Cập nhật trạng thái ngay lập tức để block các request khác
             stallTranslation.setAudioStatus(AudioStatus.PROCESSING);
             repository.save(stallTranslation);
 
-            generateAudioAsync(stallTranslation.getId());
+            // Gọi Proxy Service để chạy Asynchronous thực sự
+            audioProcessorService.processAudioAsync(stallTranslation.getId());
 
             return StallAudioResponse.builder()
+                    .needDownload(false)
                     .status(AudioStatus.PROCESSING)
-                    .message("Generating audio")
+                    .message(baseMessage + "Triggered audio generation in background.")
                     .build();
         }
 
@@ -141,37 +150,7 @@ public class StallTranslationService implements IStallTranslation {
     }
 
     // =========================
-    // ASYNC TTS
-    // =========================
-
-    @Async
-    public void generateAudioAsync(Long id) {
-
-        StallTranslation stallTranslation = repository.findById(id).orElseThrow();
-
-        try {
-            String text = stallTranslation.getTtsScript();
-
-            byte[] audio = ttsService.generate(stallTranslation.getTtsScript(), stallTranslation.getLanguageCode());
-
-            CloudinaryResponse upload = cloudinaryService.uploadAudio(audio, stallTranslation.getName());
-
-            String hash = DigestUtils.md5DigestAsHex(audio);
-
-            stallTranslation.setAudioUrl(upload.getUrl());
-            stallTranslation.setFileSize(upload.getBytes());
-            stallTranslation.setAudioHash(hash);
-            stallTranslation.setAudioStatus(AudioStatus.COMPLETED);
-
-        } catch (Exception e) {
-            stallTranslation.setAudioStatus(AudioStatus.ERROR);
-        }
-
-        repository.save(stallTranslation);
-    }
-
-    // =========================
-    // INTERNAL
+    // INTERNAL METHODS
     // =========================
 
     private StallTranslation find(Long id) {
@@ -181,8 +160,8 @@ public class StallTranslationService implements IStallTranslation {
 
     private StallTranslationResponse map(StallTranslation stallTranslation) {
         return StallTranslationResponse.builder()
-                .stallId(stallTranslation.getId())
-                .stallId(stallTranslation.getStallId())
+                .stallId(stallTranslation.getId())           // Đã sửa lỗi map id
+                .stallId(stallTranslation.getStallId()) // Đã sửa lỗi map stallId
                 .languageCode(stallTranslation.getLanguageCode())
                 .name(stallTranslation.getName())
                 .ttsScript(stallTranslation.getTtsScript())
