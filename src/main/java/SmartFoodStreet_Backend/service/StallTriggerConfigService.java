@@ -119,8 +119,8 @@ public class StallTriggerConfigService implements IStallTriggerConfig {
                 .stallId(stall.getId())
                 .name(stall.getName())
                 .category(stall.getCategory())
-                .latitude(stall.getLatitude())
-                .longitude(stall.getLongitude())
+                .latitude(Double.valueOf(stall.getLatitude()))
+                .longitude(Double.valueOf(stall.getLongitude()))
 
                 .triggerType(stallTriggerConfig != null ? stallTriggerConfig.getTriggerType().name() : null)
                 .radius(stallTriggerConfig != null ? stallTriggerConfig.getRadius() : null)

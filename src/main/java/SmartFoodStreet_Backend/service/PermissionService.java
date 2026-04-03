@@ -47,16 +47,16 @@ public class PermissionService implements IPermission {
     }
 
     @Override
-    public List<PermissionResponse> getAll () {
+    public List<PermissionResponse> getAll() {
         var permissions = permissionRepository.findAll();
         return permissions.stream().map(permissionMapper::toPermissionResponse).toList();
     }
 
     @Override
     @Transactional
-    public void deletePermission (String permissionName) {
+    public void deletePermission(String permissionName) {
         Permission permission = permissionRepository.findByName(permissionName)
-                        .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
 
         permissionRepository.deleteByName(permission.getName());
     }

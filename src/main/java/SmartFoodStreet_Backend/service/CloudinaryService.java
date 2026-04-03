@@ -86,4 +86,31 @@ public class CloudinaryService {
                 ((Number) uploadResult.get("bytes")).longValue() // 🔥 fileSize
         );
     }
+
+    public boolean deleteByUrl(String url) {
+        String publicId = extractPublicId(url);
+        if (publicId != null) {
+            return deleteFile(publicId);
+        }
+        return false;
+    }
+
+    public String extractPublicId(String url) {
+        if (url == null || url.isEmpty() || !url.contains("cloudinary.com"))
+            return null;
+        try {
+            // URL format:
+            // https://res.cloudinary.com/<cloud_name>/image/upload/v<version>/<folder>/<public_id>.<extension>
+            String folderAndId = url.substring(url.lastIndexOf("/upload/") + 8);
+            // Skip the version if present (v123456789/)
+            if (folderAndId.startsWith("v") && folderAndId.substring(1, 11).matches("\\d+")) {
+                folderAndId = folderAndId.substring(folderAndId.indexOf("/") + 1);
+            }
+            // Remove the file extension
+            return folderAndId.substring(0, folderAndId.lastIndexOf("."));
+        } catch (Exception e) {
+            log.error("Failed to extract publicId from URL: " + url, e);
+            return null;
+        }
+    }
 }
