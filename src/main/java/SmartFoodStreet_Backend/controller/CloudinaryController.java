@@ -15,10 +15,12 @@ public class CloudinaryController {
     private final CloudinaryService cloudinaryService;
 
     @PostMapping("/upload")
-    public ApiResponse<CloudinaryResponse> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ApiResponse<CloudinaryResponse> uploadFile(@RequestParam("file") MultipartFile file,
+                                                      @RequestParam(required = false) String folder,
+                                                      @RequestParam(required = false) String publicId) {
         ApiResponse<CloudinaryResponse> apiResponse = new ApiResponse<>();
 
-        apiResponse.setResult(cloudinaryService.uploadFile(file));
+        apiResponse.setResult(cloudinaryService.uploadFile(file, folder, publicId));
 
         return apiResponse;
     }

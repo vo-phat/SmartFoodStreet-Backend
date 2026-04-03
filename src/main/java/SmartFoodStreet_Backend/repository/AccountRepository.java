@@ -19,4 +19,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @EntityGraph(attributePaths = {"roles"})
     Optional<Account> findWithRolesById(Integer id);
+
+    Optional<Account> findByEmail(String email);
 }

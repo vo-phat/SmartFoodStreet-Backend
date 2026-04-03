@@ -8,16 +8,14 @@ import SmartFoodStreet_Backend.dto.authentication.response.RegisterResponse;
 import SmartFoodStreet_Backend.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
 @RestController()
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class AuthenticationController {
     public final AuthenticationService authenticationService;
 
@@ -30,9 +28,27 @@ public class AuthenticationController {
                 .build();
     }
 
+    @PostMapping("/register-vendor")
+    ApiResponse<RegisterResponse> registerVendor(@RequestBody VendorRegisterRequest registerRequest) {
+        RegisterResponse registerResponse = authenticationService.registerVendor(registerRequest);
+
+        return ApiResponse.<RegisterResponse>builder()
+                .result(registerResponse)
+                .build();
+    }
+
     @PostMapping("/login")
     ApiResponse<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         LoginResponse loginResponse = authenticationService.login(loginRequest);
+
+        return ApiResponse.<LoginResponse>builder()
+                .result(loginResponse)
+                .build();
+    }
+
+    @PostMapping("/login-email")
+    ApiResponse<LoginResponse> loginEmail(@RequestBody VendorLoginRequest loginRequest) {
+        LoginResponse loginResponse = authenticationService.loginByEmail(loginRequest);
 
         return ApiResponse.<LoginResponse>builder()
                 .result(loginResponse)

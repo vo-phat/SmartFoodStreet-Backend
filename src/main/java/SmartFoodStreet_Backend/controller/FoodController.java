@@ -30,4 +30,24 @@ public class FoodController {
                 .result(foodService.getByStall(stallId))
                 .build();
     }
+
+    @GetMapping
+    public ApiResponse<List<FoodResponse>> getAll() {
+        return ApiResponse.<List<FoodResponse>>builder()
+                .result(foodService.getAll())
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse<FoodResponse> update(@PathVariable Long id, @Valid @RequestBody FoodRequest foodRequest) {
+        return ApiResponse.<FoodResponse>builder()
+                .result(foodService.update(id, foodRequest))
+                .build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> delete(@PathVariable Long id) {
+        foodService.delete(id);
+        return ApiResponse.<Void>builder().build();
+    }
 }

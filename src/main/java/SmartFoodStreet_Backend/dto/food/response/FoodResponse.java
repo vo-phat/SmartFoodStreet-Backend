@@ -12,6 +12,8 @@ import java.math.BigDecimal;
 public class FoodResponse {
     Long id;
 
+    Long stallId;
+
     String name;
 
     BigDecimal price;

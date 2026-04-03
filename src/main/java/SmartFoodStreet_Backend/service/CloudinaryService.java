@@ -24,19 +24,31 @@ public class CloudinaryService {
     /**
      * Upload file lên Cloudinary và trả về DTO UploadResponse
      *
-     * @param file MultipartFile upload lên
+     * @param file     MultipartFile upload lên
+     * @param folder   Thư mục lưu trữ (ví dụ: "food", "stall")
+     * @param publicId ID cho ảnh trên Cloudinary (nếu để trống Cloudinary sẽ tự tạo)
      * @return UploadResponse (publicId, url, resourceType)
      */
-    public CloudinaryResponse uploadFile(MultipartFile file) {
+    public CloudinaryResponse uploadFile(MultipartFile file, String folder, String publicId) {
         try {
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
-                    ObjectUtils.asMap("resource_type", "auto"));
+            Map<String, Object> uploadOptions = ObjectUtils.asMap(
+                    "resource_type", "auto",
+                    "folder", folder != null ? folder : ""
+            );
 
-            String publicId = (String) uploadResult.get("public_id");
+            // Nếu người dùng cung cấp publicId, sử dụng nó và cho phép ghi đè (overwrite)
+            if (publicId != null && !publicId.trim().isEmpty()) {
+                uploadOptions.put("public_id", publicId);
+                uploadOptions.put("overwrite", true);
+            }
+
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), uploadOptions);
+
+            String resultPublicId = (String) uploadResult.get("public_id");
             String url = (String) uploadResult.get("secure_url");
             String resourceTypeResult = (String) uploadResult.get("resource_type");
 
-            return new CloudinaryResponse(publicId, url, resourceTypeResult);
+            return new CloudinaryResponse(resultPublicId, url, resourceTypeResult);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new AppException(ErrorCode.FILE_UPLOAD_FAILED);
@@ -61,13 +73,31 @@ public class CloudinaryService {
         }
     }
 
+    public boolean deleteFile(String publicId) {
+        return deleteFile(publicId, "image");
+    }
+
+    public boolean deleteByUrl(String url) {
+        String publicId = extractPublicId(url);
+        if (publicId != null) {
+            return deleteFile(publicId);
+        }
+        return false;
+    }
+
     public String extractPublicId(String url) {
-        if (url == null || url.isEmpty()) return null;
+        if (url == null || url.isEmpty() || !url.contains("cloudinary.com")) return null;
         try {
-            String[] parts = url.split("/");
-            String lastPart = parts[parts.length - 1]; // ví dụ: abcxyz.jpg
-            return lastPart.substring(0, lastPart.lastIndexOf(".")); // abcxyz
+            // URL format: https://res.cloudinary.com/<cloud_name>/image/upload/v<version>/<folder>/<public_id>.<extension>
+            String folderAndId = url.substring(url.lastIndexOf("/upload/") + 8);
+            // Skip the version if present (v123456789/)
+            if (folderAndId.startsWith("v") && folderAndId.substring(1, 11).matches("\\d+")) {
+                folderAndId = folderAndId.substring(folderAndId.indexOf("/") + 1);
+            }
+            // Remove the file extension
+            return folderAndId.substring(0, folderAndId.lastIndexOf("."));
         } catch (Exception e) {
+            log.error("Failed to extract publicId from URL: " + url, e);
             return null;
         }
     }

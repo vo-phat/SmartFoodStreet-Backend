@@ -9,6 +9,7 @@ import SmartFoodStreet_Backend.repository.FoodRepository;
 import SmartFoodStreet_Backend.repository.StallRepository;
 import SmartFoodStreet_Backend.service.interfaces.IFood;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,8 @@ import java.util.List;
 public class FoodService implements IFood {
     private final FoodRepository repository;
     private final StallRepository stallRepository;
+    private final CloudinaryService cloudinaryService;
+
 
     @Override
     public FoodResponse create(FoodRequest foodRequest) {
@@ -41,12 +44,51 @@ public class FoodService implements IFood {
     @Override
     public List<FoodResponse> getByStall(Long stallId) {
         return repository.findByStallId(stallId)
+                .stream()
+                .map(this::map).toList();
+    }
+
+    @Override
+    public List<FoodResponse> getAll() {
+        return repository.findAll()
                 .stream().map(this::map).toList();
+    }
+
+    @Override
+    public FoodResponse update(Long id, FoodRequest request) {
+        Food food = repository.findById(id).orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+        
+        food.setName(request.getName());
+        food.setPrice(request.getPrice());
+        food.setDescription(request.getDescription());
+        
+        if (request.getImage() != null && !request.getImage().equals(food.getImage())) {
+            // Delete old image
+            if (food.getImage() != null) {
+                cloudinaryService.deleteByUrl(food.getImage());
+            }
+            food.setImage(request.getImage());
+        }
+
+        if (request.getIsAvailable() != null) {
+            food.setIsAvailable(request.getIsAvailable());
+        }
+        
+        repository.save(food);
+        return map(food);
+    }
+
+    @Override
+    public void delete(Long id) {
+        Food food = repository.findById(id).orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+        food.setIsAvailable(false);
+        repository.save(food);
     }
 
     private FoodResponse map(Food food) {
         return FoodResponse.builder()
                 .id(food.getId())
+                .stallId(food.getStallId())
                 .name(food.getName())
                 .price(food.getPrice())
                 .description(food.getDescription())

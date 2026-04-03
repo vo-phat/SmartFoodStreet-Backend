@@ -22,11 +22,17 @@ public class Stall {
 
     String name;
     String category;
+    @Column(columnDefinition = "TEXT")
+    String description;
 
-    Double latitude;
-    Double longitude;
+    String latitude;
+    String longitude;
 
+    @Column(columnDefinition = "LONGTEXT")
     String image;
+
+    @Column(columnDefinition = "LONGTEXT")
+    String script;
 
     Boolean isActive;
 
