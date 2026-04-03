@@ -3,33 +3,33 @@ package SmartFoodStreet_Backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "stalls")
+@Table(name = "foods")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Stall {
+public class Food {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    Long streetId;
-    Long vendorId;
+    @Column(name = "stall_id")
+    Long stallId;
 
     String name;
-    String category;
 
-    Double latitude;
-    Double longitude;
+    BigDecimal price;
+
+    String description;
 
     String image;
 
-    Boolean isActive;
+    Boolean isAvailable;
 
     LocalDateTime createdAt;
-    LocalDateTime updatedAt;
 }

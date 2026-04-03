@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 public class PermissionEventListener {
-
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
 

@@ -1,24 +1,22 @@
 package SmartFoodStreet_Backend.service.interfaces;
 
-import SmartFoodStreet_Backend.dto.stall.request.StallCreationRequest;
-import SmartFoodStreet_Backend.dto.stall.request.StallUpdateRequest;
+import SmartFoodStreet_Backend.dto.food.request.FoodRequest;
+import SmartFoodStreet_Backend.dto.stall.request.StallCreateRequest;
+import SmartFoodStreet_Backend.dto.stall.request.StallTranslationRequest;
+import SmartFoodStreet_Backend.dto.stall.request.StallTriggerConfigRequest;
 import SmartFoodStreet_Backend.dto.stall.response.StallResponse;
 
 import java.util.List;
 
 public interface IStall {
 
-    StallResponse create(StallCreationRequest request);
+    StallResponse create(StallCreateRequest request);
 
-    StallResponse update(Long id, StallUpdateRequest request);
-
-    void delete(Long id);
-
-    List<StallResponse> getMyStalls();
+    StallResponse getById(Long id);
 
     List<StallResponse> getByStreet(Long streetId);
 
-    List<StallResponse> getAllAdmin();
+    StallResponse update(Long id, StallCreateRequest request);
 
-    StallResponse getById(Long id);
+    void delete(Long id);
 }

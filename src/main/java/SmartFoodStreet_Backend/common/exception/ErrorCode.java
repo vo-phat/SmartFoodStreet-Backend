@@ -29,6 +29,8 @@ public enum ErrorCode {
     STALL_ID_REQUIRED(1014, "Stall Id cannot be empty", HttpStatus.BAD_REQUEST),
     STALL_ID_INVALID(1015, "Stall Id must be a positive number", HttpStatus.BAD_REQUEST),
     REDEEM_REQUEST_INVALID(1016, "Redeem request is invalid", HttpStatus.BAD_REQUEST),
+    INVALID_REQUEST(1017, "Invalid request", HttpStatus.BAD_REQUEST),
+    INVALID_ENUM(1018, "Invalid enum", HttpStatus.BAD_REQUEST),
 
     // ================= BUSINESS ERROR (2000 - 2999) =================
     USER_ALREADY_EXISTS(2000, "User already exists", HttpStatus.CONFLICT),
@@ -39,6 +41,8 @@ public enum ErrorCode {
     ROLE_ALREADY_EXISTS(2005, "Role already exists", HttpStatus.CONFLICT),
     SESSION_NOT_FOUND(2006, "Session not found", HttpStatus.NOT_FOUND),
     STALL_NOT_FOUND(2007, "Stall not found", HttpStatus.NOT_FOUND),
+    STALL_ALREADY_EXISTS(2008, "Stall already exists", HttpStatus.CONFLICT),
+    RESOURCE_ALREADY_EXISTS(2009, "Resource already exists", HttpStatus.CONFLICT),
 
     // ================= AUTHENTICATION / AUTHORIZATION (3000 - 3999) =================
     UNAUTHENTICATED(3000, "Authentication required. Please provide a valid access token.", HttpStatus.UNAUTHORIZED),

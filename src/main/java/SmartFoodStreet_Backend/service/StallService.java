@@ -2,23 +2,14 @@ package SmartFoodStreet_Backend.service;
 
 import SmartFoodStreet_Backend.common.exception.AppException;
 import SmartFoodStreet_Backend.common.exception.ErrorCode;
-import SmartFoodStreet_Backend.dto.stall.request.StallCreationRequest;
-import SmartFoodStreet_Backend.dto.stall.request.StallUpdateRequest;
+import SmartFoodStreet_Backend.dto.stall.request.StallCreateRequest;
 import SmartFoodStreet_Backend.dto.stall.response.StallResponse;
-import SmartFoodStreet_Backend.entity.Account;
-import SmartFoodStreet_Backend.entity.FoodStreet;
 import SmartFoodStreet_Backend.entity.Stall;
-import SmartFoodStreet_Backend.mapper.StallMapper;
-import SmartFoodStreet_Backend.repository.AccountRepository;
-import SmartFoodStreet_Backend.repository.FoodStreetRepository;
 import SmartFoodStreet_Backend.repository.StallRepository;
 import SmartFoodStreet_Backend.service.interfaces.IStall;
-import SmartFoodStreet_Backend.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -26,100 +17,80 @@ import java.util.List;
 public class StallService implements IStall {
 
     private final StallRepository repository;
-    private final StallMapper mapper;
-    private final AccountRepository accountRepository;
-    private final FoodStreetRepository streetRepository;
 
     @Override
-    @PreAuthorize("hasRole('VENDOR')")
-    public StallResponse create(StallCreationRequest request) {
+    public StallResponse create(StallCreateRequest stallCreateRequest) {
 
-        Account vendor = accountRepository.findByUserName(
-                SecurityUtils.getCurrentUsername()
-        ).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTS));
+        boolean exists = repository
+                .existsByStreetIdAndNameIgnoreCase(stallCreateRequest.getStreetId(), stallCreateRequest.getName());
 
-        FoodStreet street = streetRepository.findById(request.getStreetId())
-                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+        if (exists)
+            throw new AppException(ErrorCode.STALL_ALREADY_EXISTS);
 
-        Stall stall = mapper.toEntity(request);
-        stall.setVendor(vendor);
-        stall.setStreet(street);
+        Stall stall = new Stall();
+        stall.setStreetId(stallCreateRequest.getStreetId());
+        stall.setVendorId(stallCreateRequest.getVendorId());
+        stall.setName(stallCreateRequest.getName());
+        stall.setCategory(stallCreateRequest.getCategory());
+        stall.setLatitude(stallCreateRequest.getLatitude());
+        stall.setLongitude(stallCreateRequest.getLongitude());
+        stall.setImage(stallCreateRequest.getImage());
+        stall.setIsActive(true);
 
-        return mapper.toResponse(repository.save(stall));
-    }
+        repository.save(stall);
 
-    @Override
-    @PreAuthorize("hasRole('VENDOR')")
-    public StallResponse update(Long id, StallUpdateRequest request) {
-
-        Stall stall = repository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
-
-        if (!stall.getVendor().getUserName()
-                .equals(SecurityUtils.getCurrentUsername())) {
-            throw new AppException(ErrorCode.UNAUTHORIZED);
-        }
-
-        mapper.update(stall, request);
-        stall.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-
-        return mapper.toResponse(repository.save(stall));
-    }
-
-    @Override
-    @PreAuthorize("hasRole('VENDOR')")
-    public void delete(Long id) {
-
-        Stall stall = repository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
-
-        if (!stall.getVendor().getUserName()
-                .equals(SecurityUtils.getCurrentUsername())) {
-            throw new AppException(ErrorCode.UNAUTHORIZED);
-        }
-
-        repository.delete(stall);
-    }
-
-    @Override
-    @PreAuthorize("hasRole('VENDOR')")
-    public List<StallResponse> getMyStalls() {
-
-        Account vendor = accountRepository.findByUserName(
-                SecurityUtils.getCurrentUsername()
-        ).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTS));
-
-        return repository.findByVendorId(Long.valueOf(vendor.getId()))
-                .stream()
-                .map(mapper::toResponse)
-                .toList();
-    }
-
-    @Override
-    public List<StallResponse> getByStreet(Long streetId) {
-
-        return repository.findByStreetIdAndIsActiveTrue(streetId)
-                .stream()
-                .map(mapper::toResponse)
-                .toList();
-    }
-
-    @Override
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<StallResponse> getAllAdmin() {
-
-        return repository.findAll()
-                .stream()
-                .map(mapper::toResponse)
-                .toList();
+        return map(stall);
     }
 
     @Override
     public StallResponse getById(Long id) {
+        return map(find(id));
+    }
 
-        return mapper.toResponse(
-                repository.findById(id)
-                        .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND))
-        );
+    @Override
+    public List<StallResponse> getByStreet(Long streetId) {
+        return repository.findByStreetId(streetId)
+                .stream().map(this::map).toList();
+    }
+
+    @Override
+    public StallResponse update(Long id, StallCreateRequest stallCreateRequest) {
+        Stall stall = find(id);
+
+        stall.setStreetId(stallCreateRequest.getStreetId());
+        stall.setVendorId(stallCreateRequest.getVendorId());
+        stall.setName(stallCreateRequest.getName());
+        stall.setCategory(stallCreateRequest.getCategory());
+        stall.setLatitude(stallCreateRequest.getLatitude());
+        stall.setLongitude(stallCreateRequest.getLongitude());
+        stall.setImage(stallCreateRequest.getImage());
+
+        repository.save(stall);
+
+        return map(stall);
+    }
+
+    @Override
+    public void delete(Long id) {
+        Stall stall = find(id);
+        stall.setIsActive(false);
+        repository.save(stall);
+    }
+
+    private Stall find(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+    }
+
+    private StallResponse map(Stall stall) {
+        return StallResponse.builder()
+                .id(stall.getId())
+                .name(stall.getName())
+                .category(stall.getCategory())
+                .latitude(stall.getLatitude())
+                .longitude(stall.getLongitude())
+                .image(stall.getImage())
+                .isActive(stall.getIsActive())
+                .build();
     }
 }

@@ -1,8 +1,7 @@
 package SmartFoodStreet_Backend.controller;
 
 import SmartFoodStreet_Backend.common.response.ApiResponse;
-import SmartFoodStreet_Backend.dto.stall.request.StallCreationRequest;
-import SmartFoodStreet_Backend.dto.stall.request.StallUpdateRequest;
+import SmartFoodStreet_Backend.dto.stall.request.StallCreateRequest;
 import SmartFoodStreet_Backend.dto.stall.response.StallResponse;
 import SmartFoodStreet_Backend.service.interfaces.IStall;
 import jakarta.validation.Valid;
@@ -16,65 +15,42 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StallController {
 
-    private final IStall service;
-
-    // ================= VENDOR =================
+    private final IStall stallService;
 
     @PostMapping
-    public ApiResponse<StallResponse> create(
-            @RequestBody @Valid StallCreationRequest request) {
+    public ApiResponse<StallResponse> create(@Valid @RequestBody StallCreateRequest stallCreateRequest) {
         return ApiResponse.<StallResponse>builder()
-                .result(service.create(request))
-                .build();
-    }
-
-    @PutMapping("/{id}")
-    public ApiResponse<StallResponse> update(
-            @PathVariable Long id,
-            @RequestBody StallUpdateRequest request) {
-        return ApiResponse.<StallResponse>builder()
-                .result(service.update(id, request))
-                .build();
-    }
-
-    @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ApiResponse.<Void>builder()
-                .message("Deleted successfully")
-                .build();
-    }
-
-    @GetMapping("/my")
-    public ApiResponse<List<StallResponse>> myStalls() {
-        return ApiResponse.<List<StallResponse>>builder()
-                .result(service.getMyStalls())
-                .build();
-    }
-
-    // ================= PUBLIC =================
-
-    @GetMapping
-    public ApiResponse<List<StallResponse>> byStreet(
-            @RequestParam Long streetId) {
-        return ApiResponse.<List<StallResponse>>builder()
-                .result(service.getByStreet(streetId))
+                .result(stallService.create(stallCreateRequest))
                 .build();
     }
 
     @GetMapping("/{id}")
     public ApiResponse<StallResponse> getById(@PathVariable Long id) {
         return ApiResponse.<StallResponse>builder()
-                .result(service.getById(id))
+                .result(stallService.getById(id))
                 .build();
     }
 
-    // ================= ADMIN =================
-
-    @GetMapping("/admin")
-    public ApiResponse<List<StallResponse>> getAllAdmin() {
+    @GetMapping("/street/{streetId}")
+    public ApiResponse<List<StallResponse>> getByStreet(@PathVariable Long streetId) {
         return ApiResponse.<List<StallResponse>>builder()
-                .result(service.getAllAdmin())
+                .result(stallService.getByStreet(streetId))
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse<StallResponse> update(@PathVariable Long id, @Valid @RequestBody StallCreateRequest stallCreateRequest) {
+
+        return ApiResponse.<StallResponse>builder()
+                .result(stallService.update(id, stallCreateRequest))
+                .build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> delete(@PathVariable Long id) {
+        stallService.delete(id);
+        return ApiResponse.<Void>builder()
+                .message("Successfully")
                 .build();
     }
 }
