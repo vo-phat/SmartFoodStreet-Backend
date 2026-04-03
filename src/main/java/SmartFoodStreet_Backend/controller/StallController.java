@@ -38,6 +38,27 @@ public class StallController {
                 .build();
     }
 
+    @GetMapping("/vendor/{vendorId}")
+    public ApiResponse<StallResponse> getByVendor(@PathVariable Long vendorId) {
+        return ApiResponse.<StallResponse>builder()
+                .result(stallService.getByVendor(vendorId))
+                .build();
+    }
+
+    @GetMapping
+    public ApiResponse<List<StallResponse>> getAllActive() {
+        return ApiResponse.<List<StallResponse>>builder()
+                .result(stallService.getAllActive())
+                .build();
+    }
+
+    @GetMapping("/all")
+    public ApiResponse<List<StallResponse>> getAll() {
+        return ApiResponse.<List<StallResponse>>builder()
+                .result(stallService.getAll())
+                .build();
+    }
+
     @PutMapping("/{id}")
     public ApiResponse<StallResponse> update(@PathVariable Long id, @Valid @RequestBody StallCreateRequest stallCreateRequest) {
 

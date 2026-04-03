@@ -26,4 +26,6 @@ public class FoodRequest {
     String description;
 
     String image;
+
+    Boolean isAvailable;
 }

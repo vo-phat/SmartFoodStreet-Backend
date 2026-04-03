@@ -11,7 +11,9 @@ import java.util.Set;
 @Data
 @Builder
 public class AccountResponse {
-    String username;
+    Long id;
+
+    String userName;
 
     String fullName;
 
