@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,7 +21,6 @@ public class FoodService implements IFood {
     private final FoodRepository repository;
     private final StallRepository stallRepository;
     private final CloudinaryService cloudinaryService;
-
 
     @Override
     public FoodResponse create(FoodRequest foodRequest) {
@@ -35,7 +35,7 @@ public class FoodService implements IFood {
         food.setDescription(foodRequest.getDescription());
         food.setImage(foodRequest.getImage());
         food.setIsAvailable(true);
-
+        food.setCreatedAt(LocalDateTime.now());
         repository.save(food);
 
         return map(food);
@@ -57,11 +57,10 @@ public class FoodService implements IFood {
     @Override
     public FoodResponse update(Long id, FoodRequest request) {
         Food food = repository.findById(id).orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
-        
+
         food.setName(request.getName());
         food.setPrice(request.getPrice());
         food.setDescription(request.getDescription());
-        
         if (request.getImage() != null && !request.getImage().equals(food.getImage())) {
             // Delete old image
             if (food.getImage() != null) {
@@ -73,7 +72,7 @@ public class FoodService implements IFood {
         if (request.getIsAvailable() != null) {
             food.setIsAvailable(request.getIsAvailable());
         }
-        
+
         repository.save(food);
         return map(food);
     }
