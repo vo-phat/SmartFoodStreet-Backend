@@ -3,25 +3,25 @@ package SmartFoodStreet_Backend.dto.stall.request;
 import SmartFoodStreet_Backend.enums.TriggerType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class StallTriggerConfigRequest {
     @NotNull
-    Long stallId;
+    private Long stallId;
 
     @NotNull
-    TriggerType triggerType;
+    private TriggerType triggerType;
 
-    @Min(1)
-    Integer radius;
+    private Integer radius;
+    private Integer triggerDistance;
 
+    @NotNull
     @Min(1)
-    Integer triggerDistance;
+    private Integer cooldownSeconds;
 
-    @Min(1)
-    Integer cooldownSeconds;
-
-    @Min(1)
-    Integer priority;
+    @NotNull
+    private Integer priority;
 }

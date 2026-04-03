@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "")
+@Table(name = "stall_trigger_config")
 @Getter
 @Setter
 @NoArgsConstructor

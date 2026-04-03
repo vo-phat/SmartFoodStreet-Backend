@@ -5,70 +5,85 @@ import SmartFoodStreet_Backend.common.exception.ErrorCode;
 import SmartFoodStreet_Backend.common.response.CloudinaryResponse;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CloudinaryService {
 
     private final Cloudinary cloudinary;
 
-    public CloudinaryService(Cloudinary cloudinary) {
-        this.cloudinary = cloudinary;
-    }
-
     /**
-     * Upload file lên Cloudinary và trả về DTO UploadResponse
-     *
-     * @param file MultipartFile upload lên
-     * @return UploadResponse (publicId, url, resourceType)
+     * Upload audio từ byte[]
      */
-    public CloudinaryResponse uploadFile(MultipartFile file) {
+    public CloudinaryResponse uploadAudio(byte[] data, String fileName) {
+
         try {
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
-                    ObjectUtils.asMap("resource_type", "auto"));
+            Map uploadResult = cloudinary.uploader().upload(
+                    data,
+                    ObjectUtils.asMap(
+                            "resource_type", "video", // 🔥 audio = video trong cloudinary
+                            "public_id", fileName,
+                            "format", "mp3"
+                    )
+            );
 
-            String publicId = (String) uploadResult.get("public_id");
-            String url = (String) uploadResult.get("secure_url");
-            String resourceTypeResult = (String) uploadResult.get("resource_type");
+            return map(uploadResult);
 
-            return new CloudinaryResponse(publicId, url, resourceTypeResult);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Upload audio error: {}", e.getMessage());
             throw new AppException(ErrorCode.FILE_UPLOAD_FAILED);
         }
     }
 
     /**
-     * Xóa file trên Cloudinary theo publicId
-     *
-     * @param publicId     ID của file trên Cloudinary
-     * @param resourceType Loại resource: image, video, raw
-     * @return true nếu xóa thành công, false nếu thất bại
+     * Upload image/file (giữ lại)
      */
-    public boolean deleteFile(String publicId, String resourceType) {
+    public CloudinaryResponse uploadFile(byte[] data) {
+
         try {
-            Map deleteResult = cloudinary.uploader().destroy(publicId,
-                    ObjectUtils.asMap("resource_type", resourceType));
-            String resultStatus = (String) deleteResult.get("result");
-            return "ok".equals(resultStatus);
+            Map uploadResult = cloudinary.uploader().upload(
+                    data,
+                    ObjectUtils.asMap("resource_type", "auto")
+            );
+
+            return map(uploadResult);
+
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.FILE_UPLOAD_FAILED);
+        }
+    }
+
+    /**
+     * Delete
+     */
+    public boolean deleteFile(String publicId) {
+
+        try {
+            Map result = cloudinary.uploader().destroy(
+                    publicId,
+                    ObjectUtils.asMap("resource_type", "video")
+            );
+
+            return "ok".equals(result.get("result"));
+
         } catch (Exception e) {
             throw new AppException(ErrorCode.FILE_DELETE_FAILED);
         }
     }
 
-    public String extractPublicId(String url) {
-        if (url == null || url.isEmpty()) return null;
-        try {
-            String[] parts = url.split("/");
-            String lastPart = parts[parts.length - 1]; // ví dụ: abcxyz.jpg
-            return lastPart.substring(0, lastPart.lastIndexOf(".")); // abcxyz
-        } catch (Exception e) {
-            return null;
-        }
+    private CloudinaryResponse map(Map uploadResult) {
+
+        return new CloudinaryResponse(
+                (String) uploadResult.get("public_id"),
+                (String) uploadResult.get("secure_url"),
+                (String) uploadResult.get("resource_type"),
+                ((Number) uploadResult.get("bytes")).longValue() // 🔥 fileSize
+        );
     }
 }

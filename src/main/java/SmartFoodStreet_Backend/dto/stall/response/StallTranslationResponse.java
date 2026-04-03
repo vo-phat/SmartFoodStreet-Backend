@@ -8,9 +8,17 @@ import lombok.Getter;
 public class StallTranslationResponse {
     Long stallId;
 
-    String language;
+    String languageCode;
 
     String name;
 
     String ttsScript;
+
+    String audioUrl;
+
+    Long fileSize;
+
+    String audioHash;
+
+    String audioStatus;
 }

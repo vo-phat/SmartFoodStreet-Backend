@@ -1,5 +1,6 @@
 package SmartFoodStreet_Backend.dto.stall.response;
 
+import SmartFoodStreet_Backend.enums.TriggerType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,7 +9,7 @@ import lombok.Getter;
 public class StallTriggerConfigResponse {
     Long stallId;
 
-    String triggerType;
+    TriggerType triggerType;
 
     Integer radius;
 
