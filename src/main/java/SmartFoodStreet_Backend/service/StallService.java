@@ -20,7 +20,7 @@ public class StallService implements IStall {
     private final StallRepository repository;
 
     @Override
-    @PreAuthorize("hasAuthority('STALL_CREATE')")
+//    @PreAuthorize("hasAuthority('STALL_CREATE')")
     public StallResponse create(StallCreateRequest stallCreateRequest) {
 
         boolean exists = repository
@@ -45,7 +45,7 @@ public class StallService implements IStall {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('STALL_READ')")
+//    @PreAuthorize("hasAuthority('STALL_READ')")
     public StallResponse getById(Long id) {
         return map(find(id));
     }
@@ -58,7 +58,7 @@ public class StallService implements IStall {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('STALL_UPDATE')")
+//    @PreAuthorize("hasAuthority('STALL_UPDATE')")
     public StallResponse update(Long id, StallCreateRequest stallCreateRequest) {
         Stall stall = find(id);
 
@@ -76,7 +76,7 @@ public class StallService implements IStall {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('STALL_DELETE')")
+//    @PreAuthorize("hasAuthority('STALL_DELETE')")
     public void delete(Long id) {
         Stall stall = find(id);
         stall.setIsActive(false);

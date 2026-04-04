@@ -259,8 +259,7 @@ VALUES
 
 INSERT INTO roles (name, description) VALUES
 ('ADMIN', 'Toàn quyền hệ thống'),
-('VENDOR', 'Chủ gian hàng'),
-('CUSTOMER', 'Người dùng cuối');
+('VENDOR', 'Chủ gian hàng');
 
 INSERT INTO account_roles (account_id, role_id) VALUES
 (1, 1),
@@ -269,16 +268,23 @@ INSERT INTO account_roles (account_id, role_id) VALUES
 (4, 2),
 (5, 2),
 (6, 2),
-(7, 3),
-(8, 3),
-(9, 3),
-(10, 3);
+(7, 2),
+(8, 2),
+(9, 2),
+(10, 2);
 
 INSERT INTO permissions (name, description) VALUES
 ('ACCOUNT_CREATE', 'Tạo tài khoản'),
-('ACCOUNT_READ', 'Xem tài khoản'),
+('ACCOUNT_GET_ALL', 'Xem danh sách tài khoản'),
+('ACCOUNT_GET_BY_ID', 'Xem tài theo ID'),
+('ACCOUNT_GET_MY_INFO', 'Xem thông tin tài khoản cá nhân'),
 ('ACCOUNT_UPDATE', 'Cập nhật tài khoản'),
 ('ACCOUNT_DELETE', 'Xoá tài khoản');
+INSERT INTO permissions (name, description) VALUES
+('STREET_CREATE', 'Tạo khu phố ẩm thực mới'),
+('STREET_READ', 'Xem danh sách và chi tiết khu phố ẩm thực'),
+('STREET_UPDATE', 'Cập nhật thông tin khu phố ẩm thực'),
+('STREET_DELETE', 'Xóa khu phố ẩm thực khỏi hệ thống');
 INSERT INTO permissions (name, description) VALUES
 ('STALL_CREATE', 'Tạo gian hàng'),
 ('STALL_READ', 'Xem gian hàng'),
@@ -286,21 +292,8 @@ INSERT INTO permissions (name, description) VALUES
 ('STALL_DELETE', 'Xoá gian hàng');
 INSERT INTO permissions (name, description) VALUES
 ('FOOD_CREATE', 'Tạo món ăn'),
-('FOOD_READ', 'Xem món ăn'),
 ('FOOD_UPDATE', 'Cập nhật món ăn'),
 ('FOOD_DELETE', 'Xoá món ăn');
-INSERT INTO permissions (name, description) VALUES
-('ORDER_CREATE', 'Tạo đơn hàng'),
-('ORDER_READ', 'Xem đơn hàng'),
-('ORDER_UPDATE', 'Cập nhật đơn hàng'),
-('ORDER_DELETE', 'Xoá đơn hàng'),
-('ORDER_CONFIRM', 'Xác nhận đơn'),
-('ORDER_CANCEL', 'Huỷ đơn');
-INSERT INTO permissions (name, description) VALUES
-('PAYMENT_CREATE', 'Thanh toán'),
-('PAYMENT_READ', 'Xem thanh toán');
-INSERT INTO permissions (name, description) VALUES
-('REPORT_VIEW', 'Xem báo cáo');
 
 -- ADMIN full quyền
 INSERT INTO role_permissions (role_id, permission_id)
@@ -312,9 +305,16 @@ INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id
 FROM roles r
 JOIN permissions p ON p.name IN (
-    'STALL_CREATE','STALL_READ','STALL_UPDATE',
-    'FOOD_CREATE','FOOD_READ','FOOD_UPDATE','FOOD_DELETE',
-    'ORDER_READ','ORDER_CONFIRM','ORDER_CANCEL'
+    'ACCOUNT_GET_MY_INFO',
+    'ACCOUNT_UPDATE',
+    'STREET_READ',
+    'STALL_CREATE',
+    'STALL_READ',
+    'STALL_UPDATE',
+    'FOOD_CREATE',
+    'FOOD_READ',
+    'FOOD_UPDATE',
+    'FOOD_DELETE'
 )
 WHERE r.name = 'VENDOR';
 

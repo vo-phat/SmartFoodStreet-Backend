@@ -21,7 +21,7 @@ public class FoodService implements IFood {
     private final StallRepository stallRepository;
 
     @Override
-    @PreAuthorize("hasAuthority('FOOD_CREATE')")
+//    @PreAuthorize("hasAuthority('FOOD_CREATE')")
     public FoodResponse create(FoodRequest foodRequest) {
 
         if (!stallRepository.existsById(foodRequest.getStallId()))
@@ -55,7 +55,7 @@ public class FoodService implements IFood {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('FOOD_UPDATE')")
+//    @PreAuthorize("hasAuthority('FOOD_UPDATE')")
     public FoodResponse update(Long id, FoodRequest foodRequest) {
         Food food = repository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
@@ -78,7 +78,7 @@ public class FoodService implements IFood {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('FOOD_DELETE')")
+//    @PreAuthorize("hasAuthority('FOOD_DELETE')")
     public void delete(Long id) {
         Food food = repository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
