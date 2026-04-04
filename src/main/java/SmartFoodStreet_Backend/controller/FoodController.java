@@ -30,4 +30,26 @@ public class FoodController {
                 .result(foodService.getByStall(stallId))
                 .build();
     }
+
+    @GetMapping("/{id}")
+    public ApiResponse<FoodResponse> getById(@PathVariable Long id) {
+        return ApiResponse.<FoodResponse>builder()
+                .result(foodService.getById(id))
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse<FoodResponse> update(@PathVariable Long id, @Valid @RequestBody FoodRequest foodRequest) {
+        return ApiResponse.<FoodResponse>builder()
+                .result(foodService.update(id, foodRequest))
+                .build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<String> delete(@PathVariable Long id) {
+        foodService.delete(id);
+        return ApiResponse.<String>builder()
+                .result("Food deleted successfully")
+                .build();
+    }
 }

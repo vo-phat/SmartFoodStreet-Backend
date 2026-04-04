@@ -10,4 +10,10 @@ public interface IFood {
     FoodResponse create(FoodRequest request);
 
     List<FoodResponse> getByStall(Long stallId);
+
+    FoodResponse getById(Long id);
+
+    FoodResponse update(Long id, FoodRequest request);
+
+    void delete(Long id);
 }

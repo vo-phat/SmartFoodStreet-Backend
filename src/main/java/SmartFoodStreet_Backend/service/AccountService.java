@@ -38,7 +38,7 @@ public class AccountService implements IAccount {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ACCOUNT_CREATE')")
     public Account createAccount(AccountCreationRequest request) {
 
         if (accountRepository.existsByUserName(request.getUserName())) {
@@ -65,18 +65,19 @@ public class AccountService implements IAccount {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ACCOUNT_GET_ALL')")
     public List<Account> getAccounts() {
         return accountRepository.findAll();
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ACCOUNT_GET_BY_ID')")
     public Account getAccount(long accountId) {
         return accountRepository.findById(accountId).orElseThrow(() -> new RuntimeException(ErrorCode.USER_NOT_EXISTS.getMessage()));
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ACCOUNT_GET_MY_INFO')")
     public Account getAccountByUserName(String username) {
         return accountRepository.findByUserName(username)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTS));
@@ -84,7 +85,7 @@ public class AccountService implements IAccount {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ACCOUNT_UPDATE')")
     public Account updateAccount(long accountId, AccountUpdateRequest request) {
 
         Account account = accountRepository.findById(accountId)
@@ -122,7 +123,7 @@ public class AccountService implements IAccount {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ACCOUNT_DELETE')")
     public void deleteAccount(long accountId) {
         accountRepository.deleteById(accountId);
     }

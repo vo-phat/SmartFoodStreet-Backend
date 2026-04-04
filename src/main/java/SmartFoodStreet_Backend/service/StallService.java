@@ -8,6 +8,7 @@ import SmartFoodStreet_Backend.entity.Stall;
 import SmartFoodStreet_Backend.repository.StallRepository;
 import SmartFoodStreet_Backend.service.interfaces.IStall;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class StallService implements IStall {
     private final StallRepository repository;
 
     @Override
+    @PreAuthorize("hasAuthority('STALL_CREATE')")
     public StallResponse create(StallCreateRequest stallCreateRequest) {
 
         boolean exists = repository
@@ -43,17 +45,20 @@ public class StallService implements IStall {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('STALL_READ')")
     public StallResponse getById(Long id) {
         return map(find(id));
     }
 
     @Override
+    @PreAuthorize("hasAuthority('STALL_READ')")
     public List<StallResponse> getByStreet(Long streetId) {
         return repository.findByStreetId(streetId)
                 .stream().map(this::map).toList();
     }
 
     @Override
+    @PreAuthorize("hasAuthority('STALL_UPDATE')")
     public StallResponse update(Long id, StallCreateRequest stallCreateRequest) {
         Stall stall = find(id);
 
@@ -71,6 +76,7 @@ public class StallService implements IStall {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('STALL_DELETE')")
     public void delete(Long id) {
         Stall stall = find(id);
         stall.setIsActive(false);

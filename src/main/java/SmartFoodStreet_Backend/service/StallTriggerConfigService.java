@@ -74,7 +74,6 @@ public class StallTriggerConfigService implements IStallTriggerConfig {
         );
     }
 
-    // MAIN LOGIC
     @Override
     public List<StallNearbyResponse> getNearby(double lat, double lng, double radius, String languageCode) {
 
@@ -99,8 +98,6 @@ public class StallTriggerConfigService implements IStallTriggerConfig {
                 ))
                 .toList();
     }
-
-    // ===== MAPPER =====
 
     private StallTriggerConfigResponse mapConfig(StallTriggerConfig stallTriggerConfig) {
         return StallTriggerConfigResponse.builder()

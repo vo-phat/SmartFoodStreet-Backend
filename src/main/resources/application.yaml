@@ -56,11 +56,9 @@ spring:
   # -----------------------
   #   API KEY GEMINI
   # -----------------------
-  ai:
-    openai:
-      api-key: ${GEMINI_API_KEY}
-      base-url: https://api.openai.com
-      enable: false
+#  ai:
+#    openai:
+#      api-key: ${OPEN_AI_KEY}
 
 # -----------------------
 # Server

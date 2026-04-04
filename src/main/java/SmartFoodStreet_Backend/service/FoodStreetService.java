@@ -24,7 +24,7 @@ public class FoodStreetService implements IFoodStreet {
     private final FoodStreetMapper mapper;
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('STREET_CREATE')")
     public FoodStreetResponse create(FoodStreetCreationRequest request) {
         return mapper.toResponse(
                 repository.save(mapper.toEntity(request))
@@ -32,7 +32,7 @@ public class FoodStreetService implements IFoodStreet {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('STREET_READ')")
     public List<FoodStreetResponse> getAll() {
         return repository.findAll()
                 .stream()
@@ -49,6 +49,7 @@ public class FoodStreetService implements IFoodStreet {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('STREET_READ')")
     public FoodStreetResponse getById(Long id) {
         return mapper.toResponse(
                 repository.findById(id)
@@ -57,7 +58,7 @@ public class FoodStreetService implements IFoodStreet {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('STREET_UPDATE')")
     public FoodStreetResponse update(Long id, FoodStreetUpdateRequest request) {
 
         FoodStreet entity = repository.findById(id)
@@ -70,7 +71,7 @@ public class FoodStreetService implements IFoodStreet {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('STREET_DELETE')")
     public void delete(Long id) {
         repository.deleteById(id);
     }

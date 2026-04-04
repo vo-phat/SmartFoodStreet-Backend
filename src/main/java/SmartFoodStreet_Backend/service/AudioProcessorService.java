@@ -18,52 +18,61 @@ public class AudioProcessorService {
     private final StallTranslationRepository repository;
     private final TtsService ttsService;
     private final CloudinaryService cloudinaryService;
+    private final TranslationService translationService;
 
+    // QUAN TRỌNG: Nhận thẳng Object StallTranslation thay vì Long translationId
     @Async
-    public void processAudioAsync(Long translationId) {
-        StallTranslation stallTranslation = repository.findById(translationId).orElseThrow();
+    public void processAudioAsync(StallTranslation stallTranslation, Long stallId, String targetLanguage) {
 
         try {
-            log.info("Bắt đầu tạo Audio cho translation ID: {}", translationId);
+            log.info("Bắt đầu xử lý Audio ngầm cho stall: {}, language: {}", stallId, targetLanguage);
 
-            // 1. Tối ưu giọng đọc theo ngôn ngữ
-            String voiceConfig = getVoiceConfigForLanguage(stallTranslation.getLanguageCode());
+            String scriptToRead = stallTranslation.getTtsScript();
 
-            // 2. Gọi API TTS
-            // Lưu ý: Hãy điều chỉnh lại ttsService.generate của bạn nếu cần nhận thêm tham số giọng đọc
-            byte[] audio = ttsService.generate(stallTranslation.getTtsScript(), stallTranslation.getLanguageCode());
+            // 1. DỊCH (Nếu kịch bản đang trống)
+            if (scriptToRead == null || scriptToRead.trim().isEmpty()) {
+                StallTranslation baseTranslation = (StallTranslation) repository.findByStallIdAndLanguageCode(stallId, "vi")
+                        .orElseThrow(() -> new RuntimeException("Không tìm thấy bản gốc tiếng Việt để dịch"));
 
-            // 3. Upload lên Cloudinary
-            CloudinaryResponse upload = cloudinaryService.uploadAudio(audio, stallTranslation.getName());
+                scriptToRead = translationService.translateText(baseTranslation.getTtsScript(), "vi", targetLanguage);
+                stallTranslation.setTtsScript(scriptToRead); // Lưu lại bản dịch
+            }
 
-            // 4. Tính toán Hash (SHA-256 hoặc MD5)
+            // 2. LẤY GIỌNG ĐỌC
+            String voiceConfig = getVoiceConfigForLanguage(targetLanguage);
+
+            // 3. GEN AUDIO
+            byte[] audio = ttsService.generate(scriptToRead, targetLanguage, voiceConfig);
+
+            // 4. UPLOAD LÊN CLOUD (Ghi đè)
+            String publicId = "stall_" + stallId + "_" + targetLanguage;
+            CloudinaryResponse upload = cloudinaryService.uploadAudioWithOverwrite(audio, publicId);
+
+            // 5. CẬP NHẬT THÀNH CÔNG
             String hash = DigestUtils.md5DigestAsHex(audio);
-
-            // 5. Cập nhật thành công
             stallTranslation.setAudioUrl(upload.getUrl());
             stallTranslation.setFileSize(upload.getBytes());
             stallTranslation.setAudioHash(hash);
             stallTranslation.setAudioStatus(AudioStatus.COMPLETED);
 
-            log.info("Tạo Audio thành công cho translation ID: {}", translationId);
+            log.info("Xử lý thành công ngôn ngữ: {}", targetLanguage);
 
         } catch (Exception e) {
-            log.error("Lỗi khi tạo Audio cho translation ID: {}", translationId, e);
+            log.error("Lỗi khi xử lý ngầm Audio cho ngôn ngữ {}: {}", targetLanguage, e.getMessage(), e);
             stallTranslation.setAudioStatus(AudioStatus.ERROR);
         }
 
-        // Lưu lại trạng thái cuối cùng vào Database
+        // Lưu trạng thái cuối cùng vào Database (Dù thành công hay lỗi)
         repository.save(stallTranslation);
     }
 
-    // Cấu hình linh hoạt giọng đọc theo ngôn ngữ
     private String getVoiceConfigForLanguage(String languageCode) {
         return switch (languageCode.toLowerCase()) {
-            case "vi" -> "vi-VN-Standard-A"; // Tiếng Việt (Nữ)
-            case "en" -> "en-US-Neural2-F";  // Tiếng Anh (Nữ, giọng tự nhiên)
-            case "ko" -> "ko-KR-Standard-A"; // Tiếng Hàn
-            case "ja" -> "ja-JP-Standard-A"; // Tiếng Nhật
-            default -> "en-US-Standard-A";   // Mặc định
+            case "vi" -> "vi-VN-Standard-A";
+            case "en" -> "en-US-Neural2-F";
+            case "ko" -> "ko-KR-Standard-A";
+            case "ja" -> "ja-JP-Standard-A";
+            default -> "en-US-Standard-A";
         };
     }
 }
