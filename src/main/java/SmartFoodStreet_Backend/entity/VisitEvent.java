@@ -3,7 +3,7 @@ package SmartFoodStreet_Backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "visit_events")
@@ -28,7 +28,7 @@ public class VisitEvent {
     EventType eventType;
 
     @Column(name = "event_time")
-    Timestamp eventTime;
+    LocalDateTime eventTime;
 
     @Column(name = "qr_code")
     String qrCode;

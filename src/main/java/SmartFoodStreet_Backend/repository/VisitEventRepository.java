@@ -15,8 +15,12 @@ public interface VisitEventRepository extends JpaRepository<VisitEvent, Long> {
     Optional<VisitEvent> findTopBySessionIdAndStallIdAndEventTypeOrderByEventTimeDesc(
             Long sessionId,
             Long stallId,
-            VisitEvent.EventType eventType
-    );
+            VisitEvent.EventType eventType);
+
+    boolean existsByQrCodeAndIpAddressAndEventTimeAfter(
+            String code,
+            String ip,
+            LocalDateTime time);
 
     @Query("""
                 SELECT COUNT(e)
@@ -25,7 +29,7 @@ public interface VisitEventRepository extends JpaRepository<VisitEvent, Long> {
                 AND e.eventTime BETWEEN :start AND :end
             """)
     Long countEnterBetween(LocalDateTime start,
-                           LocalDateTime end);
+            LocalDateTime end);
 
     @Query("""
                 SELECT COUNT(e)
@@ -34,14 +38,14 @@ public interface VisitEventRepository extends JpaRepository<VisitEvent, Long> {
                 AND e.eventTime BETWEEN :start AND :end
             """)
     Long countAudioCompleteBetween(LocalDateTime start,
-                                   LocalDateTime end);
+            LocalDateTime end);
 
     @Query("""
-        SELECT e.stallId, COUNT(e)
-        FROM VisitEvent e
-        WHERE e.eventType = 'ENTER_GEOFENCE'
-        GROUP BY e.stallId
-        ORDER BY COUNT(e) DESC
-    """)
+                SELECT e.stallId, COUNT(e)
+                FROM VisitEvent e
+                WHERE e.eventType = 'ENTER_GEOFENCE'
+                GROUP BY e.stallId
+                ORDER BY COUNT(e) DESC
+            """)
     List<Object[]> findTopStallsByVisits();
 }
