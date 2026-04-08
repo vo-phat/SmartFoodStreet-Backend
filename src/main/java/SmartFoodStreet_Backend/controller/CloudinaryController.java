@@ -16,18 +16,18 @@ public class CloudinaryController {
 
     @PostMapping("/upload")
     public ApiResponse<CloudinaryResponse> uploadFile(@RequestParam("file") MultipartFile file,
-                                                      @RequestParam(required = false) String folder,
-                                                      @RequestParam(required = false) String publicId) {
+            @RequestParam(required = false) String folder,
+            @RequestParam(required = false) String publicId) {
         ApiResponse<CloudinaryResponse> apiResponse = new ApiResponse<>();
 
-        apiResponse.setResult(cloudinaryService.uploadFile(file, folder, publicId));
+        apiResponse.setResult(cloudinaryService.uploadFileImage(file, folder, publicId));
 
         return apiResponse;
     }
 
     @DeleteMapping("/delete")
     public ApiResponse<CloudinaryResponse> deleteFile(@RequestParam String publicId,
-                                                      @RequestParam(defaultValue = "image") String resourceType) {
+            @RequestParam(defaultValue = "image") String resourceType) {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setResult(cloudinaryService.deleteFile(publicId, resourceType));
 

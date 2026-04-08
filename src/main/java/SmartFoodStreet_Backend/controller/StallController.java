@@ -3,9 +3,13 @@ package SmartFoodStreet_Backend.controller;
 import SmartFoodStreet_Backend.common.response.ApiResponse;
 import SmartFoodStreet_Backend.dto.stall.request.StallCreateRequest;
 import SmartFoodStreet_Backend.dto.stall.response.StallResponse;
+import SmartFoodStreet_Backend.service.interfaces.IQRCode;
 import SmartFoodStreet_Backend.service.interfaces.IStall;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +20,7 @@ import java.util.List;
 public class StallController {
 
     private final IStall stallService;
+    private final IQRCode qrService;
 
     @PostMapping
     public ApiResponse<StallResponse> create(@Valid @RequestBody StallCreateRequest stallCreateRequest) {
@@ -60,7 +65,8 @@ public class StallController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<StallResponse> update(@PathVariable Long id, @Valid @RequestBody StallCreateRequest stallCreateRequest) {
+    public ApiResponse<StallResponse> update(@PathVariable Long id,
+            @Valid @RequestBody StallCreateRequest stallCreateRequest) {
 
         return ApiResponse.<StallResponse>builder()
                 .result(stallService.update(id, stallCreateRequest))
@@ -74,4 +80,16 @@ public class StallController {
                 .message("Successfully")
                 .build();
     }
+
+    @GetMapping("/scan/{code}")
+    public ResponseEntity<?> scan(@PathVariable String code,
+            HttpServletRequest request) {
+
+        String redirectUrl = qrService.handleScan(code, request);
+
+        return ResponseEntity.status(302)
+                .header("Location", redirectUrl)
+                .build();
+    }
+
 }

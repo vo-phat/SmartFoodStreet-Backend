@@ -7,6 +7,7 @@ import SmartFoodStreet_Backend.dto.stall.response.StallResponse;
 import SmartFoodStreet_Backend.entity.Stall;
 import SmartFoodStreet_Backend.repository.StallRepository;
 import SmartFoodStreet_Backend.service.interfaces.IStall;
+import SmartFoodStreet_Backend.service.interfaces.IStallTranslation;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class StallService implements IStall {
 
     private final StallRepository repository;
     private final CloudinaryService cloudinaryService;
+    private final IStallTranslation stallTranslationService;
 
 
     @Override
@@ -43,7 +45,13 @@ public class StallService implements IStall {
         stall.setIsActive(false);
 
         repository.save(stall);
-
+ 
+        // Lưu script sang StallTranslation (Xoá cũ nếu có, tạo mới bản gốc vi)
+        if (stall.getScript() != null) {
+            stallTranslationService.deleteAllByStall(stall.getId());
+            stallTranslationService.saveOrUpdate(stall.getId(), "vi", stall.getScript());
+        }
+ 
         return map(stall);
     }
 
@@ -97,10 +105,19 @@ public class StallService implements IStall {
             stall.setImage(stallCreateRequest.getImage());
         }
 
+        boolean scriptChanged = stallCreateRequest.getScript() != null && !stallCreateRequest.getScript().equals(stall.getScript());
+ 
         if (stallCreateRequest.getScript() != null) stall.setScript(stallCreateRequest.getScript());
         if (stallCreateRequest.getIsActive() != null) stall.setIsActive(stallCreateRequest.getIsActive());
 
         repository.save(stall);
+ 
+        // Đồng bộ script sang StallTranslation (Chỉ xoá khi script gốc thay đổi)
+        if (scriptChanged) {
+            stallTranslationService.deleteAllByStall(stall.getId());
+            stallTranslationService.saveOrUpdate(stall.getId(), "vi", stall.getScript());
+        }
+ 
         return map(stall);
     }
 

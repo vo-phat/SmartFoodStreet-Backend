@@ -43,11 +43,15 @@ public enum ErrorCode {
     STALL_NOT_FOUND(2007, "Stall not found", HttpStatus.NOT_FOUND),
     STALL_ALREADY_EXISTS(2008, "Stall already exists", HttpStatus.CONFLICT),
     RESOURCE_ALREADY_EXISTS(2009, "Resource already exists", HttpStatus.CONFLICT),
-
-    // ================= AUTHENTICATION / AUTHORIZATION (3000 - 3999) =================
+    STALL_TRANSLATION_NOT_FOUND(2010, "Stall translation not found", HttpStatus.NOT_FOUND),
+    STALL_TRANSLATION_ALREADY_EXISTS(2011, "Stall translation already exists", HttpStatus.CONFLICT),
+    // ================= AUTHENTICATION / AUTHORIZATION (3000 - 3999)
+    // =================
     UNAUTHENTICATED(3000, "Authentication required. Please provide a valid access token.", HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(3001, "The provided access token is invalid, expired, or cannot be verified.", HttpStatus.UNAUTHORIZED),
-    FORBIDDEN(3002, "Access denied. You do not have sufficient permissions to perform this action.", HttpStatus.FORBIDDEN),
+    UNAUTHORIZED(3001, "The provided access token is invalid, expired, or cannot be verified.",
+            HttpStatus.UNAUTHORIZED),
+    FORBIDDEN(3002, "Access denied. You do not have sufficient permissions to perform this action.",
+            HttpStatus.FORBIDDEN),
 
     // ================= SYSTEM ERROR (5000 - 5999) =================
     FILE_UPLOAD_FAILED(5000, "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR),

@@ -30,6 +30,27 @@ public class VisitEvent {
     @Column(name = "event_time")
     Timestamp eventTime;
 
+    @Column(name = "qr_code")
+    String qrCode;
+
+    @Column(name = "ip_address")
+    String ipAddress;
+
+    @Column(name = "user_agent")
+    String userAgent;
+
+    @Column(name = "hour")
+    Integer hour;
+
+    @Column(name = "day")
+    Integer day;
+
+    @Column(name = "month")
+    Integer month;
+
+    @Column(name = "year")
+    Integer year;
+
     public enum EventType {
         ENTER_GEOFENCE,
         EXIT_GEOFENCE,

@@ -14,4 +14,6 @@ public class CloudinaryResponse {
     String url;
 
     String resourceType;
+
+    Long bytes;
 }

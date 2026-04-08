@@ -22,7 +22,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINT = { "/auth/**", "/foods/**", "/streets/**", "/stalls/**" };
+    private final String[] PUBLIC_ENDPOINT = { "/auth/**", "/foods/**", "/streets/**", "/stalls/**",
+            "/stall-translations/**", "/stall-trigger-config/**" };
 
     @Autowired
     CustomJwtDecoder customJwtDecoder;
