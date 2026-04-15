@@ -24,4 +24,6 @@ public class StallResponse {
     String script;
 
     Boolean isActive;
+    
+    Integer radius;
 }

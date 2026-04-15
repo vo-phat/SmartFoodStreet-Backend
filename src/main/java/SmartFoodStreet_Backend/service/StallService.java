@@ -146,6 +146,7 @@ public class StallService implements IStall {
                 .image(stall.getImage())
                 .script(stall.getScript())
                 .isActive(stall.getIsActive())
+                .radius(stall.getTriggerConfig() != null ? stall.getTriggerConfig().getRadius() : null)
                 .build();
     }
 }

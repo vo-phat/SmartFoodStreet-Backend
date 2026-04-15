@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "")
+@Table(name = "stall_trigger_config")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,6 +14,11 @@ import lombok.*;
 public class StallTriggerConfig {
     @Id
     Long stallId;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "stall_id")
+    Stall stall;
 
     @Enumerated(EnumType.STRING)
     TriggerType triggerType;

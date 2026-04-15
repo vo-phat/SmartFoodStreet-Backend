@@ -38,4 +38,7 @@ public class Stall {
 
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
+
+    @OneToOne(mappedBy = "stall", cascade = CascadeType.ALL)
+    StallTriggerConfig triggerConfig;
 }
