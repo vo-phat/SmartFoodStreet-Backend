@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,17 +21,22 @@ public class TtsService {
 
     @PostConstruct
     public void init() throws Exception {
-        // Đường dẫn tới file trong máy (Downloads)
-        String path = "C:/Users/X/Downloads/tts.json";
+        // 1. Sử dụng ClassPathResource để tìm file trong src/main/resources
+        ClassPathResource resource = new ClassPathResource("tts.json");
 
-        InputStream credentialsStream = new FileInputStream(path);
+        // 2. Mở InputStream trực tiếp từ resource
+        try (InputStream credentialsStream = resource.getInputStream()) {
+            GoogleCredentials credentials = GoogleCredentials.fromStream(credentialsStream);
 
-        GoogleCredentials credentials = GoogleCredentials.fromStream(credentialsStream);
-
-        client = TextToSpeechClient.create(
-                TextToSpeechSettings.newBuilder()
-                        .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
-                        .build());
+            client = TextToSpeechClient.create(
+                    TextToSpeechSettings.newBuilder()
+                            .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
+                            .build());
+            log.info("TTS Service initialized successfully with credentials from resources.");
+        } catch (Exception e) {
+            log.error("Failed to initialize TTS Service: {}", e.getMessage());
+            throw e;
+        }
     }
 
     /**
