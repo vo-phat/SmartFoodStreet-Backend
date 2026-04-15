@@ -7,6 +7,7 @@ import SmartFoodStreet_Backend.dto.stall.response.StallResponse;
 import SmartFoodStreet_Backend.entity.Stall;
 import SmartFoodStreet_Backend.repository.StallRepository;
 import SmartFoodStreet_Backend.service.interfaces.IStall;
+import SmartFoodStreet_Backend.service.interfaces.IStallTranslation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,9 @@ import java.util.List;
 public class StallService implements IStall {
 
     private final StallRepository repository;
+    private final CloudinaryService cloudinaryService;
+    private final IStallTranslation stallTranslationService;
+
 
     @Override
 //    @PreAuthorize("hasAuthority('STALL_CREATE')")
@@ -34,13 +38,21 @@ public class StallService implements IStall {
         stall.setVendorId(stallCreateRequest.getVendorId());
         stall.setName(stallCreateRequest.getName());
         stall.setCategory(stallCreateRequest.getCategory());
+        stall.setDescription(stallCreateRequest.getDescription());
         stall.setLatitude(stallCreateRequest.getLatitude());
         stall.setLongitude(stallCreateRequest.getLongitude());
         stall.setImage(stallCreateRequest.getImage());
-        stall.setIsActive(true);
+        stall.setScript(stallCreateRequest.getScript());
+        stall.setIsActive(false);
 
         repository.save(stall);
-
+ 
+        // Lưu script sang StallTranslation (Xoá cũ nếu có, tạo mới bản gốc vi)
+        if (stall.getScript() != null) {
+            stallTranslationService.deleteAllByStall(stall.getId());
+            stallTranslationService.saveOrUpdate(stall.getId(), "vi", stall.getScript());
+        }
+ 
         return map(stall);
     }
 
@@ -53,25 +65,62 @@ public class StallService implements IStall {
     @Override
     @PreAuthorize("hasAuthority('STALL_READ')")
     public List<StallResponse> getByStreet(Long streetId) {
-        return repository.findByStreetId(streetId)
+        return repository.findByStreetIdAndIsActiveTrue(streetId)
                 .stream().map(this::map).toList();
     }
 
     @Override
-//    @PreAuthorize("hasAuthority('STALL_UPDATE')")
+    public List<StallResponse> getAllActive() {
+        return repository.findByIsActiveTrue()
+                .stream().map(this::map).toList();
+    }
+
+    @Override
+    public List<StallResponse> getAll() {
+        return repository.findAll()
+                .stream().map(this::map).toList();
+    }
+
+    @Override
+    public StallResponse getByVendor(Long vendorId) {
+        return repository.findByVendorId(vendorId).stream().findFirst()
+                .map(this::map)
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+    }
+
+    @Override
     public StallResponse update(Long id, StallCreateRequest stallCreateRequest) {
         Stall stall = find(id);
 
-        stall.setStreetId(stallCreateRequest.getStreetId());
-        stall.setVendorId(stallCreateRequest.getVendorId());
-        stall.setName(stallCreateRequest.getName());
-        stall.setCategory(stallCreateRequest.getCategory());
-        stall.setLatitude(stallCreateRequest.getLatitude());
-        stall.setLongitude(stallCreateRequest.getLongitude());
-        stall.setImage(stallCreateRequest.getImage());
+        if (stallCreateRequest.getStreetId() != null) stall.setStreetId(stallCreateRequest.getStreetId());
+        if (stallCreateRequest.getVendorId() != null) stall.setVendorId(stallCreateRequest.getVendorId());
+        if (stallCreateRequest.getName() != null) stall.setName(stallCreateRequest.getName());
+        if (stallCreateRequest.getCategory() != null) stall.setCategory(stallCreateRequest.getCategory());
+        if (stallCreateRequest.getDescription() != null) stall.setDescription(stallCreateRequest.getDescription());
+        if (stallCreateRequest.getLatitude() != null) stall.setLatitude(stallCreateRequest.getLatitude());
+        if (stallCreateRequest.getLongitude() != null) stall.setLongitude(stallCreateRequest.getLongitude());
+
+        if (stallCreateRequest.getImage() != null && !stallCreateRequest.getImage().equals(stall.getImage())) {
+            // Delete the old image from Cloudinary if it exists
+            if (stall.getImage() != null) {
+                cloudinaryService.deleteByUrl(stall.getImage());
+            }
+            stall.setImage(stallCreateRequest.getImage());
+        }
+
+        boolean scriptChanged = stallCreateRequest.getScript() != null && !stallCreateRequest.getScript().equals(stall.getScript());
+ 
+        if (stallCreateRequest.getScript() != null) stall.setScript(stallCreateRequest.getScript());
+        if (stallCreateRequest.getIsActive() != null) stall.setIsActive(stallCreateRequest.getIsActive());
 
         repository.save(stall);
-
+ 
+        // Đồng bộ script sang StallTranslation (Chỉ xoá khi script gốc thay đổi)
+        if (scriptChanged) {
+            stallTranslationService.deleteAllByStall(stall.getId());
+            stallTranslationService.saveOrUpdate(stall.getId(), "vi", stall.getScript());
+        }
+ 
         return map(stall);
     }
 
@@ -91,11 +140,15 @@ public class StallService implements IStall {
     private StallResponse map(Stall stall) {
         return StallResponse.builder()
                 .id(stall.getId())
+                .streetId(stall.getStreetId())
+                .vendorId(stall.getVendorId())
                 .name(stall.getName())
                 .category(stall.getCategory())
+                .description(stall.getDescription())
                 .latitude(stall.getLatitude())
                 .longitude(stall.getLongitude())
                 .image(stall.getImage())
+                .script(stall.getScript())
                 .isActive(stall.getIsActive())
                 .build();
     }

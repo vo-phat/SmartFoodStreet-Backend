@@ -11,12 +11,21 @@ import java.util.Optional;
 
 @Repository
 public interface StallTranslationRepository extends JpaRepository<StallTranslation, Long> {
-    Optional<Object> findByStallIdAndLanguageCode(Long stallId, String lang);
+    Optional<StallTranslation> findByStallIdAndLanguageCode(Long stallId, String lang);
 
     boolean existsByStallIdAndLanguageCode(@NotNull Long stallId, @NotBlank String languageCode);
 
     List<StallTranslation> findByStallId(Long stallId);
 
+<<<<<<< HEAD
     // Dùng cho Fallback: Lấy bản dịch đầu tiên bất kỳ của Stall nếu không tìm thấy ngôn ngữ yêu cầu
     Optional<StallTranslation> findFirstByStallId(Long stallId);
 }
+=======
+    // Dùng cho Fallback: Lấy bản dịch đầu tiên bất kỳ của Stall nếu không tìm thấy
+    // ngôn ngữ yêu cầu
+    Optional<StallTranslation> findFirstByStallId(Long stallId);
+ 
+    void deleteByStallId(Long stallId);
+ }
+>>>>>>> phat

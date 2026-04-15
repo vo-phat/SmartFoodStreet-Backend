@@ -11,7 +11,7 @@ public interface IFood {
 
     List<FoodResponse> getByStall(Long stallId);
 
-    FoodResponse getById(Long id);
+    List<FoodResponse> getAll();
 
     FoodResponse update(Long id, FoodRequest request);
 

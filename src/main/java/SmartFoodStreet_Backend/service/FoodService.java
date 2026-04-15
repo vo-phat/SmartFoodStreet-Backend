@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,6 +20,7 @@ import java.util.List;
 public class FoodService implements IFood {
     private final FoodRepository repository;
     private final StallRepository stallRepository;
+    private final CloudinaryService cloudinaryService;
 
     @Override
 //    @PreAuthorize("hasAuthority('FOOD_CREATE')")
@@ -34,7 +36,7 @@ public class FoodService implements IFood {
         food.setDescription(foodRequest.getDescription());
         food.setImage(foodRequest.getImage());
         food.setIsAvailable(true);
-
+        food.setCreatedAt(LocalDateTime.now());
         repository.save(food);
 
         return map(food);
@@ -43,52 +45,50 @@ public class FoodService implements IFood {
     @Override
     public List<FoodResponse> getByStall(Long stallId) {
         return repository.findByStallId(stallId)
+                .stream()
+                .map(this::map).toList();
+    }
+
+    @Override
+    public List<FoodResponse> getAll() {
+        return repository.findAll()
                 .stream().map(this::map).toList();
     }
 
     @Override
-    public FoodResponse getById(Long id) {
-        Food food = repository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+    public FoodResponse update(Long id, FoodRequest request) {
+        Food food = repository.findById(id).orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
 
-        return map(food);
-    }
-
-    @Override
-//    @PreAuthorize("hasAuthority('FOOD_UPDATE')")
-    public FoodResponse update(Long id, FoodRequest foodRequest) {
-        Food food = repository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
-
-        if (!food.getStallId().equals(foodRequest.getStallId())) {
-            if (!stallRepository.existsById(foodRequest.getStallId())) {
-                throw new AppException(ErrorCode.RESOURCE_NOT_FOUND);
+        food.setName(request.getName());
+        food.setPrice(request.getPrice());
+        food.setDescription(request.getDescription());
+        if (request.getImage() != null && !request.getImage().equals(food.getImage())) {
+            // Delete old image
+            if (food.getImage() != null) {
+                cloudinaryService.deleteByUrl(food.getImage());
             }
-            food.setStallId(foodRequest.getStallId());
+            food.setImage(request.getImage());
         }
 
-        food.setName(foodRequest.getName());
-        food.setPrice(foodRequest.getPrice());
-        food.setDescription(foodRequest.getDescription());
-        food.setImage(foodRequest.getImage());
+        if (request.getIsAvailable() != null) {
+            food.setIsAvailable(request.getIsAvailable());
+        }
 
         repository.save(food);
-
         return map(food);
     }
 
     @Override
-//    @PreAuthorize("hasAuthority('FOOD_DELETE')")
     public void delete(Long id) {
-        Food food = repository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
-
-        repository.delete(food);
+        Food food = repository.findById(id).orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+        food.setIsAvailable(false);
+        repository.save(food);
     }
 
     private FoodResponse map(Food food) {
         return FoodResponse.builder()
                 .id(food.getId())
+                .stallId(food.getStallId())
                 .name(food.getName())
                 .price(food.getPrice())
                 .description(food.getDescription())

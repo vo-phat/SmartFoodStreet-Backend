@@ -1,5 +1,6 @@
 package SmartFoodStreet_Backend.service;
 
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
@@ -7,51 +8,61 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
+
 @Slf4j
 @Service
 public class TranslationService {
 
-    private Translate translateClient;
+   private Translate translateClient;
 
-    @PostConstruct
-    public void init() {
-        translateClient = TranslateOptions.getDefaultInstance().getService();
-        log.info("Khởi tạo Google Cloud Translation API thành công.");
-    }
+   @PostConstruct
+   public void init() throws Exception {
+      String path = "C:/Users/X/Downloads/tts.json";
+      try (FileInputStream credentialsStream = new FileInputStream(path)) {
+         GoogleCredentials credentials = GoogleCredentials.fromStream(credentialsStream);
+         translateClient = TranslateOptions.newBuilder()
+               .setCredentials(credentials)
+               .build()
+               .getService();
+         log.info("Khởi tạo Google Cloud Translation API thành công.");
+      }
+   }
 
-    /**
-     * Dịch văn bản bằng Google Translate
-     * @param text Nội dung cần dịch
-     * @param sourceLang Ngôn ngữ gốc (vd: "vi")
-     * @param targetLang Ngôn ngữ đích (vd: "ko", "en")
-     * @return Văn bản đã được dịch
-     */
-    public String translateText(String text, String sourceLang, String targetLang) {
-        log.info("Đang dịch văn bản từ {} sang {} bằng Google Translate...", sourceLang, targetLang);
+   /**
+    * Dịch văn bản bằng Google Translate
+    * 
+    * @param text       Nội dung cần dịch
+    * @param sourceLang Ngôn ngữ gốc (vd: "vi")
+    * @param targetLang Ngôn ngữ đích (vd: "ko", "en")
+    * @return Văn bản đã được dịch
+    */
+   public String translateText(String text, String sourceLang, String targetLang) {
+      log.info("Đang dịch văn bản từ {} sang {} bằng Google Translate...", sourceLang, targetLang);
 
-        try {
-            Translation translation = translateClient.translate(
-                    text,
-                    Translate.TranslateOption.sourceLanguage(sourceLang),
-                    Translate.TranslateOption.targetLanguage(targetLang),
-                    Translate.TranslateOption.model("nmt") // Sử dụng Neural Machine Translation để dịch chuẩn ngữ cảnh hơn
-            );
+      try {
+         Translation translation = translateClient.translate(
+               text,
+               Translate.TranslateOption.sourceLanguage(sourceLang),
+               Translate.TranslateOption.targetLanguage(targetLang),
+               Translate.TranslateOption.model("nmt") // Sử dụng Neural Machine Translation để dịch chuẩn ngữ cảnh hơn
+         );
 
-            // Google Cloud trả về kết quả dịch thuật
-            String translatedText = translation.getTranslatedText();
+         // Google Cloud trả về kết quả dịch thuật
+         String translatedText = translation.getTranslatedText();
 
-            // Xóa bỏ các ký tự HTML entities nếu có (VD: &quot; -> ")
-            translatedText = translatedText
-                    .replace("&quot;", "\"")
-                    .replace("&#39;", "'")
-                    .replace("&amp;", "&");
+         // Xóa bỏ các ký tự HTML entities nếu có (VD: &quot; -> ")
+         translatedText = translatedText
+               .replace("&quot;", "\"")
+               .replace("&#39;", "'")
+               .replace("&amp;", "&");
 
-            log.info("Dịch thành công: {}", translatedText);
-            return translatedText;
+         log.info("Dịch thành công: {}", translatedText);
+         return translatedText;
 
-        } catch (Exception e) {
-            log.error("Lỗi khi dịch văn bản bằng Google API: {}", e.getMessage(), e);
-            throw new RuntimeException("TRANSLATION_FAILED");
-        }
-    }
+      } catch (Exception e) {
+         log.error("Lỗi khi dịch văn bản bằng Google API: {}", e.getMessage(), e);
+         throw new RuntimeException("TRANSLATION_FAILED");
+      }
+   }
 }

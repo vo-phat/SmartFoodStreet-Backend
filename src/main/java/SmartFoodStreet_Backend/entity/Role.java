@@ -22,6 +22,7 @@ public class Role {
     @Column(unique = true, nullable = false)
     String name;
 
+    @Column(columnDefinition = "LONGTEXT")
     String description;
 
     @ManyToMany

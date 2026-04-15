@@ -7,16 +7,21 @@ import lombok.Getter;
 @Getter
 public class StallResponse {
     Long id;
+    Long streetId;
+    Long vendorId;
 
     String name;
 
     String category;
 
-    Double latitude;
+    String description;
 
-    Double longitude;
+    String latitude;
+    String longitude;
 
     String image;
+
+    String script;
 
     Boolean isActive;
 }

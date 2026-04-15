@@ -13,6 +13,12 @@ public interface IStall {
 
     List<StallResponse> getByStreet(Long streetId);
 
+    List<StallResponse> getAllActive();
+
+    StallResponse getByVendor(Long vendorId);
+
+    List<StallResponse> getAll();
+
     StallResponse update(Long id, StallCreateRequest request);
 
     void delete(Long id);

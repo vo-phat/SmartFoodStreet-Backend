@@ -48,8 +48,10 @@ public enum ErrorCode {
 
     // ================= AUTHENTICATION / AUTHORIZATION (3000 - 3999) =================
     UNAUTHENTICATED(3000, "Authentication required. Please provide a valid access token.", HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(3001, "The provided access token is invalid, expired, or cannot be verified.", HttpStatus.UNAUTHORIZED),
-    FORBIDDEN(3002, "Access denied. You do not have sufficient permissions to perform this action.", HttpStatus.FORBIDDEN),
+    UNAUTHORIZED(3001, "The provided access token is invalid, expired, or cannot be verified.",
+            HttpStatus.UNAUTHORIZED),
+    FORBIDDEN(3002, "Access denied. You do not have sufficient permissions to perform this action.",
+            HttpStatus.FORBIDDEN),
 
     // ================= SYSTEM ERROR (5000 - 5999) =================
     FILE_UPLOAD_FAILED(5000, "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR),

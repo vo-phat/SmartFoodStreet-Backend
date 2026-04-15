@@ -52,7 +52,8 @@ public class StallTranslationService implements IStallTranslation {
         stallTranslation.setName(request.getLanguageCode() + "_" + request.getStallId());
         stallTranslation.setTtsScript(request.getTtsScript());
 
-        // Reset audio khi script thay đổi để hệ thống tạo lại file mới (sẽ đè file cũ trên Cloudinary)
+        // Reset audio khi script thay đổi để hệ thống tạo lại file mới (sẽ đè file cũ
+        // trên Cloudinary)
         stallTranslation.setAudioStatus(AudioStatus.PENDING);
         stallTranslation.setAudioUrl(null);
         stallTranslation.setAudioHash(null);
@@ -80,11 +81,11 @@ public class StallTranslationService implements IStallTranslation {
     }
 
     @Override
-//    @Transactional
+    // @Transactional
     public StallAudioResponse getAudio(Long stallId, String lang, String clientHash) {
 
         // 1. Tìm bản dịch theo ngôn ngữ khách yêu cầu
-        Optional<Object> requestedOpt = repository.findByStallIdAndLanguageCode(stallId, lang);
+        Optional<StallTranslation> requestedOpt = repository.findByStallIdAndLanguageCode(stallId, lang);
         StallTranslation targetTranslation;
 
         // 2. NẾU CHƯA CÓ -> Tự động tạo Placeholder để kích hoạt dịch thuật & tạo TTS
@@ -98,7 +99,7 @@ public class StallTranslationService implements IStallTranslation {
                     .build();
             targetTranslation = repository.save(targetTranslation);
         } else {
-            targetTranslation = (StallTranslation) requestedOpt.get();
+            targetTranslation = requestedOpt.get();
         }
 
         // 3. TRƯỜNG HỢP LÝ TƯỞNG: Ngôn ngữ đích đã sẵn sàng
@@ -121,7 +122,8 @@ public class StallTranslationService implements IStallTranslation {
         }
 
         // 4. TRƯỜNG HỢP CẦN GEN MỚI: Đang PENDING hoặc bị ERROR trước đó
-        if (targetTranslation.getAudioStatus() == AudioStatus.PENDING || targetTranslation.getAudioStatus() == AudioStatus.ERROR) {
+        if (targetTranslation.getAudioStatus() == AudioStatus.PENDING
+                || targetTranslation.getAudioStatus() == AudioStatus.ERROR) {
             targetTranslation.setAudioStatus(AudioStatus.PROCESSING);
             repository.save(targetTranslation);
 
@@ -129,9 +131,11 @@ public class StallTranslationService implements IStallTranslation {
             audioProcessorService.processAudioAsync(targetTranslation, stallId, lang);
         }
 
-        // 5. UX TỐI ƯU: Không để khách chờ. Trong lúc bản dịch mới đang PROCESSING, trả về bản FALLBACK nghe tạm
-        StallTranslation fallbackTranslation = (StallTranslation) repository.findByStallIdAndLanguageCode(stallId, "en")
-                .or(() -> repository.findFirstByStallId(stallId)) // Tiếng Anh không có thì lấy đại tiếng Việt (ngôn ngữ gốc)
+        // 5. UX TỐI ƯU: Không để khách chờ. Trong lúc bản dịch mới đang PROCESSING, trả
+        // về bản FALLBACK nghe tạm
+        StallTranslation fallbackTranslation = repository.findByStallIdAndLanguageCode(stallId, "en")
+                .or(() -> repository.findFirstByStallId(stallId)) // Tiếng Anh không có thì lấy đại tiếng Việt (ngôn ngữ
+                                                                  // gốc)
                 .orElseThrow(() -> new AppException(ErrorCode.STALL_TRANSLATION_NOT_FOUND));
 
         if (fallbackTranslation.getAudioStatus() == AudioStatus.COMPLETED) {
@@ -142,7 +146,8 @@ public class StallTranslationService implements IStallTranslation {
                     .fileSize(hashMatched ? 0L : fallbackTranslation.getFileSize())
                     .audioHash(fallbackTranslation.getAudioHash())
                     .status(AudioStatus.COMPLETED)
-                    .message("Requested language is generating. Using fallback language (" + fallbackTranslation.getLanguageCode() + ").")
+                    .message("Requested language is generating. Using fallback language ("
+                            + fallbackTranslation.getLanguageCode() + ").")
                     .build();
         }
 
@@ -169,5 +174,38 @@ public class StallTranslationService implements IStallTranslation {
                 .audioHash(stallTranslation.getAudioHash())
                 .audioStatus(stallTranslation.getAudioStatus().name())
                 .build();
+    }
+ 
+    @Override
+    public void saveOrUpdate(Long stallId, String lang, String script) {
+        Optional<StallTranslation> opt = repository.findByStallIdAndLanguageCode(stallId, lang);
+ 
+        StallTranslation translation;
+        if (opt.isPresent()) {
+            translation = opt.get();
+            // Nếu script thay đổi, reset audio
+            if (script != null && !script.equals(translation.getTtsScript())) {
+                translation.setTtsScript(script);
+                translation.setAudioStatus(AudioStatus.PENDING);
+                translation.setAudioUrl(null);
+                translation.setAudioHash(null);
+                translation.setFileSize(0L);
+            }
+        } else {
+            translation = StallTranslation.builder()
+                    .stallId(stallId)
+                    .languageCode(lang)
+                    .name(lang + "_" + stallId)
+                    .ttsScript(script)
+                    .audioStatus(AudioStatus.PENDING)
+                    .build();
+        }
+        repository.save(translation);
+    }
+ 
+    @Override
+    @Transactional
+    public void deleteAllByStall(Long stallId) {
+        repository.deleteByStallId(stallId);
     }
 }

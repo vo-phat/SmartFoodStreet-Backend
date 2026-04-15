@@ -19,4 +19,8 @@ public interface IStallTranslation {
     void delete(Long id);
 
     StallAudioResponse getAudio(Long stallId, String lang, String clientHash);
-}
+ 
+    void saveOrUpdate(Long stallId, String lang, String script);
+ 
+    void deleteAllByStall(Long stallId);
+ }

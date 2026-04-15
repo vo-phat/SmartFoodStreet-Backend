@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 public class StallAudioResponse {
+<<<<<<< HEAD
     private Boolean needDownload;
 
     private String audioUrl;
@@ -18,4 +19,17 @@ public class StallAudioResponse {
     private AudioStatus status;
 
     private String message;
+=======
+   private Boolean needDownload;
+
+   private String audioUrl;
+
+   private Long fileSize;
+
+   private String audioHash;
+
+   private AudioStatus status;
+
+   private String message;
+>>>>>>> phat
 }

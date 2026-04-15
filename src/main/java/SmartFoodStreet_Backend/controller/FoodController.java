@@ -31,10 +31,10 @@ public class FoodController {
                 .build();
     }
 
-    @GetMapping("/{id}")
-    public ApiResponse<FoodResponse> getById(@PathVariable Long id) {
-        return ApiResponse.<FoodResponse>builder()
-                .result(foodService.getById(id))
+    @GetMapping
+    public ApiResponse<List<FoodResponse>> getAll() {
+        return ApiResponse.<List<FoodResponse>>builder()
+                .result(foodService.getAll())
                 .build();
     }
 

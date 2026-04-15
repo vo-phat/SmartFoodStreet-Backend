@@ -15,7 +15,11 @@ public interface IAuthentication {
 
     RegisterResponse register(RegisterRequest registerRequest);
 
+    RegisterResponse registerVendor(VendorRegisterRequest registerRequest);
+
     LoginResponse login(LoginRequest loginRequest);
+
+    LoginResponse loginByEmail(VendorLoginRequest loginRequest);
 
     void logout(LogoutRequest token);
 

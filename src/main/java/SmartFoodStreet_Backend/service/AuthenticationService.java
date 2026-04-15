@@ -9,9 +9,13 @@ import SmartFoodStreet_Backend.dto.authentication.response.RegisterResponse;
 import SmartFoodStreet_Backend.entity.Account;
 import SmartFoodStreet_Backend.entity.InvalidatedToken;
 import SmartFoodStreet_Backend.entity.Role;
+import SmartFoodStreet_Backend.entity.Stall;
+import SmartFoodStreet_Backend.entity.Stall;
+import SmartFoodStreet_Backend.mapper.AccountMapper;
 import SmartFoodStreet_Backend.repository.AccountRepository;
 import SmartFoodStreet_Backend.repository.InvalidatedTokenRepository;
 import SmartFoodStreet_Backend.repository.RoleRepository;
+import SmartFoodStreet_Backend.repository.StallRepository;
 import SmartFoodStreet_Backend.service.interfaces.IAuthentication;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -44,6 +48,8 @@ public class AuthenticationService implements IAuthentication {
     AccountRepository accountRepository;
     RoleRepository roleRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
+    StallRepository stallRepository;
+    AccountMapper accountMapper;
 
     @Value("${jwt.secret}")
     @NonFinal
@@ -107,6 +113,51 @@ public class AuthenticationService implements IAuthentication {
     }
 
     @Override
+    @Transactional
+    public RegisterResponse registerVendor(VendorRegisterRequest registerRequest) {
+        if (accountRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
+            throw new AppException(ErrorCode.USER_ALREADY_EXISTS);
+        }
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        String passwordHash = passwordEncoder.encode(registerRequest.getPassword());
+
+        Role vendorRole = roleRepository.findByName("VENDOR")
+                .orElseGet(() -> {
+                    Role role = Role.builder()
+                            .name("VENDOR")
+                            .build();
+                    return roleRepository.save(role);
+                });
+
+        Account account = Account.builder()
+                .userName(registerRequest.getEmail())
+                .email(registerRequest.getEmail())
+                .fullName(registerRequest.getOwnerName())
+                .password(passwordHash)
+                .createdAt(new Timestamp(System.currentTimeMillis()))
+                .roles(Set.of(vendorRole))
+                .isActive(true)
+                .build();
+
+        Account savedAccount = accountRepository.save(account);
+
+        Stall stall = Stall.builder()
+                .streetId(1L)
+                .vendorId(savedAccount.getId())
+                .name(registerRequest.getStallName())
+                .isActive(false)
+                .build();
+
+        stallRepository.save(stall);
+
+        return RegisterResponse.builder()
+                .accountId(savedAccount.getId())
+                .userName(savedAccount.getUserName())
+                .build();
+    }
+
+    @Override
     public LoginResponse login(LoginRequest loginRequest) {
         var account = accountRepository.findByUserName(loginRequest.getUserName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTS));
@@ -124,6 +175,29 @@ public class AuthenticationService implements IAuthentication {
         return LoginResponse.builder()
                 .token(token)
                 .authenticated(true)
+                .account(accountMapper.toAccountResponse(account))
+                .build();
+    }
+
+    @Override
+    public LoginResponse loginByEmail(VendorLoginRequest loginRequest) {
+        var account = accountRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTS));
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+
+        boolean authenticated = passwordEncoder.matches(loginRequest.getPassword(), account.getPassword());
+
+        if (!authenticated) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        var token = generateToken(account);
+
+        return LoginResponse.builder()
+                .token(token)
+                .authenticated(true)
+                .account(accountMapper.toAccountResponse(account))
                 .build();
     }
 
@@ -151,14 +225,13 @@ public class AuthenticationService implements IAuthentication {
     @Override
     public SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
         JWSVerifier verifier = new MACVerifier(
-                Base64.getDecoder().decode(SINGER_KEY)
-        );
+                Base64.getDecoder().decode(SINGER_KEY));
 
         SignedJWT signedJWT = SignedJWT.parse(token);
 
         Date expiryTime = (isRefresh)
                 ? new Date(signedJWT.getJWTClaimsSet().getIssueTime()
-                    .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS).toEpochMilli())
+                        .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS).toEpochMilli())
                 : signedJWT.getJWTClaimsSet().getExpirationTime();
 
         var verified = signedJWT.verify(verifier);
@@ -166,13 +239,12 @@ public class AuthenticationService implements IAuthentication {
         if (!(verified && expiryTime.after(new Date())))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
-        if(invalidatedTokenRepository
+        if (invalidatedTokenRepository
                 .existsById(signedJWT.getJWTClaimsSet().getJWTID()))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         return signedJWT;
     }
-
 
     @Override
     public String generateToken(Account account) {
@@ -190,8 +262,7 @@ public class AuthenticationService implements IAuthentication {
                 .issuer("vn.edu.sgu.smartfoodstreet")
                 .issueTime(new Date())
                 .expirationTime(Date.from(
-                        Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS)
-                ))
+                        Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS)))
                 .jwtID(UUID.randomUUID().toString())
                 .build();
 
@@ -208,9 +279,8 @@ public class AuthenticationService implements IAuthentication {
         }
     }
 
-
     @Override
-    public LoginResponse refreshToken (RefreshRequest refreshRequest) throws ParseException, JOSEException {
+    public LoginResponse refreshToken(RefreshRequest refreshRequest) throws ParseException, JOSEException {
         var signJwt = verifyToken(refreshRequest.getToken(), true);
 
         String jit = signJwt.getJWTClaimsSet().getJWTID();
@@ -226,8 +296,7 @@ public class AuthenticationService implements IAuthentication {
         var userName = signJwt.getJWTClaimsSet().getSubject();
 
         var account = accountRepository.findByUserName(userName).orElseThrow(
-                () -> new AppException(ErrorCode.UNAUTHENTICATED)
-        );
+                () -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         var token = generateToken(account);
 
@@ -240,9 +309,9 @@ public class AuthenticationService implements IAuthentication {
     private String buildScope(Account account) {
         StringJoiner stringJoiner = new StringJoiner(" ");
 
-        if(!CollectionUtils.isEmpty(account.getRoles())) {
+        if (!CollectionUtils.isEmpty(account.getRoles())) {
             account.getRoles().forEach(role -> {
-                stringJoiner.add("ROLE_"+role.getName());
+                stringJoiner.add("ROLE_" + role.getName());
                 if (!CollectionUtils.isEmpty(role.getPermissions()))
                     role.getPermissions()
                             .forEach(permission -> stringJoiner.add(permission.getName()));
