@@ -68,10 +68,38 @@ public class AudioProcessorService {
 
     private String getVoiceConfigForLanguage(String languageCode) {
         return switch (languageCode.toLowerCase()) {
-            case "vi" -> "vi-VN-Standard-A";
-            case "en" -> "en-US-Neural2-F";
-            case "ko" -> "ko-KR-Standard-A";
-            case "ja" -> "ja-JP-Standard-A";
+            // Châu Á
+            case "vi", "vi-vn" -> "vi-VN-Standard-A";          // Tiếng Việt
+            case "ko", "ko-kr" -> "ko-KR-Standard-A";          // Tiếng Hàn
+            case "ja", "ja-jp" -> "ja-JP-Standard-A";          // Tiếng Nhật
+            case "zh", "zh-cn" -> "cmn-CN-Standard-A";         // Tiếng Trung (Giản thể/Đại lục)
+            case "zh-tw" -> "cmn-TW-Standard-A";               // Tiếng Trung (Phồn thể/Đài Loan)
+            case "th", "th-th" -> "th-TH-Standard-A";          // Tiếng Thái
+            case "id", "id-id" -> "id-ID-Standard-A";          // Tiếng Indonesia
+            case "hi", "hi-in" -> "hi-IN-Standard-A";          // Tiếng Hindi (Ấn Độ)
+
+            // Tiếng Anh
+            case "en", "en-us" -> "en-US-Neural2-F";           // Tiếng Anh (Mỹ)
+            case "en-gb" -> "en-GB-Standard-A";                // Tiếng Anh (Anh)
+            case "en-au" -> "en-AU-Standard-A";                // Tiếng Anh (Úc)
+            case "en-in" -> "en-IN-Standard-A";                // Tiếng Anh (Ấn Độ)
+
+            // Châu Âu
+            case "fr", "fr-fr" -> "fr-FR-Standard-A";          // Tiếng Pháp
+            case "de", "de-de" -> "de-DE-Standard-A";          // Tiếng Đức
+            case "es", "es-es" -> "es-ES-Standard-A";          // Tiếng Tây Ban Nha (Tây Ban Nha)
+            case "it", "it-it" -> "it-IT-Standard-A";          // Tiếng Ý
+            case "ru", "ru-ru" -> "ru-RU-Standard-A";          // Tiếng Nga
+            case "nl", "nl-nl" -> "nl-NL-Standard-A";          // Tiếng Hà Lan
+            case "pl", "pl-pl" -> "pl-PL-Standard-A";          // Tiếng Ba Lan
+
+            // Châu Mỹ & Khác
+            case "es-mx" -> "es-MX-Standard-A";                // Tiếng Tây Ban Nha (Mexico/Mỹ Latinh)
+            case "pt", "pt-br" -> "pt-BR-Standard-A";          // Tiếng Bồ Đào Nha (Brazil)
+            case "pt-pt" -> "pt-PT-Standard-A";                // Tiếng Bồ Đào Nha (Bồ Đào Nha)
+            case "ar" -> "ar-XA-Standard-A";                   // Tiếng Ả Rập (Tiêu chuẩn)
+
+            // Mặc định
             default -> "en-US-Standard-A";
         };
     }
