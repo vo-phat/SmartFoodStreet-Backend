@@ -20,22 +20,32 @@ public class TtsService {
     private TextToSpeechClient client;
 
     @PostConstruct
-    public void init() throws Exception {
-        // 1. Sử dụng ClassPathResource để tìm file trong src/main/resources
-        ClassPathResource resource = new ClassPathResource("tts.json");
+    public void init() {
+        try {
+            // 1. Sử dụng ClassPathResource để tìm file trong src/main/resources
+            ClassPathResource resource = new ClassPathResource("tts.json");
 
-        // 2. Mở InputStream trực tiếp từ resource
-        try (InputStream credentialsStream = resource.getInputStream()) {
-            GoogleCredentials credentials = GoogleCredentials.fromStream(credentialsStream);
+            if (!resource.exists()) {
+                log.warn("****************************************************************");
+                log.warn("WARNING: tts.json not found in src/main/resources.");
+                log.warn("TTS Service will be disabled. Please provide credentials to use TTS.");
+                log.warn("****************************************************************");
+                return;
+            }
 
-            client = TextToSpeechClient.create(
-                    TextToSpeechSettings.newBuilder()
-                            .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
-                            .build());
-            log.info("TTS Service initialized successfully with credentials from resources.");
+            // 2. Mở InputStream trực tiếp từ resource
+            try (InputStream credentialsStream = resource.getInputStream()) {
+                GoogleCredentials credentials = GoogleCredentials.fromStream(credentialsStream);
+
+                client = TextToSpeechClient.create(
+                        TextToSpeechSettings.newBuilder()
+                                .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
+                                .build());
+                log.info("TTS Service initialized successfully with credentials from resources.");
+            }
         } catch (Exception e) {
-            log.error("Failed to initialize TTS Service: {}", e.getMessage());
-            throw e;
+            log.error("Failed to initialize TTS Service: {}. App will continue without TTS.", e.getMessage());
+            // Không throw exception để app vẫn start được
         }
     }
 
@@ -43,6 +53,10 @@ public class TtsService {
      * Generate MP3 từ text (Đã bổ sung voiceName để giọng đọc chuẩn xác)
      */
     public byte[] generate(String text, String languageCode, String voiceName) {
+        if (client == null) {
+            log.warn("TTS Service is not initialized. Skipping generation.");
+            return new byte[0];
+        }
         try {
             SynthesisInput input = SynthesisInput.newBuilder()
                     .setText(text)

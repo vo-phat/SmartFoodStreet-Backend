@@ -17,24 +17,33 @@ public class TranslationService {
     private Translate translateClient;
 
     @PostConstruct
-    public void init() throws Exception {
-        // 1. Sử dụng ClassPathResource để đọc file từ src/main/resources
-        org.springframework.core.io.ClassPathResource resource =
-                new org.springframework.core.io.ClassPathResource("tts.json");
+    public void init() {
+        try {
+            // 1. Sử dụng ClassPathResource để đọc file từ src/main/resources
+            org.springframework.core.io.ClassPathResource resource =
+                    new org.springframework.core.io.ClassPathResource("tts.json");
 
-        // 2. Sử dụng try-with-resources để đảm bảo đóng stream sau khi đọc
-        try (InputStream credentialsStream = resource.getInputStream()) {
-            GoogleCredentials credentials = GoogleCredentials.fromStream(credentialsStream);
+            if (!resource.exists()) {
+                log.warn("****************************************************************");
+                log.warn("WARNING: tts.json not found in src/main/resources.");
+                log.warn("Translation Service will be disabled.");
+                log.warn("****************************************************************");
+                return;
+            }
 
-            translateClient = TranslateOptions.newBuilder()
-                    .setCredentials(credentials)
-                    .build()
-                    .getService();
+            // 2. Sử dụng try-with-resources để đảm bảo đóng stream sau khi đọc
+            try (InputStream credentialsStream = resource.getInputStream()) {
+                GoogleCredentials credentials = GoogleCredentials.fromStream(credentialsStream);
 
-            log.info("Khởi tạo Google Cloud Translation API thành công từ resources.");
+                translateClient = TranslateOptions.newBuilder()
+                        .setCredentials(credentials)
+                        .build()
+                        .getService();
+
+                log.info("Khởi tạo Google Cloud Translation API thành công từ resources.");
+            }
         } catch (Exception e) {
-            log.error("Lỗi khi khởi tạo Translation API: {}", e.getMessage());
-            throw e; // Ném lỗi để Spring dừng quá trình khởi tạo nếu không có credentials
+            log.error("Lỗi khi khởi tạo Translation API: {}. App will continue without Translation.", e.getMessage());
         }
     }
 
@@ -47,6 +56,10 @@ public class TranslationService {
      * @return Văn bản đã được dịch
      */
     public String translateText(String text, String sourceLang, String targetLang) {
+        if (translateClient == null) {
+            log.warn("Translation Service is not initialized. Returning original text.");
+            return text;
+        }
         log.info("Đang dịch văn bản từ {} sang {} bằng Google Translate...", sourceLang, targetLang);
 
         try {
