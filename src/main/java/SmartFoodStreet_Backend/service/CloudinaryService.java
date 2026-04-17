@@ -137,6 +137,10 @@ public class CloudinaryService {
             params.put("overwrite", true); // Lệnh ghi đè (Xóa cũ, đè mới)
             params.put("format", "mp3"); // Đảm bảo định dạng chuẩn mp3
 
+            if (fileBytes == null || fileBytes.length == 0) {
+                throw new IllegalArgumentException("Dữ liệu file âm thanh rỗng");
+            }
+
             Map uploadResult = cloudinary.uploader().upload(fileBytes, params);
 
             // Tận dụng hàm map() có sẵn để parse Map thành DTO

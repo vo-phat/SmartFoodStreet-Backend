@@ -45,6 +45,7 @@ public enum ErrorCode {
     RESOURCE_ALREADY_EXISTS(2009, "Resource already exists", HttpStatus.CONFLICT),
     STALL_TRANSLATION_NOT_FOUND(2010, "Stall translation not found", HttpStatus.NOT_FOUND),
     STALL_TRANSLATION_ALREADY_EXISTS(2011, "Stall translation already exists", HttpStatus.CONFLICT),
+    TOO_MANY_REQUESTS(2012, "Bạn thao tác quá nhanh. Vui lòng thử lại sau giây lát.", HttpStatus.TOO_MANY_REQUESTS),
     // ================= AUTHENTICATION / AUTHORIZATION (3000 - 3999)
     // =================
     UNAUTHENTICATED(3000, "Authentication required. Please provide a valid access token.", HttpStatus.UNAUTHORIZED),

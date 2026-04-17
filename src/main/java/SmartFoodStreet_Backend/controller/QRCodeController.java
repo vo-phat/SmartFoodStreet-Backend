@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -74,17 +76,19 @@ public class QRCodeController {
     @GetMapping("/scan/{code}")
     public void scanQRCode(
             @PathVariable String code,
+            @RequestParam(required = false) String sessionId,
             HttpServletRequest request,
             HttpServletResponse response) throws IOException {
 
         try {
-            String targetUrl = qrCodeService.handleScan(code, request);
+            String targetUrl = qrCodeService.handleScan(code, request, sessionId);
 
             response.sendRedirect(targetUrl);
 
         } catch (Exception e) {
-
-            response.sendRedirect("http://localhost:5173/error");
+            String errorMessage = e.getMessage();
+            String redirectUrl = "http://localhost:5173/error?message=" + URLEncoder.encode(errorMessage, StandardCharsets.UTF_8);
+            response.sendRedirect(redirectUrl);
         }
     }
 }

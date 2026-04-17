@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IQRCode {
 
-   String handleScan(String code, HttpServletRequest request);
+   String handleScan(String code, HttpServletRequest request, String sessionId);
 
    QRCodeResponse create(QRCodeCreateRequest request);
 

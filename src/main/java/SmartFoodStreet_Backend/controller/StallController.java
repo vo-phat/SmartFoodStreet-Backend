@@ -83,9 +83,10 @@ public class StallController {
 
     @GetMapping("/scan/{code}")
     public ResponseEntity<?> scan(@PathVariable String code,
-            HttpServletRequest request) {
+            HttpServletRequest request,
+            @RequestParam(required = false) String sessionId) {
 
-        String redirectUrl = qrService.handleScan(code, request);
+        String redirectUrl = qrService.handleScan(code, request, sessionId);
 
         return ResponseEntity.status(302)
                 .header("Location", redirectUrl)

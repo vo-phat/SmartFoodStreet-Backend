@@ -44,6 +44,10 @@ public class AudioProcessorService {
          // 3. GEN AUDIO
          byte[] audio = ttsService.generate(scriptToRead, targetLanguage, voiceConfig);
 
+         if (audio == null || audio.length == 0) {
+            throw new RuntimeException("Không thể tạo file âm thanh (TTS Service có thể chưa được cấu hình)");
+         }
+
          // 4. UPLOAD LÊN CLOUD (Ghi đè)
          String publicId = "stall_" + stallId + "_" + targetLanguage;
          CloudinaryResponse upload = cloudinaryService.uploadAudioWithOverwrite(audio, publicId);

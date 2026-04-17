@@ -1,5 +1,7 @@
 package SmartFoodStreet_Backend.service;
 
+import SmartFoodStreet_Backend.common.exception.AppException;
+import SmartFoodStreet_Backend.common.exception.ErrorCode;
 import SmartFoodStreet_Backend.entity.QRCode;
 import SmartFoodStreet_Backend.entity.Stall;
 import SmartFoodStreet_Backend.entity.VisitEvent;
@@ -82,9 +84,11 @@ public class QRCodeService implements IQRCode {
          qrCode.setStall(stall);
       }
 
-      if (request.getName() != null) qrCode.setName(request.getName());
-      if (request.getIsActive() != null) qrCode.setIsActive(request.getIsActive());
-      
+      if (request.getName() != null)
+         qrCode.setName(request.getName());
+      if (request.getIsActive() != null)
+         qrCode.setIsActive(request.getIsActive());
+
       qrCode.setUpdatedAt(LocalDateTime.now());
 
       return qrCodeMapper.toResponse(qrCodeRepository.save(qrCode));
@@ -104,10 +108,10 @@ public class QRCodeService implements IQRCode {
    public QRCodeResponse toggleActive(Long id) {
       QRCode qrCode = qrCodeRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Không tìm thấy mã QR"));
-      
+
       qrCode.setIsActive(!Boolean.TRUE.equals(qrCode.getIsActive()));
       qrCode.setUpdatedAt(LocalDateTime.now());
-      
+
       return qrCodeMapper.toResponse(qrCodeRepository.save(qrCode));
    }
 
@@ -132,7 +136,7 @@ public class QRCodeService implements IQRCode {
 
    @Override
    @Transactional
-   public String handleScan(String code, HttpServletRequest request) {
+   public String handleScan(String code, HttpServletRequest request, String sessionId) {
 
       // 1. Kiểm tra mã QR hợp lệ
       if (code == null || code.isBlank()) {
@@ -159,28 +163,29 @@ public class QRCodeService implements IQRCode {
 
       // 4. Chống spam (quan trọng)
       boolean isSpam = isDuplicateScan(code, ip);
-      if (!isSpam) {
-         // 5. Ghi nhận sự kiện quét mã QR
-         VisitEvent event = buildEvent(qr, request, ip);
-
-         visitEventAsyncService.logQrScanAsync(event);
-
-         // 6. Cập nhật lượt quét
-         qrCodeRepository.incrementScanCount(qr.getId());
+      if (isSpam) {
+         throw new AppException(ErrorCode.TOO_MANY_REQUESTS);
       }
+
+      // 5. Ghi nhận sự kiện quét mã QR
+      VisitEvent event = buildEvent(qr, request, ip, sessionId);
+      visitEventAsyncService.logQrScanAsync(event);
+
+      // 6. Cập nhật lượt quét
+      qrCodeRepository.incrementScanCount(qr.getId());
 
       return "http://localhost:5173/stall/" + stall.getId();
    }
 
    private boolean isDuplicateScan(String code, String ip) {
-      LocalDateTime oneMinuteAgo = LocalDateTime.now().minusSeconds(30);
+      LocalDateTime thirtySecondsAgo = LocalDateTime.now().minusSeconds(30);
       return visitEventRepository.existsByQrCodeAndIpAddressAndEventTimeAfter(
             code,
             ip,
-            oneMinuteAgo);
+            thirtySecondsAgo);
    }
 
-   private VisitEvent buildEvent(QRCode qr, HttpServletRequest request, String ip) {
+   private VisitEvent buildEvent(QRCode qr, HttpServletRequest request, String ip, String sessionId) {
       return VisitEvent.builder()
             .stallId(qr.getStall().getId())
             .qrCode(qr.getCode())
@@ -188,6 +193,7 @@ public class QRCodeService implements IQRCode {
             .eventTime(LocalDateTime.now())
             .ipAddress(ip)
             .userAgent(request.getHeader("User-Agent"))
+            .sessionId(Long.valueOf(sessionId))
             .build();
    }
 
