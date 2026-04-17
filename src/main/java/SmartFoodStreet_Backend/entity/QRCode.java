@@ -31,7 +31,7 @@ public class QRCode {
    private String code;
 
    @ManyToOne
-   @JoinColumn(name = "stall_id", nullable = false)
+   @JoinColumn(name = "stall_id", nullable = true)
    private Stall stall;
 
    private String name;

@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface QRCodeRepository extends JpaRepository<QRCode, Long> {
     Optional<QRCode> findByCode(String code);
 
-    @Query("SELECT q FROM QRCode q JOIN FETCH q.stall WHERE q.code = :code")
+    @Query("SELECT q FROM QRCode q LEFT JOIN FETCH q.stall WHERE q.code = :code")
     Optional<QRCode> findByCodeWithStall(@Param("code") String code);
 
     Optional<QRCode> findByStallId(Long stallId);

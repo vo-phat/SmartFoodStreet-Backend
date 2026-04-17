@@ -59,10 +59,27 @@ public class QRCodeController {
                 .build();
     }
 
+    @PatchMapping("/{id}/regenerate")
+    public ApiResponse<QRCodeResponse> regenerateCode(@PathVariable Long id) {
+        return ApiResponse.<QRCodeResponse>builder()
+                .result(qrCodeService.regenerateCode(id))
+                .build();
+    }
+
     @GetMapping("/stall/{stallId}")
     public ApiResponse<QRCodeResponse> getByStall(@PathVariable Long stallId) {
         return ApiResponse.<QRCodeResponse>builder()
                 .result(qrCodeService.getByStall(stallId))
+                .build();
+    }
+
+    @GetMapping("/gateway")
+    public ApiResponse<QRCodeResponse> getGateway() {
+        return ApiResponse.<QRCodeResponse>builder()
+                .result(qrCodeService.getAll().stream()
+                        .filter(q -> q.getStallId() == null)
+                        .findFirst()
+                        .orElse(null))
                 .build();
     }
 

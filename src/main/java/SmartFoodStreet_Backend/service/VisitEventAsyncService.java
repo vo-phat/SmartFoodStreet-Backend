@@ -12,7 +12,7 @@ public class VisitEventAsyncService {
 
    private final VisitEventRepository visitEventRepository;
 
-   @Async("qrExecutor")
+   // @Async("qrExecutor")
    public void logEventAsync(VisitEvent event) {
       try {
          visitEventRepository.save(event);

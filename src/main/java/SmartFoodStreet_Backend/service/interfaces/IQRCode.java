@@ -16,7 +16,7 @@ public interface IQRCode {
    void delete(Long id);
 
    QRCodeResponse toggleActive(Long id);
-
+   QRCodeResponse regenerateCode(Long id);
    QRCodeResponse getById(Long id);
 
    QRCodeResponse getByStall(Long stallId);
