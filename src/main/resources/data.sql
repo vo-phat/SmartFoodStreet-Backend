@@ -333,7 +333,7 @@ INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio
 INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
 (1, 'vi', 'Lãng Quán', 'Lãng Quán mang đến phong cách ẩm thực đường phố hiện đại với các món nướng tại bàn. Điểm đặc biệt của quán là mở cửa đến tận 4 giờ sáng, phục vụ những "cú đêm" sành ăn. Đừng quên thử món răng mực nướng hoặc lườn vịt xông khói khi ghé qua đây nhé.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428646/langquan_vi_ke0fth.mp3', 'COMPLETED'),
 (1, 'en-US', 'Lang Quan', 'Lang Quan offers a modern street food style with tabletop grilling. The unique thing about this place is that it stays open until 4 AM, catering to late-night foodies. Don''t forget to try their grilled squid teeth or smoked duck breast when you visit.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428646/langquan_en-US_gmb4bz.mp3', 'COMPLETED'),
-(1, 'zh', '浪馆 (Lang Quan)', '浪馆 (Lang Quan) 提供现代街头风格的桌上烧烤。这里的独特之处在于营业至凌晨 4 点，专门服务熬夜的美食家。光临此处时，别忘了尝尝烤鱿鱼嘴或烟熏鸭胸。', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428646/langquan_vi_ke0fth.mp3', 'COMPLETED');
+(1, 'zh', '浪馆 (Lang Quan)', '浪馆 (Lang Quan) 提供现代街头风格的桌上烧烤。这里的独特之处在于营业至凌晨 4 点，专门服务熬夜的美食家。光临此处时，别忘了尝尝烤鱿鱼嘴或烟熏鸭胸。', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428646/langquan_zh_omxyzc.mp3', 'COMPLETED');
 
 INSERT INTO foods (stall_id, name, price, description, image)
 VALUES
