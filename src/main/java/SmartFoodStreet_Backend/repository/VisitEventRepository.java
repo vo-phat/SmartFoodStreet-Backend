@@ -40,6 +40,12 @@ public interface VisitEventRepository extends JpaRepository<VisitEvent, Long> {
     Long countAudioCompleteBetween(LocalDateTime start,
             LocalDateTime end);
 
+    @Query("SELECT COUNT(DISTINCT e.ipAddress) FROM VisitEvent e")
+    Long countUniqueVisitors();
+
+    @Query("SELECT COUNT(e) FROM VisitEvent e WHERE e.eventType = 'WEBSITE_VISIT' OR e.eventType = 'QR_SCAN'")
+    Long countTotalVisits();
+
     @Query("""
                 SELECT e.stallId, COUNT(e)
                 FROM VisitEvent e

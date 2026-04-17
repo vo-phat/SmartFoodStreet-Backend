@@ -13,11 +13,11 @@ public class VisitEventAsyncService {
    private final VisitEventRepository visitEventRepository;
 
    @Async("qrExecutor")
-   public void logQrScanAsync(VisitEvent event) {
+   public void logEventAsync(VisitEvent event) {
       try {
          visitEventRepository.save(event);
       } catch (Exception e) {
-         System.out.println("Lỗi log QR: " + e.getMessage());
+         System.out.println("Lỗi log Event: " + e.getMessage());
       }
    }
 }

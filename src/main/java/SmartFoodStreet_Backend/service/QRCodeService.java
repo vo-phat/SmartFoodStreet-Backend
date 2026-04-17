@@ -169,7 +169,7 @@ public class QRCodeService implements IQRCode {
 
       // 5. Ghi nhận sự kiện quét mã QR
       VisitEvent event = buildEvent(qr, request, ip, sessionId);
-      visitEventAsyncService.logQrScanAsync(event);
+      visitEventAsyncService.logEventAsync(event);
 
       // 6. Cập nhật lượt quét
       qrCodeRepository.incrementScanCount(qr.getId());

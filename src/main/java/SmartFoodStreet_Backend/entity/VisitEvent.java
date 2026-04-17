@@ -59,6 +59,7 @@ public class VisitEvent {
         QR_SCAN,
         VIEW_DETAIL,
         VOUCHER_GENERATED,
-        VOUCHER_REDEEMED
+        VOUCHER_REDEEMED,
+        WEBSITE_VISIT
     }
 }

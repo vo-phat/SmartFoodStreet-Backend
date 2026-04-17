@@ -182,66 +182,60 @@ CREATE TABLE foods (
 );
 
 -- =========================
--- VISIT SESSIONS
--- =========================
--- Phiên trải nghiệm của user khi đi trong food street
--- Dùng để tracking hành vi và trigger audio
-CREATE TABLE visit_sessions (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    street_id BIGINT NOT NULL,
-    device_id VARCHAR(255) NOT NULL,   -- định danh thiết bị
-    budget_initial DECIMAL(10,2),      -- ngân sách ban đầu
-    budget_remaining DECIMAL(10,2),    -- ngân sách còn lại
-    start_latitude DECIMAL(10,8),
-    start_longitude DECIMAL(11,8),
-    started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    ended_at DATETIME,
-    status ENUM('ACTIVE','ENDED') DEFAULT 'ACTIVE',
-    FOREIGN KEY (street_id) REFERENCES food_streets(id) ON DELETE CASCADE
-);
-CREATE INDEX idx_visit_sessions_street ON visit_sessions(street_id);
-CREATE INDEX idx_visit_sessions_device ON visit_sessions(device_id);
-CREATE INDEX idx_device_time ON visit_sessions(device_id, started_at);
-
--- =========================
 -- VISIT EVENTS
 -- =========================
 -- Log các sự kiện trong session:
 -- vào vùng, ra vùng, bắt đầu audio, kết thúc audio
+
 CREATE TABLE visit_events (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    session_id BIGINT NOT NULL,
-    stall_id BIGINT NOT NULL,
+
+    session_id BIGINT,
+    stall_id BIGINT,
+
     event_type ENUM(
         'ENTER_GEOFENCE',
         'EXIT_GEOFENCE',
         'AUDIO_START',
-        'AUDIO_COMPLETE'
+        'AUDIO_COMPLETE',
+        'QR_SCAN',
     ),
+
     event_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (session_id) REFERENCES visit_sessions(id) ON DELETE CASCADE,
-    FOREIGN KEY (stall_id) REFERENCES stalls(id) ON DELETE CASCADE
+
+    qr_code VARCHAR(255),
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+
+    hour INT,
+    day INT,
+    month INT,
+    year INT,
+    FOREIGN KEY (stall_id) REFERENCES stalls(id) ON DELETE CASCADE,
 );
+
 CREATE INDEX idx_event_stall_time ON visit_events(stall_id, event_time);
 CREATE INDEX idx_event_session_time ON visit_events(session_id, event_time);
 CREATE INDEX idx_event_type_time ON visit_events(event_type, event_time);
 CREATE INDEX idx_event_session_stall ON visit_events(session_id, stall_id);
 
--- =========================
--- LOCATION LOGS
--- =========================
--- Lưu lịch sử di chuyển của user theo thời gian
--- Dùng cho tracking GPS và phân tích hành vi
-CREATE TABLE location_logs (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    session_id BIGINT NOT NULL,
-    latitude DECIMAL(10,8),
-    longitude DECIMAL(11,8),
-    recorded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (session_id) REFERENCES visit_sessions(id) ON DELETE CASCADE
-);
-CREATE INDEX idx_location_logs_session_time ON location_logs(session_id, recorded_at);
-CREATE INDEX idx_location_lat_lng ON location_logs(latitude, longitude);
+
+
+CREATE TABLE `qr_codes` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `is_active` bit(1) DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `scan_count` int DEFAULT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `stall_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK7jr9kfomfvkf6nj1h9elq38a9` (`stall_id`),
+  CONSTRAINT `FK7jr9kfomfvkf6nj1h9elq38a9` FOREIGN KEY (`stall_id`) REFERENCES `stalls` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 
 -- ******************************************** DATA ***********************************************************************
 INSERT INTO accounts (id, username, password, full_name, email)
