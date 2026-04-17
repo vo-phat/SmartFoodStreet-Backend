@@ -1,6 +1,6 @@
 services:
   # 1. MySQL: Lưu dữ liệu
-  mysql-db:
+  infra_mysql:
     image: mysql:8.0
     container_name: infra_mysql
     environment:
@@ -11,6 +11,10 @@ services:
       - "3306:3306" # Giữ nguyên cổng 3307 theo ý bạn
     volumes:
       - mysql_infra_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 5s
+      retries: 10
 
   # 2. Redis: Cache
   redis:
@@ -30,9 +34,32 @@ services:
       NGROK_AUTHTOKEN: "3Bx5wmT2FnR0yLemtNUSeFIUrZf_33BQP8FbrRF5saEptxQJP"
     command:
       - "http"
-      - "host.docker.internal:5173"
+      - "host.docker.internal:80"
     ports:
       - "4040:4040" # Để bạn có thể xem giao diện quản lý của Ngrok tại localhost:4040
+
+  be:
+    build: .
+    container_name: app_be
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./.env:/app/.env  # Dòng này sẽ ánh xạ file .env vào thư mục /app trong container
+    depends_on:
+      infra_mysql:
+        condition: service_healthy # Chỉ chạy BE khi MySQL đã thực sự "khỏe"
+    restart: on-failure # Tự khởi động lại nếu bị crash do lỗi kết nối DB
+
+  nginx:
+    image: nginx:latest
+    container_name: app_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/dist:/usr/share/nginx/html
+    depends_on:
+      - be
 
 volumes:
   mysql_infra_data:

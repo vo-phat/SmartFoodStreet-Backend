@@ -174,7 +174,7 @@ public class QRCodeService implements IQRCode {
       // 6. Cập nhật lượt quét
       qrCodeRepository.incrementScanCount(qr.getId());
 
-      return "http://localhost:5173/stall/" + stall.getId();
+       return "/stall/" + stall.getId();
    }
 
    private boolean isDuplicateScan(String code, String ip) {
@@ -185,17 +185,26 @@ public class QRCodeService implements IQRCode {
             thirtySecondsAgo);
    }
 
-   private VisitEvent buildEvent(QRCode qr, HttpServletRequest request, String ip, String sessionId) {
-      return VisitEvent.builder()
-            .stallId(qr.getStall().getId())
-            .qrCode(qr.getCode())
-            .eventType(VisitEvent.EventType.QR_SCAN)
-            .eventTime(LocalDateTime.now())
-            .ipAddress(ip)
-            .userAgent(request.getHeader("User-Agent"))
-            .sessionId(Long.valueOf(sessionId))
-            .build();
-   }
+    private VisitEvent buildEvent(QRCode qr, HttpServletRequest request, String ip, String sessionId) {
+        Long sid = null;
+        try {
+            if (sessionId != null && !sessionId.isBlank()) {
+                sid = Long.valueOf(sessionId);
+            }
+        } catch (NumberFormatException e) {
+            // Log lỗi hoặc gán mặc định nếu cần
+        }
+
+        return VisitEvent.builder()
+                .stallId(qr.getStall().getId())
+                .qrCode(qr.getCode())
+                .eventType(VisitEvent.EventType.QR_SCAN)
+                .eventTime(LocalDateTime.now())
+                .ipAddress(ip)
+                .userAgent(request.getHeader("User-Agent"))
+                .sessionId(sid) // Dùng biến đã kiểm tra
+                .build();
+    }
 
    private String getClientIp(HttpServletRequest request) {
       String remoteAddr = "";

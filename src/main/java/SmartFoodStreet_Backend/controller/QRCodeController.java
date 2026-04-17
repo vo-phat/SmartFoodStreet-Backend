@@ -87,7 +87,7 @@ public class QRCodeController {
 
         } catch (Exception e) {
             String errorMessage = e.getMessage();
-            String redirectUrl = "http://localhost:5173/error?message="
+            String redirectUrl = "/error?message="
                     + URLEncoder.encode(errorMessage, StandardCharsets.UTF_8);
             response.sendRedirect(redirectUrl);
         }

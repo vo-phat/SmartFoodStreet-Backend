@@ -94,8 +94,6 @@ CREATE TABLE food_streets (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-CREATE INDEX idx_food_streets_city ON food_streets(city);
-CREATE INDEX idx_food_streets_location ON food_streets(latitude, longitude);
 
 -- =========================
 -- STALLS (POIS)
@@ -108,19 +106,18 @@ CREATE TABLE stalls (
     vendor_id BIGINT NOT NULL,         -- chủ quán
     name VARCHAR(255) NOT NULL,        -- tên quán
     category VARCHAR(100),             -- loại: seafood, bbq...
+    description VARCHAR(255),
     latitude DECIMAL(10,8) NOT NULL,
     longitude DECIMAL(11,8) NOT NULL,
     location POINT GENERATED ALWAYS AS (POINT(longitude, latitude)) STORED NOT NULL, -- phục vụ query geospatial
     image VARCHAR(255),               -- ảnh
+    script TEXT,
     is_active BOOLEAN DEFAULT TRUE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (street_id) REFERENCES food_streets(id) ON DELETE CASCADE,
     FOREIGN KEY (vendor_id) REFERENCES accounts(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
-CREATE INDEX idx_stalls_street ON stalls(street_id);
-CREATE INDEX idx_stalls_vendor ON stalls(vendor_id);
-CREATE SPATIAL INDEX idx_stalls_location ON stalls(location);
 
 -- =========================
 -- STALL TRIGGER CONFIG
@@ -139,7 +136,6 @@ CREATE TABLE stall_trigger_config (
 ALTER TABLE stall_trigger_config
 ADD CONSTRAINT chk_radius CHECK (radius > 0),
 ADD CONSTRAINT chk_distance CHECK (trigger_distance > 0);
-CREATE INDEX idx_trigger_type ON stall_trigger_config(trigger_type);
 
 -- =========================
 -- STALL TRANSLATIONS
@@ -186,40 +182,27 @@ CREATE TABLE foods (
 -- =========================
 -- Log các sự kiện trong session:
 -- vào vùng, ra vùng, bắt đầu audio, kết thúc audio
-
 CREATE TABLE visit_events (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-
     session_id BIGINT,
     stall_id BIGINT,
-
     event_type ENUM(
         'ENTER_GEOFENCE',
         'EXIT_GEOFENCE',
         'AUDIO_START',
         'AUDIO_COMPLETE',
-        'QR_SCAN',
+        'QR_SCAN'
     ),
-
     event_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-
     qr_code VARCHAR(255),
     ip_address VARCHAR(45),
     user_agent TEXT,
-
     hour INT,
     day INT,
     month INT,
     year INT,
-    FOREIGN KEY (stall_id) REFERENCES stalls(id) ON DELETE CASCADE,
+    FOREIGN KEY (stall_id) REFERENCES stalls(id) ON DELETE CASCADE
 );
-
-CREATE INDEX idx_event_stall_time ON visit_events(stall_id, event_time);
-CREATE INDEX idx_event_session_time ON visit_events(session_id, event_time);
-CREATE INDEX idx_event_type_time ON visit_events(event_type, event_time);
-CREATE INDEX idx_event_session_stall ON visit_events(session_id, stall_id);
-
-
 
 CREATE TABLE `qr_codes` (
   `id` bigint NOT NULL AUTO_INCREMENT,
