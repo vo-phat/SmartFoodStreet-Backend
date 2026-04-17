@@ -255,7 +255,8 @@ VALUES
 (7, 'trongnghia',    '$2a$10$NKSO0o5/GNuyUahJvircYOUc0Zk78qydIhiso4FpDu25tsPKsm/8e', 'Nguyễn Trọng Nghĩa', 'ntn@yahoo.com.vn'),
 (8, 'tienphat',  '$2a$10$NKSO0o5/GNuyUahJvircYOUc0Zk78qydIhiso4FpDu25tsPKsm/8e', 'Nguyễn Tiến Phát', 'ntp@gmail.com'),
 (9,  'ngocmai',  '$2a$10$NKSO0o5/GNuyUahJvircYOUc0Zk78qydIhiso4FpDu25tsPKsm/8e', 'Trần Ngọc Mai', 'tnm@gmail.com'),
-(10, 'minhthien',  '$2a$10$NKSO0o5/GNuyUahJvircYOUc0Zk78qydIhiso4FpDu25tsPKsm/8e', 'Nguyễn Minh Thiện', 'nmt@gmail.com');
+(10, 'minhthien',  '$2a$10$NKSO0o5/GNuyUahJvircYOUc0Zk78qydIhiso4FpDu25tsPKsm/8e', 'Nguyễn Minh Thiện', 'nmt@gmail.com'),
+(11, 'conghau',  '$2a$10$NKSO0o5/GNuyUahJvircYOUc0Zk78qydIhiso4FpDu25tsPKsm/8e', 'Trần Công Hậu', 'tch@gmail.com');
 
 INSERT INTO roles (name, description) VALUES
 ('ADMIN', 'Toàn quyền hệ thống'),
@@ -271,7 +272,8 @@ INSERT INTO account_roles (account_id, role_id) VALUES
 (7, 2),
 (8, 2),
 (9, 2),
-(10, 2);
+(10, 2),
+(11,2);
 
 INSERT INTO permissions (name, description) VALUES
 ('ACCOUNT_CREATE', 'Tạo tài khoản'),
@@ -323,37 +325,35 @@ VALUES ('Phố ẩm thực Vĩnh Khánh', 'Khu phố ẩm thực nổi tiếng Q
 
 INSERT INTO stalls (street_id, vendor_id, name, category, latitude, longitude, image)
 VALUES
-(1, 2, 'Ốc Oanh Vĩnh Khánh', 'SEAFOOD', 10.757600, 106.704000, 'https://statics.vinpearl.com/nhung-quan-oc-ngon-re-o-sai-gon_1732543607.jpg'),
-(1, 3, 'Ốc Tô Vĩnh Khánh', 'SEAFOOD', 10.757700, 106.704200, 'https://mia.vn/media/uploads/blog-du-lich/quan-oc-quan-3-bac-1709211164.jpg'),
-(1, 4, 'Bò nướng ngói 154', 'BBQ', 10.757800, 106.704300, 'https://cdn.tgdd.vn/Files/2022/02/17/1415980/5-quan-bo-nuong-gia-re-diem-hen-am-thuc-de-la-ca-o-sai-gon-202202170818031663.jpg'),
-(1, 5, 'Hải sản 5 Rảnh', 'SEAFOOD', 10.757650, 106.704100, 'https://digiticket.vn/blog/wp-content/uploads/2021/05/quan-cat-ba-1024x768.jpg'),
-(1, 6, 'Phá lấu bò Cô Thảo', 'STREET_FOOD', 10.757900, 106.704250, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSECs6Ha2xU2DmCn72rjfgHR9oeSmRuSIitDQ&s'),
-(1, 2, 'Trà sữa Vĩnh Khánh', 'DRINK', 10.757500, 106.703900, 'https://caphenguyenchat.vn/wp-content/uploads/2019/11/nen-kinh-doanh-quan-tra-sua-hay-quan-cafe-1.jpg'),
-(1, 3, 'Bánh tráng nướng Đà Lạt', 'SNACK', 10.757850, 106.704400, 'https://pandafood.com.vn/wp-content/uploads/2024/09/banh-trang-nuong-phan-thiet-3.jpg'),
-(1, 4, 'Xiên que nướng 79', 'BBQ', 10.757720, 106.704180, 'https://mia.vn/media/uploads/blog-du-lich/thuong-thuc-xien-que-nuong-giua-cai-se-se-lanh-da-lat-10-1634547681.jpg'),
-(1, 5, 'Cháo hải sản đêm', 'STREET_FOOD', 10.757630, 106.704050, 'https://vn1.vdrive.vn/haisancuabien.com/2022/01/Hai-San-Cua-Bien-Thuc-Don-41-Mon-Man-Chao-Hai-San.jpg'),
-(1, 6, 'Sò điệp nướng mỡ hành', 'SEAFOOD', 10.757780, 106.704220, 'https://anhoquan.com/thumbs/700x400x2/upload/product/so-diep-nuong-mo-hanh-7559.jpg');
+(1, 2, 'Lãng Quán', 'BBQ', 10.757900, 106.704250, 'https://mia.vn/media/uploads/blog-du-lich/pho-am-thuc-vinh-khanh-lang-quan-1707245308.jpg'),
+(1, 3, 'Ốc Oanh Vĩnh Khánh', 'SEAFOOD', 10.757600, 106.704000, 'https://statics.vinpearl.com/nhung-quan-oc-ngon-re-o-sai-gon_1732543607.jpg'),
+(1, 4, 'Quán Dê Chung', 'BBQ', 10.757700, 106.704200, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkNDmGuwYsZF40QmoXZM1ZHaQwsQnUdKU4bw&s'),
+(1, 5, 'Bò nướng ngói 154', 'BBQ', 10.757800, 106.704300, 'https://cdn.tgdd.vn/Files/2022/02/17/1415980/5-quan-bo-nuong-gia-re-diem-hen-am-thuc-de-la-ca-o-sai-gon-202202170818031663.jpg'),
+(1, 6, 'Hải sản 5 Rảnh', 'SEAFOOD', 10.757650, 106.704100, 'https://digiticket.vn/blog/wp-content/uploads/2021/05/quan-cat-ba-1024x768.jpg'),
+(1, 7, 'Phá lấu bò Cô Thảo', 'STREET_FOOD', 10.757900, 106.704250, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSECs6Ha2xU2DmCn72rjfgHR9oeSmRuSIitDQ&s'),
+(1, 8, 'Trà sữa Vĩnh Khánh', 'DRINK', 10.757500, 106.703900, 'https://caphenguyenchat.vn/wp-content/uploads/2019/11/nen-kinh-doanh-quan-tra-sua-hay-quan-cafe-1.jpg'),
+(1, 9, 'Bánh tráng nướng Đà Lạt', 'SNACK', 10.757850, 106.704400, 'https://pandafood.com.vn/wp-content/uploads/2024/09/banh-trang-nuong-phan-thiet-3.jpg'),
+(1, 10, 'Xiên que nướng 79', 'BBQ', 10.757720, 106.704180, 'https://mia.vn/media/uploads/blog-du-lich/thuong-thuc-xien-que-nuong-giua-cai-se-se-lanh-da-lat-10-1634547681.jpg'),
+(1, 11, 'Cháo hải sản đêm', 'STREET_FOOD', 10.757630, 106.704050, 'https://vn1.vdrive.vn/haisancuabien.com/2022/01/Hai-San-Cua-Bien-Thuc-Don-41-Mon-Man-Chao-Hai-San.jpg');
 
 INSERT INTO stall_trigger_config (stall_id)
 SELECT id FROM stalls;
 
 -- 1. ỐC OANH VĨNH KHÁNH
 INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
-(2, 'vi', 'Ốc Oanh Vĩnh Khánh', 'Chào mừng bạn đến với Ốc Oanh - "huyền thoại" tại phố Vĩnh Khánh. Nếu bạn là tín đồ của hải sản tươi sống, đây là điểm dừng chân không thể bỏ qua. Món ăn nổi bật nhất tại đây chính là ốc hương xào bơ béo ngậy ăn kèm bánh mì nóng hổi. Không gian nhộn nhịp, tiếng xào nấu vang dội sẽ cho bạn cảm giác thực sự của một Sài Gòn không ngủ.', '/audio/ocoanhvinhkhanh_vi.mp3', 'COMPLETED'),
-(2, 'en-US', 'Oc Oanh Vinh Khanh', 'Welcome to Oc Oanh, a legend on Vinh Khanh Street. If you’re a seafood lover, this is a must-visit. Their signature dish is sautéed sweet snails in salted butter, perfectly paired with crispy bread. The vibrant atmosphere and the sizzling sounds from the kitchen capture the true essence of Saigon''s nightlife.', '/audio/ocoanhvinhkhanh_en-US.mp3', 'COMPLETED'),
-(2, 'zh', 'Oanh 螺店', '欢迎光临 Oanh 螺店 —— 永庆街上的美食传奇。如果你是海鲜爱好者，这里是必去之地。招牌菜是奶油炒甜螺，搭配香脆的面包简直绝配。喧闹的氛围和厨房的滋滋声，让你感受真正的西贡不夜城。', '/audio/ocoanhvinhkhanh_zh.mp3', 'COMPLETED');
-
+(2, 'vi', 'Ốc Oanh Vĩnh Khánh', 'Chào mừng bạn đến với Ốc Oanh - "huyền thoại" tại phố Vĩnh Khánh. Nếu bạn là tín đồ của hải sản tươi sống, đây là điểm dừng chân không thể bỏ qua. Món ăn nổi bật nhất tại đây chính là ốc hương xào bơ béo ngậy ăn kèm bánh mì nóng hổi. Không gian nhộn nhịp, tiếng xào nấu vang dội sẽ cho bạn cảm giác thực sự của một Sài Gòn không ngủ.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/ocoanhvinhkhanh_vi_a8irew.mp3', 'COMPLETED'),
+(2, 'en-US', 'Oc Oanh Vinh Khanh', 'Welcome to Oc Oanh, a legend on Vinh Khanh Street. If you’re a seafood lover, this is a must-visit. Their signature dish is sautéed sweet snails in salted butter, perfectly paired with crispy bread. The vibrant atmosphere and the sizzling sounds from the kitchen capture the true essence of Saigon''s nightlife.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/ocoanhvinhkhanh_en-US_h6qnss.mp3', 'COMPLETED'),
+(2, 'zh', 'Oanh 螺店', '欢迎光临 Oanh 螺店 —— 永庆街上的美食传奇。如果你是海鲜爱好者，这里是必去之地。招牌菜是奶油炒甜螺，搭配香脆的面包简直绝配。喧闹的氛围和厨房的滋滋声，让你感受真正的西贡不夜城。', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/ocoanhvinhkhanh_zh_tfe20k.mp3', 'COMPLETED');
 -- 2. QUÁN DÊ CHUNG
 INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
-(3, 'vi', 'Quán Dê Chung', 'Đổi vị với thịt dê tại Quán Dê Chung ngay đầu phố. Với kinh nghiệm lâu năm, thịt dê tại đây được khử mùi hoàn hảo, giữ được độ ngọt và mềm. Món lẩu dê với nước dùng thanh ngọt, đậm đà thảo mộc chính là linh hồn của quán, giúp bạn nạp đầy năng lượng sau một ngày dài.', '/audio/quandechung_vi.mp3', 'COMPLETED'),
-(3, 'en-US', 'De Chung Goat Restaurant', 'Change your palate with goat meat at De Chung, located right at the street entrance. With years of experience, the goat meat here is perfectly processed to remove odors while remaining sweet and tender. Their goat hotpot with herbal broth is the soul of the shop, perfect for recharging.', '/audio/quandechung_en-US.mp3', 'COMPLETED'),
-(3, 'zh', 'De Chung 羊肉店', '来到街口的 De Chung 羊肉店换换口味吧。凭着多年的经验，这里的羊肉处理得完全没有膻味，保持了鲜甜嫩滑。药膳汤底的羊肉火锅是这里的灵魂，非常适合在漫长的一天后补充能量。', '/audio/quandechung_zh.mp3', 'COMPLETED');
-
+(3, 'vi', 'Quán Dê Chung', 'Đổi vị với thịt dê tại Quán Dê Chung ngay đầu phố. Với kinh nghiệm lâu năm, thịt dê tại đây được khử mùi hoàn hảo, giữ được độ ngọt và mềm. Món lẩu dê với nước dùng thanh ngọt, đậm đà thảo mộc chính là linh hồn của quán, giúp bạn nạp đầy năng lượng sau một ngày dài.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/quandechung_vi_mecets.mp3', 'COMPLETED'),
+(3, 'en-US', 'De Chung Goat Restaurant', 'Change your palate with goat meat at De Chung, located right at the street entrance. With years of experience, the goat meat here is perfectly processed to remove odors while remaining sweet and tender. Their goat hotpot with herbal broth is the soul of the shop, perfect for recharging.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/quandechung_en-US_u5zdk4.mp3', 'COMPLETED'),
+(3, 'zh', 'De Chung 羊肉店', '来到街口的 De Chung 羊肉店换换口味吧。凭着多年的经验，这里的羊肉处理得完全没有膻味，保持了鲜甜嫩滑。药膳汤底的羊肉火锅是这里的灵魂，非常适合在漫长的一天后补充能量。', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/quandechung_zh_tg6kq0.mp3', 'COMPLETED');
 -- 3. LÃNG QUÁN
 INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
-(1, 'vi', 'Lãng Quán', 'Lãng Quán mang đến phong cách ẩm thực đường phố hiện đại với các món nướng tại bàn. Điểm đặc biệt của quán là mở cửa đến tận 4 giờ sáng, phục vụ những "cú đêm" sành ăn. Đừng quên thử món răng mực nướng hoặc lườn vịt xông khói khi ghé qua đây nhé.', '/audio/langquan_vi.mp3', 'COMPLETED'),
-(1, 'en-US', 'Lang Quan', 'Lang Quan offers a modern street food style with tabletop grilling. The unique thing about this place is that it stays open until 4 AM, catering to late-night foodies. Don''t forget to try their grilled squid teeth or smoked duck breast when you visit.', '/audio/langquan_en-US.mp3', 'COMPLETED'),
-(1, 'zh', '浪馆 (Lang Quan)', '浪馆 (Lang Quan) 提供现代街头风格的桌上烧烤。这里的独特之处在于营业至凌晨 4 点，专门服务熬夜的美食家。光临此处时，别忘了尝尝烤鱿鱼嘴或烟熏鸭胸。', '/audio/langquan_zh.mp3', 'COMPLETED');
+(1, 'vi', 'Lãng Quán', 'Lãng Quán mang đến phong cách ẩm thực đường phố hiện đại với các món nướng tại bàn. Điểm đặc biệt của quán là mở cửa đến tận 4 giờ sáng, phục vụ những "cú đêm" sành ăn. Đừng quên thử món răng mực nướng hoặc lườn vịt xông khói khi ghé qua đây nhé.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428646/langquan_vi_ke0fth.mp3', 'COMPLETED'),
+(1, 'en-US', 'Lang Quan', 'Lang Quan offers a modern street food style with tabletop grilling. The unique thing about this place is that it stays open until 4 AM, catering to late-night foodies. Don''t forget to try their grilled squid teeth or smoked duck breast when you visit.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428646/langquan_en-US_gmb4bz.mp3', 'COMPLETED'),
+(1, 'zh', '浪馆 (Lang Quan)', '浪馆 (Lang Quan) 提供现代街头风格的桌上烧烤。这里的独特之处在于营业至凌晨 4 点，专门服务熬夜的美食家。光临此处时，别忘了尝尝烤鱿鱼嘴或烟熏鸭胸。', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428646/langquan_vi_ke0fth.mp3', 'COMPLETED');
 
 INSERT INTO foods (stall_id, name, price, description, image)
 VALUES
