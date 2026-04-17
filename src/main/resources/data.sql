@@ -255,7 +255,8 @@ VALUES
 (7, 'trongnghia',    '$2a$10$NKSO0o5/GNuyUahJvircYOUc0Zk78qydIhiso4FpDu25tsPKsm/8e', 'Nguyễn Trọng Nghĩa', 'ntn@yahoo.com.vn'),
 (8, 'tienphat',  '$2a$10$NKSO0o5/GNuyUahJvircYOUc0Zk78qydIhiso4FpDu25tsPKsm/8e', 'Nguyễn Tiến Phát', 'ntp@gmail.com'),
 (9,  'ngocmai',  '$2a$10$NKSO0o5/GNuyUahJvircYOUc0Zk78qydIhiso4FpDu25tsPKsm/8e', 'Trần Ngọc Mai', 'tnm@gmail.com'),
-(10, 'minhthien',  '$2a$10$NKSO0o5/GNuyUahJvircYOUc0Zk78qydIhiso4FpDu25tsPKsm/8e', 'Nguyễn Minh Thiện', 'nmt@gmail.com');
+(10, 'minhthien',  '$2a$10$NKSO0o5/GNuyUahJvircYOUc0Zk78qydIhiso4FpDu25tsPKsm/8e', 'Nguyễn Minh Thiện', 'nmt@gmail.com'),
+(11, 'conghau',  '$2a$10$NKSO0o5/GNuyUahJvircYOUc0Zk78qydIhiso4FpDu25tsPKsm/8e', 'Trần Công Hậu', 'tch@gmail.com');
 
 INSERT INTO roles (name, description) VALUES
 ('ADMIN', 'Toàn quyền hệ thống'),
@@ -271,7 +272,8 @@ INSERT INTO account_roles (account_id, role_id) VALUES
 (7, 2),
 (8, 2),
 (9, 2),
-(10, 2);
+(10, 2),
+(11,2);
 
 INSERT INTO permissions (name, description) VALUES
 ('ACCOUNT_CREATE', 'Tạo tài khoản'),
@@ -324,16 +326,15 @@ VALUES ('Phố ẩm thực Vĩnh Khánh', 'Khu phố ẩm thực nổi tiếng Q
 INSERT INTO stalls (street_id, vendor_id, name, category, latitude, longitude, image)
 VALUES
 (1, 2, 'Lãng Quán', 'BBQ', 10.757900, 106.704250, 'https://mia.vn/media/uploads/blog-du-lich/pho-am-thuc-vinh-khanh-lang-quan-1707245308.jpg'),
-(1, 2, 'Ốc Oanh Vĩnh Khánh', 'SEAFOOD', 10.757600, 106.704000, 'https://statics.vinpearl.com/nhung-quan-oc-ngon-re-o-sai-gon_1732543607.jpg'),
-(1, 2, 'Quán Dê Chung', 'BBQ', 10.757700, 106.704200, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkNDmGuwYsZF40QmoXZM1ZHaQwsQnUdKU4bw&s'),
-(1, 3, 'Bò nướng ngói 154', 'BBQ', 10.757800, 106.704300, 'https://cdn.tgdd.vn/Files/2022/02/17/1415980/5-quan-bo-nuong-gia-re-diem-hen-am-thuc-de-la-ca-o-sai-gon-202202170818031663.jpg'),
-(1, 3, 'Hải sản 5 Rảnh', 'SEAFOOD', 10.757650, 106.704100, 'https://digiticket.vn/blog/wp-content/uploads/2021/05/quan-cat-ba-1024x768.jpg'),
-(1, 4, 'Phá lấu bò Cô Thảo', 'STREET_FOOD', 10.757900, 106.704250, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSECs6Ha2xU2DmCn72rjfgHR9oeSmRuSIitDQ&s'),
-(1, 4, 'Trà sữa Vĩnh Khánh', 'DRINK', 10.757500, 106.703900, 'https://caphenguyenchat.vn/wp-content/uploads/2019/11/nen-kinh-doanh-quan-tra-sua-hay-quan-cafe-1.jpg'),
-(1, 5, 'Bánh tráng nướng Đà Lạt', 'SNACK', 10.757850, 106.704400, 'https://pandafood.com.vn/wp-content/uploads/2024/09/banh-trang-nuong-phan-thiet-3.jpg'),
-(1, 5, 'Xiên que nướng 79', 'BBQ', 10.757720, 106.704180, 'https://mia.vn/media/uploads/blog-du-lich/thuong-thuc-xien-que-nuong-giua-cai-se-se-lanh-da-lat-10-1634547681.jpg'),
-(1, 6, 'Cháo hải sản đêm', 'STREET_FOOD', 10.757630, 106.704050, 'https://vn1.vdrive.vn/haisancuabien.com/2022/01/Hai-San-Cua-Bien-Thuc-Don-41-Mon-Man-Chao-Hai-San.jpg'),
-(1, 6, 'Sò điệp nướng mỡ hành', 'SEAFOOD', 10.757780, 106.704220, 'https://anhoquan.com/thumbs/700x400x2/upload/product/so-diep-nuong-mo-hanh-7559.jpg');
+(1, 3, 'Ốc Oanh Vĩnh Khánh', 'SEAFOOD', 10.757600, 106.704000, 'https://statics.vinpearl.com/nhung-quan-oc-ngon-re-o-sai-gon_1732543607.jpg'),
+(1, 4, 'Quán Dê Chung', 'BBQ', 10.757700, 106.704200, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkNDmGuwYsZF40QmoXZM1ZHaQwsQnUdKU4bw&s'),
+(1, 5, 'Bò nướng ngói 154', 'BBQ', 10.757800, 106.704300, 'https://cdn.tgdd.vn/Files/2022/02/17/1415980/5-quan-bo-nuong-gia-re-diem-hen-am-thuc-de-la-ca-o-sai-gon-202202170818031663.jpg'),
+(1, 6, 'Hải sản 5 Rảnh', 'SEAFOOD', 10.757650, 106.704100, 'https://digiticket.vn/blog/wp-content/uploads/2021/05/quan-cat-ba-1024x768.jpg'),
+(1, 7, 'Phá lấu bò Cô Thảo', 'STREET_FOOD', 10.757900, 106.704250, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSECs6Ha2xU2DmCn72rjfgHR9oeSmRuSIitDQ&s'),
+(1, 8, 'Trà sữa Vĩnh Khánh', 'DRINK', 10.757500, 106.703900, 'https://caphenguyenchat.vn/wp-content/uploads/2019/11/nen-kinh-doanh-quan-tra-sua-hay-quan-cafe-1.jpg'),
+(1, 9, 'Bánh tráng nướng Đà Lạt', 'SNACK', 10.757850, 106.704400, 'https://pandafood.com.vn/wp-content/uploads/2024/09/banh-trang-nuong-phan-thiet-3.jpg'),
+(1, 10, 'Xiên que nướng 79', 'BBQ', 10.757720, 106.704180, 'https://mia.vn/media/uploads/blog-du-lich/thuong-thuc-xien-que-nuong-giua-cai-se-se-lanh-da-lat-10-1634547681.jpg'),
+(1, 11, 'Cháo hải sản đêm', 'STREET_FOOD', 10.757630, 106.704050, 'https://vn1.vdrive.vn/haisancuabien.com/2022/01/Hai-San-Cua-Bien-Thuc-Don-41-Mon-Man-Chao-Hai-San.jpg');
 
 INSERT INTO stall_trigger_config (stall_id)
 SELECT id FROM stalls;
