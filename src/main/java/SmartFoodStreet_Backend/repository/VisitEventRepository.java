@@ -54,4 +54,31 @@ public interface VisitEventRepository extends JpaRepository<VisitEvent, Long> {
                 ORDER BY COUNT(e) DESC
             """)
     List<Object[]> findTopStallsByVisits();
+
+    @Query("""
+                SELECT COUNT(e)
+                FROM VisitEvent e
+                WHERE e.stallId = :stallId
+                AND e.eventType = :type
+                AND e.eventTime BETWEEN :start AND :end
+            """)
+    Long countByStallAndTypeBetween(
+            @org.springframework.data.repository.query.Param("stallId") Long stallId,
+            @org.springframework.data.repository.query.Param("type") VisitEvent.EventType type,
+            @org.springframework.data.repository.query.Param("start") java.time.LocalDateTime start,
+            @org.springframework.data.repository.query.Param("end") java.time.LocalDateTime end);
+
+    @Query("""
+                SELECT e.day, COUNT(e)
+                FROM VisitEvent e
+                WHERE e.stallId = :stallId
+                AND e.eventType = 'ENTER_GEOFENCE'
+                AND e.eventTime BETWEEN :start AND :end
+                GROUP BY e.day
+                ORDER BY e.day ASC
+            """)
+    List<Object[]> findDailyVisitsByStall(
+            @org.springframework.data.repository.query.Param("stallId") Long stallId,
+            @org.springframework.data.repository.query.Param("start") java.time.LocalDateTime start,
+            @org.springframework.data.repository.query.Param("end") java.time.LocalDateTime end);
 }

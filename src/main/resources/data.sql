@@ -199,6 +199,8 @@ CREATE TABLE visit_events (
         'AUDIO_START',
         'AUDIO_COMPLETE',
         'QR_SCAN',
+        'VIEW_DETAIL',
+        'WEBSITE_VISIT'
     ),
 
     event_time DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -211,7 +213,7 @@ CREATE TABLE visit_events (
     day INT,
     month INT,
     year INT,
-    FOREIGN KEY (stall_id) REFERENCES stalls(id) ON DELETE CASCADE,
+    FOREIGN KEY (stall_id) REFERENCES stalls(id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_event_stall_time ON visit_events(stall_id, event_time);
@@ -229,11 +231,12 @@ CREATE TABLE `qr_codes` (
   `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `scan_count` int DEFAULT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
-  `stall_id` bigint NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK7jr9kfomfvkf6nj1h9elq38a9` (`stall_id`),
-  CONSTRAINT `FK7jr9kfomfvkf6nj1h9elq38a9` FOREIGN KEY (`stall_id`) REFERENCES `stalls` (`id`)
+  `stall_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO qr_codes (id, code, name, is_active, scan_count, created_at, updated_at, stall_id)
+VALUES (1, 'STREET_GATEWAY', 'Cổng Chào Dự Án', 1, 0, NOW(), NOW(), NULL);
 
 
 
