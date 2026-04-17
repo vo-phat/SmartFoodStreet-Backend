@@ -394,3 +394,87 @@ VALUES
 (9,'Cháo hải sản',45000,'Cháo hầm nhừ cùng tôm mực tươi, hành ngò thơm lừng','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHty4sCdcJSf1Ilxx62Vp9AQJDYb_Z3y-_Yg&s'),
 (9,'Cháo tôm',40000,'Cháo sánh mịn hầm cùng tôm tươi ngọt nước tự nhiên','https://daynauan.info.vn/wp-content/uploads/2015/11/Chao-tom.jpg'),
 (10,'Sò điệp nướng mỡ hành',100000,'Sò điệp tươi nướng mỡ hành đậu phộng thơm béo','https://cdn.tgdd.vn/2021/03/CookRecipe/GalleryStep/thanh-pham-179.jpg');
+
+INSERT INTO stall_translations 
+(stall_id, language_code, name, tts_script, audio_url, audio_status)
+VALUES
+
+-- ================= 1. ỐC OANH =================
+(1,'vi','Ốc Oanh Vĩnh Khánh','Chào mừng bạn đã đến với Ốc Oanh – một trong những quán ốc nổi tiếng nhất tại phố ẩm thực Vĩnh Khánh. Khi vừa tiến lại gần, bạn sẽ cảm nhận ngay không khí nhộn nhịp cùng hương thơm quyến rũ từ những món ốc xào bơ tỏi, rang me hay nướng mỡ hành.
+Điểm đặc biệt ở đây chính là độ tươi ngon của hải sản và cách nêm nếm đậm đà, rất đặc trưng của Sài Gòn. Nếu bạn muốn vừa thưởng thức món ngon vừa hòa mình vào nhịp sống sôi động về đêm, đây chắc chắn là điểm dừng chân không nên bỏ lỡ','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776449958/OcOanhVinhKhanh_vi_bfr8kx.mp3','COMPLETED'),
+(1,'en','Oc Oanh Vinh Khanh','Welcome to Oc Oanh, one of the most famous seafood spots on Vinh Khanh Street. As you get closer, you’ll immediately feel the lively atmosphere and catch the irresistible aroma of butter garlic snails, tamarind stir-fried seafood, and grilled dishes with scallion oil.
+What makes this place stand out is the freshness of its ingredients and the bold Saigon-style flavors. If you want to enjoy great food while immersing yourself in the vibrant nightlife, this is definitely a must-visit stop','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776449957/OcOanhVinhKhanh_en_gwar5b.mp3','COMPLETED'),
+(1,'zh-CN','Oc Oanh','欢迎来到Ốc Oanh，这里是永庆街最受欢迎的海鲜餐厅之一。当你走近时，可以立刻感受到热闹的氛围，以及蒜香黄油炒螺、酸甜罗望子海鲜和葱油烧烤散发出的诱人香气。
+这家店以食材新鲜和浓郁的西贡风味而闻名。如果你想一边品尝美食，一边感受夜晚的活力气息，这里绝对是不容错过的地方','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776449959/OcOanhVinhKhanh_zh_qwdwin.mp3','COMPLETED'),
+
+-- ================= 2. ỐC TÔ =================
+(2,'vi','Ốc Tô Vĩnh Khánh','Bạn đang đứng trước Ốc Tô – một địa điểm quen thuộc của những tín đồ hải sản bình dân. Không quá cầu kỳ về không gian, nhưng nơi đây luôn đông khách nhờ món ăn lên nhanh, nóng hổi và đậm đà.
+Âm thanh xèo xèo từ bếp và tiếng trò chuyện rộn ràng tạo nên một trải nghiệm rất ‘đời’ của Sài Gòn. Đây là nơi lý tưởng để tụ tập bạn bè và thưởng thức những món ốc ngon đúng điệu.','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448174/OcToVinhKhanh_vi_grrues.mp3','COMPLETED'),
+(2,'en','Oc To Vinh Khanh','Welcome to Oc Oanh, one of the most famous seafood spots on Vinh Khanh Street. As you get closer, you’ll immediately feel the lively atmosphere and catch the irresistible aroma of butter garlic snails, tamarind stir-fried seafood, and grilled dishes with scallion oil.
+What makes this place stand out is the freshness of its ingredients and the bold Saigon-style flavors. If you want to enjoy great food while immersing yourself in the vibrant nightlife, this is definitely a must-visit stop.','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448173/OcToVinhKhanh_en_ouugxe.mp3','COMPLETED'),
+(2,'zh-CN','Oc To','欢迎来到Ốc Oanh，这里是永庆街最受欢迎的海鲜餐厅之一。当你走近时，可以立刻感受到热闹的氛围，以及蒜香黄油炒螺、酸甜罗望子海鲜和葱油烧烤散发出的诱人香气。
+这家店以食材新鲜和浓郁的西贡风味而闻名。如果你想一边品尝美食，一边感受夜晚的活力气息，这里绝对是不容错过的地方','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448175/OcToVinhKhanh_zh_fipssy.mp3','COMPLETED'),
+
+-- ================= 3. BÒ NƯỚNG =================
+(3,'vi','Bò nướng ngói 154','Mùi thơm từ bếp nướng đang dẫn bạn đến với quán bò nướng ngói 154. Những miếng thịt bò được tẩm ướp kỹ lưỡng, nướng trên ngói nóng giữ trọn độ mềm và vị ngọt tự nhiên.
+Không gian ấm cúng, khói bếp lan tỏa và tiếng thịt nướng xèo xèo tạo nên một trải nghiệm ẩm thực đầy hấp dẫn. Nếu bạn yêu thích đồ nướng, đừng ngần ngại dừng lại và thử ngay','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448167/BoNuong_vi_fdcowp.mp3','COMPLETED'),
+(3,'en','Bo Nuong Ngoi 154','The smoky aroma leads you to Bo Nuong Ngoi 154. The beef is carefully marinated and grilled on hot tiles, preserving its tenderness and natural sweetness.
+With a cozy atmosphere, rising smoke, and sizzling sounds, this place offers a truly enjoyable barbecue experience. If you love grilled food, this is a stop worth trying','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448167/BoNuong_en_ebdbng.mp3','COMPLETED'),
+(3,'zh-CN','Bo Nuong','空气中弥漫的烤肉香味正引领你来到154号烤牛肉店。这里的牛肉经过精心腌制，在热瓦片上烤制，保持了肉质的鲜嫩和自然的甜味。
+烟火气十足的环境和滋滋作响的烤肉声，让人食欲大开。如果你喜欢烧烤，这里绝对值得一试','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448168/BoNuong_zh_lolula.mp3','COMPLETED'),
+
+-- ================= 4. HẢI SẢN =================
+(4,'vi','Hải sản 5 Rảnh','Hải sản 5 Rảnh mang đến cho bạn cảm giác gần gũi như một bữa ăn gia đình giữa lòng phố. Hải sản ở đây luôn tươi, được chế biến đơn giản nhưng giữ trọn vị ngọt tự nhiên.
+Không quá ồn ào, không quá cầu kỳ, nhưng chính sự mộc mạc đó lại khiến nhiều người quay lại lần nữa','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448172/HaiSan5Ranh_vi_zugtcx.mp3','COMPLETED'),
+(4,'en','Hai San 5 Ranh','Hai San 5 Ranh offers a cozy, home-like dining experience in the middle of the busy street. The seafood is always fresh and simply prepared to preserve its natural sweetness.
+It may not be fancy, but its simplicity is exactly what keeps people coming back','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448171/HaiSan5Ranh_en_j919uo.mp3','COMPLETED'),
+(4,'zh-CN','Hai San','Hải sản 5 Rảnh带来一种温馨、像在家吃饭的感觉。这里的海鲜新鲜可口，烹饪方式简单，却保留了食材最自然的鲜甜。
+虽然不华丽，但正是这种朴实，让许多食客一次又一次地回到这里','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448172/HaiSan5Ranh_zh_ruhmkr.mp3','COMPLETED'),
+
+-- ================= 5. PHÁ LẤU =================
+(5,'vi','Phá lấu bò Cô Thảo','Một mùi thơm béo ngậy đang lan tỏa – đó chính là phá lấu bò Cô Thảo. Món ăn mang đậm hương vị truyền thống với nước dùng sánh, béo và đậm đà.
+Cắn một miếng bánh mì giòn, chấm cùng nước phá lấu nóng hổi, bạn sẽ cảm nhận được sự hấp dẫn rất riêng của ẩm thực Sài Gòn.','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448176/PhaLauBo_vi_obsuzh.mp3','COMPLETED'),
+(5,'en','Pha Lau Co Thao','A rich, savory aroma fills the air – that’s Co Thao’s beef offal stew. This traditional dish features a thick, flavorful broth that is both creamy and satisfying.
+Pair it with crispy bread, and you’ll discover a uniquely comforting taste of Saigon street food','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448175/PhaLauBo_en_tezk1w.mp3','COMPLETED'),
+(5,'zh-CN','Pha Lau','一股浓郁的香气扑面而来，这就是Cô Thảo的牛杂炖菜。这道传统小吃以浓厚顺滑的汤汁和丰富的味道著称。
+搭配酥脆的面包一起食用，你会感受到独特而令人满足的西贡风味','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448176/PhaLauBo_zh_wz0eec.mp3','COMPLETED'),
+
+-- ================= 6. TRÀ SỮA =================
+(6,'vi','Trà sữa Vĩnh Khánh','Nếu bạn cần một chút ngọt ngào để nghỉ chân, quán trà sữa Vĩnh Khánh là lựa chọn lý tưởng. Với thực đơn đa dạng và không gian thoải mái, nơi đây luôn là điểm hẹn quen thuộc của giới trẻ.
+Một ly trà mát lạnh giữa không khí náo nhiệt sẽ giúp bạn thư giãn trước khi tiếp tục hành trình khám phá','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448505/TraSua_vi_hqtxnq.mp3','COMPLETED'),
+(6,'en','Milk Tea Vinh Khanh','If you’re looking for a refreshing break, Vinh Khanh Milk Tea is the perfect stop. With a wide selection of drinks and a comfortable setting, it’s a favorite hangout for young people.
+A cool drink in the middle of the lively street can be just what you need to recharge','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448504/TraSua_en_wy2e6h.mp3','COMPLETED'),
+(6,'zh-CN','Milk Tea','如果你想稍作休息，来一杯清凉的饮品，永庆街的奶茶店是不错的选择。这里饮品种类丰富，环境轻松，是年轻人常来的聚会地点。
+在热闹的街头喝上一杯冰凉的奶茶，会让你瞬间放松下来','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448504/TraSua_zh_kqgofp.mp3','COMPLETED'),
+
+-- ================= 7. BÁNH TRÁNG =================
+(7,'vi','Bánh tráng nướng Đà Lạt','Tiếng giòn tan của bánh tráng nướng đang mời gọi bạn dừng chân. Món ăn vặt này nổi bật với lớp bánh giòn rụm, kết hợp cùng trứng, phô mai và nhiều topping hấp dẫn.
+Đây là một trong những món ăn đường phố được yêu thích nhất, dễ ăn và đầy hương vị','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448166/BanhTrangNuong_vi_hsza9q.mp3','COMPLETED'),
+(7,'en','Grilled Rice Paper','The crispy sound of grilled rice paper invites you to stop and try. This popular street snack features a crunchy base topped with egg, cheese, and various flavorful ingredients.
+It’s simple, delicious, and loved by many','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448166/BanhTrangNuong_en_xo6dtt.mp3','COMPLETED'),
+(7,'zh-CN','Rice Paper','烤米纸发出的酥脆声音仿佛在邀请你停下来品尝。这种街头小吃以香脆的口感和丰富的配料而闻名，例如鸡蛋、芝士等。
+简单却美味，是许多人喜爱的经典小吃','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448166/BanhTrangNuong_zh_vgyuq0.mp3','COMPLETED'),
+
+-- ================= 8. XIÊN QUE =================
+(8,'vi','Xiên que nướng 79','Mùi thơm của những xiên nướng đang lan tỏa khắp không gian. Tại đây, bạn có thể lựa chọn nhiều loại xiên hấp dẫn, từ thịt đến hải sản.
+Vừa cầm xiên nóng hổi, vừa trò chuyện cùng bạn bè, bạn sẽ cảm nhận rõ nét sự vui vẻ của ẩm thực đường phố','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448507/XienQueNuong_vi_zfqln3.mp3','COMPLETED'),
+(8,'en','Grilled Skewers 79','The aroma of grilled skewers fills the air. Here, you can choose from a variety of options, from meat to seafood.
+Holding a hot skewer while chatting with friends perfectly captures the joy of street dining','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448505/XienQueNuong_en_wu8cq4.mp3','COMPLETED'),
+(8,'zh-CN','Skewers','烤串的香味弥漫在空气中，让人忍不住停下脚步。这里提供多种选择，从肉类到海鲜应有尽有。
+一边吃着热腾腾的烤串，一边与朋友聊天，正是街头美食的乐趣所在','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448508/XienQueNuong_zh_en57fh.mp3','COMPLETED'),
+
+-- ================= 9. CHÁO =================
+(9,'vi','Cháo hải sản đêm','Giữa không khí về đêm, một tô cháo nóng hổi sẽ mang lại cảm giác ấm áp. Cháo hải sản với vị ngọt tự nhiên từ tôm, mực là lựa chọn quen thuộc của nhiều người.
+Đây là món ăn nhẹ nhưng đầy dinh dưỡng, rất thích hợp để kết thúc một buổi tối khám phá ẩm thực.','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448169/ChaoHaiSan_vi_yhcel5.mp3','COMPLETED'),
+(9,'en','Seafood Porridge','On a cool evening, a warm bowl of seafood porridge can be incredibly comforting. With the natural sweetness of shrimp and squid, it’s a popular late-night choice.
+Light yet nourishing, it’s a perfect way to end your food journey','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448168/ChaoHaiSan_en_za8ffq.mp3','COMPLETED'),
+(9,'zh-CN','Porridge','在夜晚来一碗热腾腾的海鲜粥，会让人感到非常温暖。粥中融合了虾和鱿鱼的天然鲜甜，是许多人喜爱的宵夜选择。
+清淡却营养丰富，非常适合为一天的美食之旅画上句号','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448170/ChaoHaiSan_zh_tgk7ca.mp3','COMPLETED'),
+
+-- ================= 10. SÒ ĐIỆP =================
+(10,'vi','Sò điệp nướng mỡ hành','Hương thơm béo ngậy của mỡ hành đang lan tỏa từ những con sò điệp nướng. Thịt sò mềm, ngọt, kết hợp cùng đậu phộng bùi tạo nên hương vị khó quên.
+Đây là món ăn bạn nên thử ít nhất một lần khi ghé phố ẩm thực này','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448503/SoDiepNuong_vi_b3bkae.mp3','COMPLETED'),
+(10,'en','Grilled Scallops','The rich aroma of scallion oil spreads from the grilled scallops. The tender, sweet scallop meat blends perfectly with the nutty flavor of peanuts.
+It’s a dish you should try at least once when visiting this food street.','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448177/SoDiepNuong_en_dphsvo.mp3','COMPLETED'),
+(10,'zh-CN','Scallops','葱油的香气从烤扇贝中散发出来，令人食欲大开。扇贝肉质鲜嫩甘甜，搭配花生的香味，口感层次丰富。
+来到这里，这道菜绝对值得你尝试一次','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448503/SoDiepNuong_zh_r7gdht.mp3','COMPLETED');
