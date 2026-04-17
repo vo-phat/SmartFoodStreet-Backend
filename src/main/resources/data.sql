@@ -259,8 +259,7 @@ VALUES
 
 INSERT INTO roles (name, description) VALUES
 ('ADMIN', 'Toàn quyền hệ thống'),
-('VENDOR', 'Chủ gian hàng'),
-('CUSTOMER', 'Người dùng cuối');
+('VENDOR', 'Chủ gian hàng');
 
 INSERT INTO account_roles (account_id, role_id) VALUES
 (1, 1),
@@ -269,16 +268,23 @@ INSERT INTO account_roles (account_id, role_id) VALUES
 (4, 2),
 (5, 2),
 (6, 2),
-(7, 3),
-(8, 3),
-(9, 3),
-(10, 3);
+(7, 2),
+(8, 2),
+(9, 2),
+(10, 2);
 
 INSERT INTO permissions (name, description) VALUES
 ('ACCOUNT_CREATE', 'Tạo tài khoản'),
-('ACCOUNT_READ', 'Xem tài khoản'),
+('ACCOUNT_GET_ALL', 'Xem danh sách tài khoản'),
+('ACCOUNT_GET_BY_ID', 'Xem tài theo ID'),
+('ACCOUNT_GET_MY_INFO', 'Xem thông tin tài khoản cá nhân'),
 ('ACCOUNT_UPDATE', 'Cập nhật tài khoản'),
 ('ACCOUNT_DELETE', 'Xoá tài khoản');
+INSERT INTO permissions (name, description) VALUES
+('STREET_CREATE', 'Tạo khu phố ẩm thực mới'),
+('STREET_READ', 'Xem danh sách và chi tiết khu phố ẩm thực'),
+('STREET_UPDATE', 'Cập nhật thông tin khu phố ẩm thực'),
+('STREET_DELETE', 'Xóa khu phố ẩm thực khỏi hệ thống');
 INSERT INTO permissions (name, description) VALUES
 ('STALL_CREATE', 'Tạo gian hàng'),
 ('STALL_READ', 'Xem gian hàng'),
@@ -286,21 +292,8 @@ INSERT INTO permissions (name, description) VALUES
 ('STALL_DELETE', 'Xoá gian hàng');
 INSERT INTO permissions (name, description) VALUES
 ('FOOD_CREATE', 'Tạo món ăn'),
-('FOOD_READ', 'Xem món ăn'),
 ('FOOD_UPDATE', 'Cập nhật món ăn'),
 ('FOOD_DELETE', 'Xoá món ăn');
-INSERT INTO permissions (name, description) VALUES
-('ORDER_CREATE', 'Tạo đơn hàng'),
-('ORDER_READ', 'Xem đơn hàng'),
-('ORDER_UPDATE', 'Cập nhật đơn hàng'),
-('ORDER_DELETE', 'Xoá đơn hàng'),
-('ORDER_CONFIRM', 'Xác nhận đơn'),
-('ORDER_CANCEL', 'Huỷ đơn');
-INSERT INTO permissions (name, description) VALUES
-('PAYMENT_CREATE', 'Thanh toán'),
-('PAYMENT_READ', 'Xem thanh toán');
-INSERT INTO permissions (name, description) VALUES
-('REPORT_VIEW', 'Xem báo cáo');
 
 -- ADMIN full quyền
 INSERT INTO role_permissions (role_id, permission_id)
@@ -312,9 +305,16 @@ INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id
 FROM roles r
 JOIN permissions p ON p.name IN (
-    'STALL_CREATE','STALL_READ','STALL_UPDATE',
-    'FOOD_CREATE','FOOD_READ','FOOD_UPDATE','FOOD_DELETE',
-    'ORDER_READ','ORDER_CONFIRM','ORDER_CANCEL'
+    'ACCOUNT_GET_MY_INFO',
+    'ACCOUNT_UPDATE',
+    'STREET_READ',
+    'STALL_CREATE',
+    'STALL_READ',
+    'STALL_UPDATE',
+    'FOOD_CREATE',
+    'FOOD_READ',
+    'FOOD_UPDATE',
+    'FOOD_DELETE'
 )
 WHERE r.name = 'VENDOR';
 
@@ -327,7 +327,7 @@ VALUES
 (1, 3, 'Ốc Tô Vĩnh Khánh', 'SEAFOOD', 10.757700, 106.704200, 'https://mia.vn/media/uploads/blog-du-lich/quan-oc-quan-3-bac-1709211164.jpg'),
 (1, 4, 'Bò nướng ngói 154', 'BBQ', 10.757800, 106.704300, 'https://cdn.tgdd.vn/Files/2022/02/17/1415980/5-quan-bo-nuong-gia-re-diem-hen-am-thuc-de-la-ca-o-sai-gon-202202170818031663.jpg'),
 (1, 5, 'Hải sản 5 Rảnh', 'SEAFOOD', 10.757650, 106.704100, 'https://digiticket.vn/blog/wp-content/uploads/2021/05/quan-cat-ba-1024x768.jpg'),
-(1, 6, 'Phá lấu bò Cô Thảo', 'STREET_FOOD', 10.757900, 106.704250, 'https://static.vinwonders.com/2023/01/pha-lau-da-nang-0.jpg'),
+(1, 6, 'Phá lấu bò Cô Thảo', 'STREET_FOOD', 10.757900, 106.704250, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSECs6Ha2xU2DmCn72rjfgHR9oeSmRuSIitDQ&s'),
 (1, 2, 'Trà sữa Vĩnh Khánh', 'DRINK', 10.757500, 106.703900, 'https://caphenguyenchat.vn/wp-content/uploads/2019/11/nen-kinh-doanh-quan-tra-sua-hay-quan-cafe-1.jpg'),
 (1, 3, 'Bánh tráng nướng Đà Lạt', 'SNACK', 10.757850, 106.704400, 'https://pandafood.com.vn/wp-content/uploads/2024/09/banh-trang-nuong-phan-thiet-3.jpg'),
 (1, 4, 'Xiên que nướng 79', 'BBQ', 10.757720, 106.704180, 'https://mia.vn/media/uploads/blog-du-lich/thuong-thuc-xien-que-nuong-giua-cai-se-se-lanh-da-lat-10-1634547681.jpg'),
@@ -336,6 +336,24 @@ VALUES
 
 INSERT INTO stall_trigger_config (stall_id)
 SELECT id FROM stalls;
+
+-- 1. ỐC OANH VĨNH KHÁNH
+INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
+(2, 'vi', 'Ốc Oanh Vĩnh Khánh', 'Chào mừng bạn đến với Ốc Oanh - "huyền thoại" tại phố Vĩnh Khánh. Nếu bạn là tín đồ của hải sản tươi sống, đây là điểm dừng chân không thể bỏ qua. Món ăn nổi bật nhất tại đây chính là ốc hương xào bơ béo ngậy ăn kèm bánh mì nóng hổi. Không gian nhộn nhịp, tiếng xào nấu vang dội sẽ cho bạn cảm giác thực sự của một Sài Gòn không ngủ.', '/audio/ocoanhvinhkhanh_vi.mp3', 'COMPLETED'),
+(2, 'en-US', 'Oc Oanh Vinh Khanh', 'Welcome to Oc Oanh, a legend on Vinh Khanh Street. If you’re a seafood lover, this is a must-visit. Their signature dish is sautéed sweet snails in salted butter, perfectly paired with crispy bread. The vibrant atmosphere and the sizzling sounds from the kitchen capture the true essence of Saigon''s nightlife.', '/audio/ocoanhvinhkhanh_en-US.mp3', 'COMPLETED'),
+(2, 'zh', 'Oanh 螺店', '欢迎光临 Oanh 螺店 —— 永庆街上的美食传奇。如果你是海鲜爱好者，这里是必去之地。招牌菜是奶油炒甜螺，搭配香脆的面包简直绝配。喧闹的氛围和厨房的滋滋声，让你感受真正的西贡不夜城。', '/audio/ocoanhvinhkhanh_zh.mp3', 'COMPLETED');
+
+-- 2. QUÁN DÊ CHUNG
+INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
+(3, 'vi', 'Quán Dê Chung', 'Đổi vị với thịt dê tại Quán Dê Chung ngay đầu phố. Với kinh nghiệm lâu năm, thịt dê tại đây được khử mùi hoàn hảo, giữ được độ ngọt và mềm. Món lẩu dê với nước dùng thanh ngọt, đậm đà thảo mộc chính là linh hồn của quán, giúp bạn nạp đầy năng lượng sau một ngày dài.', '/audio/quandechung_vi.mp3', 'COMPLETED'),
+(3, 'en-US', 'De Chung Goat Restaurant', 'Change your palate with goat meat at De Chung, located right at the street entrance. With years of experience, the goat meat here is perfectly processed to remove odors while remaining sweet and tender. Their goat hotpot with herbal broth is the soul of the shop, perfect for recharging.', '/audio/quandechung_en-US.mp3', 'COMPLETED'),
+(3, 'zh', 'De Chung 羊肉店', '来到街口的 De Chung 羊肉店换换口味吧。凭着多年的经验，这里的羊肉处理得完全没有膻味，保持了鲜甜嫩滑。药膳汤底的羊肉火锅是这里的灵魂，非常适合在漫长的一天后补充能量。', '/audio/quandechung_zh.mp3', 'COMPLETED');
+
+-- 3. LÃNG QUÁN
+INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
+(1, 'vi', 'Lãng Quán', 'Lãng Quán mang đến phong cách ẩm thực đường phố hiện đại với các món nướng tại bàn. Điểm đặc biệt của quán là mở cửa đến tận 4 giờ sáng, phục vụ những "cú đêm" sành ăn. Đừng quên thử món răng mực nướng hoặc lườn vịt xông khói khi ghé qua đây nhé.', '/audio/langquan_vi.mp3', 'COMPLETED'),
+(1, 'en-US', 'Lang Quan', 'Lang Quan offers a modern street food style with tabletop grilling. The unique thing about this place is that it stays open until 4 AM, catering to late-night foodies. Don''t forget to try their grilled squid teeth or smoked duck breast when you visit.', '/audio/langquan_en-US.mp3', 'COMPLETED'),
+(1, 'zh', '浪馆 (Lang Quan)', '浪馆 (Lang Quan) 提供现代街头风格的桌上烧烤。这里的独特之处在于营业至凌晨 4 点，专门服务熬夜的美食家。光临此处时，别忘了尝尝烤鱿鱼嘴或烟熏鸭胸。', '/audio/langquan_zh.mp3', 'COMPLETED');
 
 INSERT INTO foods (stall_id, name, price, description, image)
 VALUES

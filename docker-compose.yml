@@ -1,0 +1,38 @@
+services:
+  # 1. MySQL: Lưu dữ liệu
+  mysql-db:
+    image: mysql:8.0
+    container_name: infra_mysql
+    environment:
+      # Cho phép mật khẩu rỗng
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_DATABASE: smart_food_street
+    ports:
+      - "3306:3306" # Giữ nguyên cổng 3307 theo ý bạn
+    volumes:
+      - mysql_infra_data:/var/lib/mysql
+
+  # 2. Redis: Cache
+  redis:
+    image: redis:alpine
+    container_name: infra_redis
+    ports:
+      - "6379:6379" # Mở cổng để Spring Boot kết nối vào
+
+  # 3. Ngrok: Tạo tunnel ra ngoài (để test mobile hoặc webhook)
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: infra_ngrok
+    # Quan trọng: Thêm dòng này để container nhận diện được IP của máy thật
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      NGROK_AUTHTOKEN: "3Bx5wmT2FnR0yLemtNUSeFIUrZf_33BQP8FbrRF5saEptxQJP"
+    command:
+      - "http"
+      - "host.docker.internal:5173"
+    ports:
+      - "4040:4040" # Để bạn có thể xem giao diện quản lý của Ngrok tại localhost:4040
+
+volumes:
+  mysql_infra_data:

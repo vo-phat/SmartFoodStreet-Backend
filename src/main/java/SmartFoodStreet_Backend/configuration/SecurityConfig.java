@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .accessDeniedHandler(new JwtAccessDeniedHandler()));
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
-        httpSecurity.cors();
+        httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         return httpSecurity.build();
     }
@@ -66,8 +66,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*");
-        config.addAllowedHeader("*");
+        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedHeaders(List.of("*"));
         config.addAllowedMethod("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

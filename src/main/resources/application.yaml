@@ -19,6 +19,14 @@ spring:
     time-zone: Asia/Ho_Chi_Minh
 
   # -----------------------
+  #   Set time zone
+  # -----------------------
+  data:
+    redis:
+      host: localhost # Trỏ về localhost vì Docker đã map port 6379:6379
+      port: 6379
+
+  # -----------------------
   #   Cloudinary
   # -----------------------
   servlet:
@@ -61,6 +69,9 @@ spring:
       api-key: ${GEMINI_API_KEY}
       base-url: https://api.openai.com
       enable: false
+    vectors tore:
+      jdbc:
+        initialize-schema: never
 
 # -----------------------
 # Server
