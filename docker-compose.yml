@@ -31,7 +31,8 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      NGROK_AUTHTOKEN: "3Bx5wmT2FnR0yLemtNUSeFIUrZf_33BQP8FbrRF5saEptxQJP"
+#      NGROK_AUTHTOKEN: "3Bx5wmT2FnR0yLemtNUSeFIUrZf_33BQP8FbrRF5saEptxQJP"
+      NGROK_AUTHTOKEN: "3CXTXaEDHP5RYsA456BMB8A1ISj_2NPK6Y9XET4kyEoQUWZhu"
     command:
       - "http"
       - "host.docker.internal:80"

@@ -319,24 +319,80 @@ VALUES
 INSERT INTO stall_trigger_config (stall_id)
 SELECT id FROM stalls;
 
--- 1. ỐC OANH VĨNH KHÁNH
-INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
-(2, 'vi', 'Ốc Oanh Vĩnh Khánh', 'Chào mừng bạn đến với Ốc Oanh - "huyền thoại" tại phố Vĩnh Khánh. Nếu bạn là tín đồ của hải sản tươi sống, đây là điểm dừng chân không thể bỏ qua. Món ăn nổi bật nhất tại đây chính là ốc hương xào bơ béo ngậy ăn kèm bánh mì nóng hổi. Không gian nhộn nhịp, tiếng xào nấu vang dội sẽ cho bạn cảm giác thực sự của một Sài Gòn không ngủ.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/ocoanhvinhkhanh_vi_a8irew.mp3', 'COMPLETED'),
-(2, 'en-US', 'Oc Oanh Vinh Khanh', 'Welcome to Oc Oanh, a legend on Vinh Khanh Street. If you’re a seafood lover, this is a must-visit. Their signature dish is sautéed sweet snails in salted butter, perfectly paired with crispy bread. The vibrant atmosphere and the sizzling sounds from the kitchen capture the true essence of Saigon''s nightlife.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/ocoanhvinhkhanh_en-US_h6qnss.mp3', 'COMPLETED'),
-(2, 'zh', 'Oanh 螺店', '欢迎光临 Oanh 螺店 —— 永庆街上的美食传奇。如果你是海鲜爱好者，这里是必去之地。招牌菜是奶油炒甜螺，搭配香脆的面包简直绝配。喧闹的氛围和厨房的滋滋声，让你感受真正的西贡不夜城。', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/ocoanhvinhkhanh_zh_tfe20k.mp3', 'COMPLETED');
--- 2. QUÁN DÊ CHUNG
-INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
-(3, 'vi', 'Quán Dê Chung', 'Đổi vị với thịt dê tại Quán Dê Chung ngay đầu phố. Với kinh nghiệm lâu năm, thịt dê tại đây được khử mùi hoàn hảo, giữ được độ ngọt và mềm. Món lẩu dê với nước dùng thanh ngọt, đậm đà thảo mộc chính là linh hồn của quán, giúp bạn nạp đầy năng lượng sau một ngày dài.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/quandechung_vi_mecets.mp3', 'COMPLETED'),
-(3, 'en-US', 'De Chung Goat Restaurant', 'Change your palate with goat meat at De Chung, located right at the street entrance. With years of experience, the goat meat here is perfectly processed to remove odors while remaining sweet and tender. Their goat hotpot with herbal broth is the soul of the shop, perfect for recharging.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/quandechung_en-US_u5zdk4.mp3', 'COMPLETED'),
-(3, 'zh', 'De Chung 羊肉店', '来到街口的 De Chung 羊肉店换换口味吧。凭着多年的经验，这里的羊肉处理得完全没有膻味，保持了鲜甜嫩滑。药膳汤底的羊肉火锅是这里的灵魂，非常适合在漫长的一天后补充能量。', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/quandechung_zh_tg6kq0.mp3', 'COMPLETED');
--- 3. LÃNG QUÁN
+-- 1. LÃNG QUÁN
 INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
 (1, 'vi', 'Lãng Quán', 'Lãng Quán mang đến phong cách ẩm thực đường phố hiện đại với các món nướng tại bàn. Điểm đặc biệt của quán là mở cửa đến tận 4 giờ sáng, phục vụ những "cú đêm" sành ăn. Đừng quên thử món răng mực nướng hoặc lườn vịt xông khói khi ghé qua đây nhé.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428646/langquan_vi_ke0fth.mp3', 'COMPLETED'),
 (1, 'en-US', 'Lang Quan', 'Lang Quan offers a modern street food style with tabletop grilling. The unique thing about this place is that it stays open until 4 AM, catering to late-night foodies. Don''t forget to try their grilled squid teeth or smoked duck breast when you visit.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428646/langquan_en-US_gmb4bz.mp3', 'COMPLETED'),
 (1, 'zh', '浪馆 (Lang Quan)', '浪馆 (Lang Quan) 提供现代街头风格的桌上烧烤。这里的独特之处在于营业至凌晨 4 点，专门服务熬夜的美食家。光临此处时，别忘了尝尝烤鱿鱼嘴或烟熏鸭胸。', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428646/langquan_zh_omxyzc.mp3', 'COMPLETED');
+-- 2. ỐC OANH VĨNH KHÁNH
+INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
+(2, 'vi', 'Ốc Oanh Vĩnh Khánh', 'Chào mừng bạn đến với Ốc Oanh - "huyền thoại" tại phố Vĩnh Khánh. Nếu bạn là tín đồ của hải sản tươi sống, đây là điểm dừng chân không thể bỏ qua. Món ăn nổi bật nhất tại đây chính là ốc hương xào bơ béo ngậy ăn kèm bánh mì nóng hổi. Không gian nhộn nhịp, tiếng xào nấu vang dội sẽ cho bạn cảm giác thực sự của một Sài Gòn không ngủ.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/ocoanhvinhkhanh_vi_a8irew.mp3', 'COMPLETED'),
+(2, 'en-US', 'Oc Oanh Vinh Khanh', 'Welcome to Oc Oanh, a legend on Vinh Khanh Street. If you’re a seafood lover, this is a must-visit. Their signature dish is sautéed sweet snails in salted butter, perfectly paired with crispy bread. The vibrant atmosphere and the sizzling sounds from the kitchen capture the true essence of Saigon''s nightlife.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/ocoanhvinhkhanh_en-US_h6qnss.mp3', 'COMPLETED'),
+(2, 'zh', 'Oanh 螺店', '欢迎光临 Oanh 螺店 —— 永庆街上的美食传奇。如果你是海鲜爱好者，这里是必去之地。招牌菜是奶油炒甜螺，搭配香脆的面包简直绝配。喧闹的氛围和厨房的滋滋声，让你感受真正的西贡不夜城。', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/ocoanhvinhkhanh_zh_tfe20k.mp3', 'COMPLETED');
+-- 3. QUÁN DÊ CHUNG
+INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
+(3, 'vi', 'Quán Dê Chung', 'Đổi vị với thịt dê tại Quán Dê Chung ngay đầu phố. Với kinh nghiệm lâu năm, thịt dê tại đây được khử mùi hoàn hảo, giữ được độ ngọt và mềm. Món lẩu dê với nước dùng thanh ngọt, đậm đà thảo mộc chính là linh hồn của quán, giúp bạn nạp đầy năng lượng sau một ngày dài.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/quandechung_vi_mecets.mp3', 'COMPLETED'),
+(3, 'en-US', 'De Chung Goat Restaurant', 'Change your palate with goat meat at De Chung, located right at the street entrance. With years of experience, the goat meat here is perfectly processed to remove odors while remaining sweet and tender. Their goat hotpot with herbal broth is the soul of the shop, perfect for recharging.', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/quandechung_en-US_u5zdk4.mp3', 'COMPLETED'),
+(3, 'zh', 'De Chung 羊肉店', '来到街口的 De Chung 羊肉店换换口味吧。凭着多年的经验，这里的羊肉处理得完全没有膻味，保持了鲜甜嫩滑。药膳汤底的羊肉火锅是这里的灵魂，非常适合在漫长的一天后补充能量。', 'https://res.cloudinary.com/dg8idf5y5/video/upload/v1776428647/quandechung_zh_tg6kq0.mp3', 'COMPLETED');
 
-INSERT INTO foods (stall_id, name, price, description, image)
-VALUES
+INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
+-- 4. BÒ NƯỚNG
+(3,'vi','Bò nướng ngói 154','Mùi thơm từ bếp nướng đang dẫn bạn đến với quán bò nướng ngói 154. Những miếng thịt bò được tẩm ướp kỹ lưỡng, nướng trên ngói nóng giữ trọn độ mềm và vị ngọt tự nhiên.
+Không gian ấm cúng, khói bếp lan tỏa và tiếng thịt nướng xèo xèo tạo nên một trải nghiệm ẩm thực đầy hấp dẫn. Nếu bạn yêu thích đồ nướng, đừng ngần ngại dừng lại và thử ngay','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448167/BoNuong_vi_fdcowp.mp3','COMPLETED'),
+(3,'en','Bo Nuong Ngoi 154','The smoky aroma leads you to Bo Nuong Ngoi 154. The beef is carefully marinated and grilled on hot tiles, preserving its tenderness and natural sweetness.
+With a cozy atmosphere, rising smoke, and sizzling sounds, this place offers a truly enjoyable barbecue experience. If you love grilled food, this is a stop worth trying','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448167/BoNuong_en_ebdbng.mp3','COMPLETED'),
+(3,'zh-CN','Bo Nuong','空气中弥漫的烤肉香味正引领你来到154号烤牛肉店。这里的牛肉经过精心腌制，在热瓦片上烤制，保持了肉质的鲜嫩和自然的甜味。
+烟火气十足的环境和滋滋作响的烤肉声，让人食欲大开。如果你喜欢烧烤，这里绝对值得一试','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448168/BoNuong_zh_lolula.mp3','COMPLETED'),
+
+-- 5. HẢI SẢN
+(4,'vi','Hải sản 5 Rảnh','Hải sản 5 Rảnh mang đến cho bạn cảm giác gần gũi như một bữa ăn gia đình giữa lòng phố. Hải sản ở đây luôn tươi, được chế biến đơn giản nhưng giữ trọn vị ngọt tự nhiên.
+Không quá ồn ào, không quá cầu kỳ, nhưng chính sự mộc mạc đó lại khiến nhiều người quay lại lần nữa','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448172/HaiSan5Ranh_vi_zugtcx.mp3','COMPLETED'),
+(4,'en','Hai San 5 Ranh','Hai San 5 Ranh offers a cozy, home-like dining experience in the middle of the busy street. The seafood is always fresh and simply prepared to preserve its natural sweetness.
+It may not be fancy, but its simplicity is exactly what keeps people coming back','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448171/HaiSan5Ranh_en_j919uo.mp3','COMPLETED'),
+(4,'zh-CN','Hai San','Hải sản 5 Rảnh带来一种温馨、像在家吃饭的感觉。这里的海鲜新鲜可口，烹饪方式简单，却保留了食材最自然的鲜甜。
+虽然不华丽，但正是这种朴实，让许多食客一次又一次地回到这里','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448172/HaiSan5Ranh_zh_ruhmkr.mp3','COMPLETED'),
+
+-- 6. PHÁ LẤU
+(5,'vi','Phá lấu bò Cô Thảo','Một mùi thơm béo ngậy đang lan tỏa – đó chính là phá lấu bò Cô Thảo. Món ăn mang đậm hương vị truyền thống với nước dùng sánh, béo và đậm đà.
+Cắn một miếng bánh mì giòn, chấm cùng nước phá lấu nóng hổi, bạn sẽ cảm nhận được sự hấp dẫn rất riêng của ẩm thực Sài Gòn.','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448176/PhaLauBo_vi_obsuzh.mp3','COMPLETED'),
+(5,'en','Pha Lau Co Thao','A rich, savory aroma fills the air – that’s Co Thao’s beef offal stew. This traditional dish features a thick, flavorful broth that is both creamy and satisfying.
+Pair it with crispy bread, and you’ll discover a uniquely comforting taste of Saigon street food','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448175/PhaLauBo_en_tezk1w.mp3','COMPLETED'),
+(5,'zh-CN','Pha Lau','一股浓郁的香气扑面而来，这就是Cô Thảo的牛杂炖菜。这道传统小吃以浓厚顺滑的汤汁和丰富的味道著称。
+搭配酥脆的面包一起食用，你会感受到独特而令人满足的西贡风味','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448176/PhaLauBo_zh_wz0eec.mp3','COMPLETED'),
+
+-- 7. TRÀ SỮA
+(6,'vi','Trà sữa Vĩnh Khánh','Nếu bạn cần một chút ngọt ngào để nghỉ chân, quán trà sữa Vĩnh Khánh là lựa chọn lý tưởng. Với thực đơn đa dạng và không gian thoải mái, nơi đây luôn là điểm hẹn quen thuộc của giới trẻ.
+Một ly trà mát lạnh giữa không khí náo nhiệt sẽ giúp bạn thư giãn trước khi tiếp tục hành trình khám phá','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448505/TraSua_vi_hqtxnq.mp3','COMPLETED'),
+(6,'en','Milk Tea Vinh Khanh','If you’re looking for a refreshing break, Vinh Khanh Milk Tea is the perfect stop. With a wide selection of drinks and a comfortable setting, it’s a favorite hangout for young people.
+A cool drink in the middle of the lively street can be just what you need to recharge','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448504/TraSua_en_wy2e6h.mp3','COMPLETED'),
+(6,'zh-CN','Milk Tea','如果你想稍作休息，来一杯清凉的饮品，永庆街的奶茶店是不错的选择。这里饮品种类丰富，环境轻松，是年轻人常来的聚会地点。
+在热闹的街头喝上一杯冰凉的奶茶，会让你瞬间放松下来','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448504/TraSua_zh_kqgofp.mp3','COMPLETED'),
+
+-- 8. BÁNH TRÁNG
+(7,'vi','Bánh tráng nướng Đà Lạt','Tiếng giòn tan của bánh tráng nướng đang mời gọi bạn dừng chân. Món ăn vặt này nổi bật với lớp bánh giòn rụm, kết hợp cùng trứng, phô mai và nhiều topping hấp dẫn.
+Đây là một trong những món ăn đường phố được yêu thích nhất, dễ ăn và đầy hương vị','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448166/BanhTrangNuong_vi_hsza9q.mp3','COMPLETED'),
+(7,'en','Grilled Rice Paper','The crispy sound of grilled rice paper invites you to stop and try. This popular street snack features a crunchy base topped with egg, cheese, and various flavorful ingredients.
+It’s simple, delicious, and loved by many','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448166/BanhTrangNuong_en_xo6dtt.mp3','COMPLETED'),
+(7,'zh-CN','Rice Paper','烤米纸发出的酥脆声音仿佛在邀请你停下来品尝。这种街头小吃以香脆的口感和丰富的配料而闻名，例如鸡蛋、芝士等。
+简单却美味，是许多人喜爱的经典小吃','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448166/BanhTrangNuong_zh_vgyuq0.mp3','COMPLETED'),
+
+-- 9. XIÊN QUE
+(8,'vi','Xiên que nướng 79','Mùi thơm của những xiên nướng đang lan tỏa khắp không gian. Tại đây, bạn có thể lựa chọn nhiều loại xiên hấp dẫn, từ thịt đến hải sản.
+Vừa cầm xiên nóng hổi, vừa trò chuyện cùng bạn bè, bạn sẽ cảm nhận rõ nét sự vui vẻ của ẩm thực đường phố','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448507/XienQueNuong_vi_zfqln3.mp3','COMPLETED'),
+(8,'en','Grilled Skewers 79','The aroma of grilled skewers fills the air. Here, you can choose from a variety of options, from meat to seafood.
+Holding a hot skewer while chatting with friends perfectly captures the joy of street dining','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448505/XienQueNuong_en_wu8cq4.mp3','COMPLETED'),
+(8,'zh-CN','Skewers','烤串的香味弥漫在空气中，让人忍不住停下脚步。这里提供多种选择，从肉类到海鲜应有尽有。
+一边吃着热腾腾的烤串，一边与朋友聊天，正是街头美食的乐趣所在','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448508/XienQueNuong_zh_en57fh.mp3','COMPLETED'),
+
+-- 10. CHÁO
+(9,'vi','Cháo hải sản đêm','Giữa không khí về đêm, một tô cháo nóng hổi sẽ mang lại cảm giác ấm áp. Cháo hải sản với vị ngọt tự nhiên từ tôm, mực là lựa chọn quen thuộc của nhiều người.
+Đây là món ăn nhẹ nhưng đầy dinh dưỡng, rất thích hợp để kết thúc một buổi tối khám phá ẩm thực.','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448169/ChaoHaiSan_vi_yhcel5.mp3','COMPLETED'),
+(9,'en','Seafood Porridge','On a cool evening, a warm bowl of seafood porridge can be incredibly comforting. With the natural sweetness of shrimp and squid, it’s a popular late-night choice.
+Light yet nourishing, it’s a perfect way to end your food journey','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448168/ChaoHaiSan_en_za8ffq.mp3','COMPLETED'),
+(9,'zh-CN','Porridge','在夜晚来一碗热腾腾的海鲜粥，会让人感到非常温暖。粥中融合了虾和鱿鱼的天然鲜甜，是许多人喜爱的宵夜选择。
+清淡却营养丰富，非常适合为一天的美食之旅画上句号','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448170/ChaoHaiSan_zh_tgk7ca.mp3','COMPLETED');
+
+INSERT INTO foods (stall_id, name, price, description, image) VALUES
 (1,'Ốc hương xào bơ tỏi',80000,'Ốc hương giòn sần sật quyện sốt bơ tỏi thơm lừng','https://cdn.tgdd.vn/Files/2021/08/25/1377750/cach-lam-oc-huong-xao-bo-toi-thom-ngon-dam-vi-an-la-ghien-202302231825082513.jpg'),
 (1,'Ốc len xào dừa',70000,'Ốc len tươi béo ngậy trong nước cốt dừa đậm đà','https://cdn.tgdd.vn/2022/03/CookDishThumb/2-cach-nau-oc-len-xao-don-gian-ngon-nhuc-nhoi-thumb-620x620.jpg'),
 (1,'Ốc móng tay xào rau muống',60000,'Ốc giòn ngọt xào cùng rau muống tỏi xanh mướt','https://cdn.tgdd.vn/Files/2020/02/20/1237599/cach-lam-oc-mong-tay-xao-rau-muong-gion-ngon-hap-dan-202002201439571176.jpg'),

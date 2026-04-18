@@ -188,7 +188,7 @@ public class QRCodeService implements IQRCode {
          throw new RuntimeException("Gian hàng hiện không hoạt động");
       }
 
-      return "/stall/" + stall.getId();
+      return "home/stall/" + stall.getId();
    }
 
    private boolean isDuplicateScan(String code, String ip) {
