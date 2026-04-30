@@ -222,7 +222,6 @@ INSERT INTO qr_codes (id, code, name, is_active, scan_count, created_at, updated
 VALUES (1, 'STREET_GATEWAY', 'Cổng Chào Dự Án', 1, 0, NOW(), NOW(), NULL);
 
 
-
 -- ******************************************** DATA ***********************************************************************
 INSERT INTO accounts (id, username, password, full_name, email)
 VALUES
@@ -311,13 +310,10 @@ VALUES
 (1, 5, 'Bò nướng ngói 154', 'BBQ', 10.757800, 106.704300, 'https://cdn.tgdd.vn/Files/2022/02/17/1415980/5-quan-bo-nuong-gia-re-diem-hen-am-thuc-de-la-ca-o-sai-gon-202202170818031663.jpg'),
 (1, 6, 'Hải sản 5 Rảnh', 'SEAFOOD', 10.757650, 106.704100, 'https://digiticket.vn/blog/wp-content/uploads/2021/05/quan-cat-ba-1024x768.jpg'),
 (1, 7, 'Phá lấu bò Cô Thảo', 'STREET_FOOD', 10.757900, 106.704250, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSECs6Ha2xU2DmCn72rjfgHR9oeSmRuSIitDQ&s'),
-(1, 8, 'Trà sữa Vĩnh Khánh', 'DRINK', 10.757500, 106.703900, 'https://caphenguyenchat.vn/wp-content/uploads/2019/11/nen-kinh-doanh-quan-tra-sua-hay-quan-cafe-1.jpg'),
+(1, 8, 'Trà sữa Vĩnh Khánh', 'DRINK', 10.757500, 106.703900, 'https://ipos.vn/wp-content/uploads/2025/08/cac-buoc-chuan-bi-quan-tra-sua-5.jpg'),
 (1, 9, 'Bánh tráng nướng Đà Lạt', 'SNACK', 10.757850, 106.704400, 'https://pandafood.com.vn/wp-content/uploads/2024/09/banh-trang-nuong-phan-thiet-3.jpg'),
 (1, 10, 'Xiên que nướng 79', 'BBQ', 10.757720, 106.704180, 'https://mia.vn/media/uploads/blog-du-lich/thuong-thuc-xien-que-nuong-giua-cai-se-se-lanh-da-lat-10-1634547681.jpg'),
 (1, 11, 'Cháo hải sản đêm', 'STREET_FOOD', 10.757630, 106.704050, 'https://vn1.vdrive.vn/haisancuabien.com/2022/01/Hai-San-Cua-Bien-Thuc-Don-41-Mon-Man-Chao-Hai-San.jpg');
-
-INSERT INTO stall_trigger_config (stall_id)
-SELECT id FROM stalls;
 
 -- 1. LÃNG QUÁN
 INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
@@ -337,59 +333,59 @@ INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio
 
 INSERT INTO stall_translations (stall_id, language_code, name, tts_script, audio_url, audio_status) VALUES
 -- 4. BÒ NƯỚNG
-(3,'vi','Bò nướng ngói 154','Mùi thơm từ bếp nướng đang dẫn bạn đến với quán bò nướng ngói 154. Những miếng thịt bò được tẩm ướp kỹ lưỡng, nướng trên ngói nóng giữ trọn độ mềm và vị ngọt tự nhiên.
+(4,'vi','Bò nướng ngói 154','Mùi thơm từ bếp nướng đang dẫn bạn đến với quán bò nướng ngói 154. Những miếng thịt bò được tẩm ướp kỹ lưỡng, nướng trên ngói nóng giữ trọn độ mềm và vị ngọt tự nhiên.
 Không gian ấm cúng, khói bếp lan tỏa và tiếng thịt nướng xèo xèo tạo nên một trải nghiệm ẩm thực đầy hấp dẫn. Nếu bạn yêu thích đồ nướng, đừng ngần ngại dừng lại và thử ngay','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448167/BoNuong_vi_fdcowp.mp3','COMPLETED'),
-(3,'en','Bo Nuong Ngoi 154','The smoky aroma leads you to Bo Nuong Ngoi 154. The beef is carefully marinated and grilled on hot tiles, preserving its tenderness and natural sweetness.
+(4,'en','Bo Nuong Ngoi 154','The smoky aroma leads you to Bo Nuong Ngoi 154. The beef is carefully marinated and grilled on hot tiles, preserving its tenderness and natural sweetness.
 With a cozy atmosphere, rising smoke, and sizzling sounds, this place offers a truly enjoyable barbecue experience. If you love grilled food, this is a stop worth trying','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448167/BoNuong_en_ebdbng.mp3','COMPLETED'),
-(3,'zh-CN','Bo Nuong','空气中弥漫的烤肉香味正引领你来到154号烤牛肉店。这里的牛肉经过精心腌制，在热瓦片上烤制，保持了肉质的鲜嫩和自然的甜味。
+(4,'zh-CN','Bo Nuong','空气中弥漫的烤肉香味正引领你来到154号烤牛肉店。这里的牛肉经过精心腌制，在热瓦片上烤制，保持了肉质的鲜嫩和自然的甜味。
 烟火气十足的环境和滋滋作响的烤肉声，让人食欲大开。如果你喜欢烧烤，这里绝对值得一试','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448168/BoNuong_zh_lolula.mp3','COMPLETED'),
 
 -- 5. HẢI SẢN
-(4,'vi','Hải sản 5 Rảnh','Hải sản 5 Rảnh mang đến cho bạn cảm giác gần gũi như một bữa ăn gia đình giữa lòng phố. Hải sản ở đây luôn tươi, được chế biến đơn giản nhưng giữ trọn vị ngọt tự nhiên.
+(5,'vi','Hải sản 5 Rảnh','Hải sản 5 Rảnh mang đến cho bạn cảm giác gần gũi như một bữa ăn gia đình giữa lòng phố. Hải sản ở đây luôn tươi, được chế biến đơn giản nhưng giữ trọn vị ngọt tự nhiên.
 Không quá ồn ào, không quá cầu kỳ, nhưng chính sự mộc mạc đó lại khiến nhiều người quay lại lần nữa','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448172/HaiSan5Ranh_vi_zugtcx.mp3','COMPLETED'),
-(4,'en','Hai San 5 Ranh','Hai San 5 Ranh offers a cozy, home-like dining experience in the middle of the busy street. The seafood is always fresh and simply prepared to preserve its natural sweetness.
+(5,'en','Hai San 5 Ranh','Hai San 5 Ranh offers a cozy, home-like dining experience in the middle of the busy street. The seafood is always fresh and simply prepared to preserve its natural sweetness.
 It may not be fancy, but its simplicity is exactly what keeps people coming back','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448171/HaiSan5Ranh_en_j919uo.mp3','COMPLETED'),
-(4,'zh-CN','Hai San','Hải sản 5 Rảnh带来一种温馨、像在家吃饭的感觉。这里的海鲜新鲜可口，烹饪方式简单，却保留了食材最自然的鲜甜。
+(5,'zh-CN','Hai San','Hải sản 5 Rảnh带来一种温馨、像在家吃饭的感觉。这里的海鲜新鲜可口，烹饪方式简单，却保留了食材最自然的鲜甜。
 虽然不华丽，但正是这种朴实，让许多食客一次又一次地回到这里','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448172/HaiSan5Ranh_zh_ruhmkr.mp3','COMPLETED'),
 
 -- 6. PHÁ LẤU
-(5,'vi','Phá lấu bò Cô Thảo','Một mùi thơm béo ngậy đang lan tỏa – đó chính là phá lấu bò Cô Thảo. Món ăn mang đậm hương vị truyền thống với nước dùng sánh, béo và đậm đà.
+(6,'vi','Phá lấu bò Cô Thảo','Một mùi thơm béo ngậy đang lan tỏa – đó chính là phá lấu bò Cô Thảo. Món ăn mang đậm hương vị truyền thống với nước dùng sánh, béo và đậm đà.
 Cắn một miếng bánh mì giòn, chấm cùng nước phá lấu nóng hổi, bạn sẽ cảm nhận được sự hấp dẫn rất riêng của ẩm thực Sài Gòn.','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448176/PhaLauBo_vi_obsuzh.mp3','COMPLETED'),
-(5,'en','Pha Lau Co Thao','A rich, savory aroma fills the air – that’s Co Thao’s beef offal stew. This traditional dish features a thick, flavorful broth that is both creamy and satisfying.
+(6,'en','Pha Lau Co Thao','A rich, savory aroma fills the air – that’s Co Thao’s beef offal stew. This traditional dish features a thick, flavorful broth that is both creamy and satisfying.
 Pair it with crispy bread, and you’ll discover a uniquely comforting taste of Saigon street food','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448175/PhaLauBo_en_tezk1w.mp3','COMPLETED'),
-(5,'zh-CN','Pha Lau','一股浓郁的香气扑面而来，这就是Cô Thảo的牛杂炖菜。这道传统小吃以浓厚顺滑的汤汁和丰富的味道著称。
+(6,'zh-CN','Pha Lau','一股浓郁的香气扑面而来，这就是Cô Thảo的牛杂炖菜。这道传统小吃以浓厚顺滑的汤汁和丰富的味道著称。
 搭配酥脆的面包一起食用，你会感受到独特而令人满足的西贡风味','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448176/PhaLauBo_zh_wz0eec.mp3','COMPLETED'),
 
 -- 7. TRÀ SỮA
-(6,'vi','Trà sữa Vĩnh Khánh','Nếu bạn cần một chút ngọt ngào để nghỉ chân, quán trà sữa Vĩnh Khánh là lựa chọn lý tưởng. Với thực đơn đa dạng và không gian thoải mái, nơi đây luôn là điểm hẹn quen thuộc của giới trẻ.
+(7,'vi','Trà sữa Vĩnh Khánh','Nếu bạn cần một chút ngọt ngào để nghỉ chân, quán trà sữa Vĩnh Khánh là lựa chọn lý tưởng. Với thực đơn đa dạng và không gian thoải mái, nơi đây luôn là điểm hẹn quen thuộc của giới trẻ.
 Một ly trà mát lạnh giữa không khí náo nhiệt sẽ giúp bạn thư giãn trước khi tiếp tục hành trình khám phá','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448505/TraSua_vi_hqtxnq.mp3','COMPLETED'),
-(6,'en','Milk Tea Vinh Khanh','If you’re looking for a refreshing break, Vinh Khanh Milk Tea is the perfect stop. With a wide selection of drinks and a comfortable setting, it’s a favorite hangout for young people.
+(7,'en','Milk Tea Vinh Khanh','If you’re looking for a refreshing break, Vinh Khanh Milk Tea is the perfect stop. With a wide selection of drinks and a comfortable setting, it’s a favorite hangout for young people.
 A cool drink in the middle of the lively street can be just what you need to recharge','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448504/TraSua_en_wy2e6h.mp3','COMPLETED'),
-(6,'zh-CN','Milk Tea','如果你想稍作休息，来一杯清凉的饮品，永庆街的奶茶店是不错的选择。这里饮品种类丰富，环境轻松，是年轻人常来的聚会地点。
+(7,'zh-CN','Milk Tea','如果你想稍作休息，来一杯清凉的饮品，永庆街的奶茶店是不错的选择。这里饮品种类丰富，环境轻松，是年轻人常来的聚会地点。
 在热闹的街头喝上一杯冰凉的奶茶，会让你瞬间放松下来','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448504/TraSua_zh_kqgofp.mp3','COMPLETED'),
 
 -- 8. BÁNH TRÁNG
-(7,'vi','Bánh tráng nướng Đà Lạt','Tiếng giòn tan của bánh tráng nướng đang mời gọi bạn dừng chân. Món ăn vặt này nổi bật với lớp bánh giòn rụm, kết hợp cùng trứng, phô mai và nhiều topping hấp dẫn.
+(8,'vi','Bánh tráng nướng Đà Lạt','Tiếng giòn tan của bánh tráng nướng đang mời gọi bạn dừng chân. Món ăn vặt này nổi bật với lớp bánh giòn rụm, kết hợp cùng trứng, phô mai và nhiều topping hấp dẫn.
 Đây là một trong những món ăn đường phố được yêu thích nhất, dễ ăn và đầy hương vị','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448166/BanhTrangNuong_vi_hsza9q.mp3','COMPLETED'),
-(7,'en','Grilled Rice Paper','The crispy sound of grilled rice paper invites you to stop and try. This popular street snack features a crunchy base topped with egg, cheese, and various flavorful ingredients.
+(8,'en','Grilled Rice Paper','The crispy sound of grilled rice paper invites you to stop and try. This popular street snack features a crunchy base topped with egg, cheese, and various flavorful ingredients.
 It’s simple, delicious, and loved by many','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448166/BanhTrangNuong_en_xo6dtt.mp3','COMPLETED'),
-(7,'zh-CN','Rice Paper','烤米纸发出的酥脆声音仿佛在邀请你停下来品尝。这种街头小吃以香脆的口感和丰富的配料而闻名，例如鸡蛋、芝士等。
+(8,'zh-CN','Rice Paper','烤米纸发出的酥脆声音仿佛在邀请你停下来品尝。这种街头小吃以香脆的口感和丰富的配料而闻名，例如鸡蛋、芝士等。
 简单却美味，是许多人喜爱的经典小吃','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448166/BanhTrangNuong_zh_vgyuq0.mp3','COMPLETED'),
 
 -- 9. XIÊN QUE
-(8,'vi','Xiên que nướng 79','Mùi thơm của những xiên nướng đang lan tỏa khắp không gian. Tại đây, bạn có thể lựa chọn nhiều loại xiên hấp dẫn, từ thịt đến hải sản.
+(9,'vi','Xiên que nướng 79','Mùi thơm của những xiên nướng đang lan tỏa khắp không gian. Tại đây, bạn có thể lựa chọn nhiều loại xiên hấp dẫn, từ thịt đến hải sản.
 Vừa cầm xiên nóng hổi, vừa trò chuyện cùng bạn bè, bạn sẽ cảm nhận rõ nét sự vui vẻ của ẩm thực đường phố','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448507/XienQueNuong_vi_zfqln3.mp3','COMPLETED'),
-(8,'en','Grilled Skewers 79','The aroma of grilled skewers fills the air. Here, you can choose from a variety of options, from meat to seafood.
+(9,'en','Grilled Skewers 79','The aroma of grilled skewers fills the air. Here, you can choose from a variety of options, from meat to seafood.
 Holding a hot skewer while chatting with friends perfectly captures the joy of street dining','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448505/XienQueNuong_en_wu8cq4.mp3','COMPLETED'),
-(8,'zh-CN','Skewers','烤串的香味弥漫在空气中，让人忍不住停下脚步。这里提供多种选择，从肉类到海鲜应有尽有。
+(9,'zh-CN','Skewers','烤串的香味弥漫在空气中，让人忍不住停下脚步。这里提供多种选择，从肉类到海鲜应有尽有。
 一边吃着热腾腾的烤串，一边与朋友聊天，正是街头美食的乐趣所在','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448508/XienQueNuong_zh_en57fh.mp3','COMPLETED'),
 
 -- 10. CHÁO
-(9,'vi','Cháo hải sản đêm','Giữa không khí về đêm, một tô cháo nóng hổi sẽ mang lại cảm giác ấm áp. Cháo hải sản với vị ngọt tự nhiên từ tôm, mực là lựa chọn quen thuộc của nhiều người.
+(10,'vi','Cháo hải sản đêm','Giữa không khí về đêm, một tô cháo nóng hổi sẽ mang lại cảm giác ấm áp. Cháo hải sản với vị ngọt tự nhiên từ tôm, mực là lựa chọn quen thuộc của nhiều người.
 Đây là món ăn nhẹ nhưng đầy dinh dưỡng, rất thích hợp để kết thúc một buổi tối khám phá ẩm thực.','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448169/ChaoHaiSan_vi_yhcel5.mp3','COMPLETED'),
-(9,'en','Seafood Porridge','On a cool evening, a warm bowl of seafood porridge can be incredibly comforting. With the natural sweetness of shrimp and squid, it’s a popular late-night choice.
+(10,'en','Seafood Porridge','On a cool evening, a warm bowl of seafood porridge can be incredibly comforting. With the natural sweetness of shrimp and squid, it’s a popular late-night choice.
 Light yet nourishing, it’s a perfect way to end your food journey','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448168/ChaoHaiSan_en_za8ffq.mp3','COMPLETED'),
-(9,'zh-CN','Porridge','在夜晚来一碗热腾腾的海鲜粥，会让人感到非常温暖。粥中融合了虾和鱿鱼的天然鲜甜，是许多人喜爱的宵夜选择。
+(10,'zh-CN','Porridge','在夜晚来一碗热腾腾的海鲜粥，会让人感到非常温暖。粥中融合了虾和鱿鱼的天然鲜甜，是许多人喜爱的宵夜选择。
 清淡却营养丰富，非常适合为一天的美食之旅画上句号','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448170/ChaoHaiSan_zh_tgk7ca.mp3','COMPLETED');
 
 INSERT INTO foods (stall_id, name, price, description, image) VALUES
@@ -448,3 +444,35 @@ INSERT INTO foods (stall_id, name, price, description, image) VALUES
 (9,'Cháo hải sản',45000,'Cháo hầm nhừ cùng tôm mực tươi, hành ngò thơm lừng','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHty4sCdcJSf1Ilxx62Vp9AQJDYb_Z3y-_Yg&s'),
 (9,'Cháo tôm',40000,'Cháo sánh mịn hầm cùng tôm tươi ngọt nước tự nhiên','https://daynauan.info.vn/wp-content/uploads/2015/11/Chao-tom.jpg'),
 (10,'Sò điệp nướng mỡ hành',100000,'Sò điệp tươi nướng mỡ hành đậu phộng thơm béo','https://cdn.tgdd.vn/2021/03/CookRecipe/GalleryStep/thanh-pham-179.jpg');
+
+-- Cập nhật tọa độ thực tế cho các quán dọc đường Vĩnh Khánh (Quận 4)
+-- Trục chính khoảng: Lat 10.757... | Lon 106.703... -> 106.704...
+UPDATE stalls SET latitude = 10.757950, longitude = 106.704350 WHERE id = 1; -- Lãng Quán
+UPDATE stalls SET latitude = 10.757650, longitude = 106.704050 WHERE id = 2; -- Ốc Oanh
+UPDATE stalls SET latitude = 10.757750, longitude = 106.704150 WHERE id = 3; -- Quán Dê Chung
+UPDATE stalls SET latitude = 10.757820, longitude = 106.704280 WHERE id = 4; -- Bò nướng ngói 154
+UPDATE stalls SET latitude = 10.757680, longitude = 106.704120 WHERE id = 5; -- Hải sản 5 Rảnh
+UPDATE stalls SET latitude = 10.757920, longitude = 106.704420 WHERE id = 6; -- Phá lấu Cô Thảo
+UPDATE stalls SET latitude = 10.757520, longitude = 106.703850 WHERE id = 7; -- Trà sữa Vĩnh Khánh
+UPDATE stalls SET latitude = 10.757880, longitude = 106.704500 WHERE id = 8; -- Bánh tráng nướng Đà Lạt
+UPDATE stalls SET latitude = 10.757720, longitude = 106.704220 WHERE id = 9; -- Xiên que nướng 79
+UPDATE stalls SET latitude = 10.757600, longitude = 106.703950 WHERE id = 10; -- Cháo hải sản đêm
+
+-- 2. Đổ dữ liệu cấu hình Geofence chi tiết
+-- Giải thích: 
+-- radius: Bán kính vòng tròn (m). Quán lớn để 35-40m, quán nhỏ/đồ ăn vặt để 20-25m.
+-- priority: Độ ưu tiên (1-5). Quán nổi tiếng ưu tiên cao hơn để ưu tiên phát audio trước.
+-- cooldown_seconds: Thời gian chờ (giây) trước khi phát lại audio của quán đó.
+
+INSERT INTO stall_trigger_config (stall_id, trigger_type, radius, trigger_distance, cooldown_seconds, priority)
+VALUES 
+(1, 'GEOFENCE', 40, 5, 10, 4), -- Lãng Quán (BBQ lớn, ưu tiên cao, cooldown lâu để tránh lặp)
+(2, 'GEOFENCE', 35, 4.5, 10, 5), -- Ốc Oanh (Rất nổi tiếng, ưu tiên cao nhất)
+(3, 'GEOFENCE', 30, 4, 10, 2), -- Quán Dê Chung
+(4, 'GEOFENCE', 30, 4, 10, 3), -- Bò nướng ngói 154
+(5, 'GEOFENCE', 30, 4, 10, 2), -- Hải sản 5 Rảnh
+(6, 'GEOFENCE', 20, 3, 10, 3), -- Phá lấu Cô Thảo (Quán nhỏ, vùng hẹp)
+(7, 'GEOFENCE', 20, 3, 10,  1), -- Trà sữa Vĩnh Khánh (Quán nhỏ)
+(8, 'GEOFENCE', 25, 3.5, 10, 2), -- Bánh tráng nướng Đà Lạt
+(9, 'GEOFENCE', 25, 3.5, 10, 1), -- Xiên que nướng 79
+(10, 'GEOFENCE', 30, 4, 10, 1); -- Cháo hải sản đêm
