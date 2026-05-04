@@ -23,13 +23,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINT = { "/auth/**", "/foods/**", "/streets/**", "/stalls/**",
-            "/stall-translations/**", "/stall-trigger-config/**", "/qr/**" };
+            "/stall-translations/**", "/stall-trigger-config/**", "/qr/**", "/ws-qr-code/**" };
 
     @Autowired
     CustomJwtDecoder customJwtDecoder;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.csrf(AbstractHttpConfigurer::disable);
+        httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
         httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(PUBLIC_ENDPOINT).permitAll()
 
                 .anyRequest().authenticated());
@@ -39,9 +42,6 @@ public class SecurityConfig {
 
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 .accessDeniedHandler(new JwtAccessDeniedHandler()));
-
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
-        httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         return httpSecurity.build();
     }

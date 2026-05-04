@@ -96,13 +96,14 @@ public class QRCodeController {
             @RequestParam(required = false) String sessionId,
             HttpServletRequest request,
             HttpServletResponse response) throws IOException {
+        System.out.println("====== ĐÃ VÀO CONTROLLER QUÉT MÃ: " + code + " ======");
 
         try {
             String targetUrl = qrCodeService.handleScan(code, request, sessionId);
-
             response.sendRedirect(targetUrl);
 
         } catch (Exception e) {
+            System.out.println("====== CÓ LỖI XẢY RA: " + e.getMessage() + " ======");
             String errorMessage = e.getMessage();
             String redirectUrl = "/error?message="
                     + URLEncoder.encode(errorMessage, StandardCharsets.UTF_8);

@@ -205,6 +205,9 @@ CREATE TABLE visit_events (
     year INT,
     FOREIGN KEY (stall_id) REFERENCES stalls(id) ON DELETE CASCADE
 );
+CREATE INDEX idx_visit_event_time ON visit_events(event_time);
+CREATE INDEX idx_visit_event_stall ON visit_events(stall_id);
+CREATE INDEX idx_visit_event_type ON visit_events(event_type);
 
 CREATE TABLE `qr_codes` (
   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -220,6 +223,22 @@ CREATE TABLE `qr_codes` (
 
 INSERT INTO qr_codes (id, code, name, is_active, scan_count, created_at, updated_at, stall_id)
 VALUES (1, 'STREET_GATEWAY', 'Cổng Chào Dự Án', 1, 0, NOW(), NOW(), NULL);
+
+-- =========================
+-- ANALYTICS DAILY
+-- =========================
+CREATE TABLE analytics_daily (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    date DATE NOT NULL,
+    stall_id BIGINT,
+    total_visits INT DEFAULT 0,
+    total_audio_plays INT DEFAULT 0,
+    UNIQUE(date, stall_id),
+    FOREIGN KEY (stall_id) REFERENCES stalls(id) ON DELETE CASCADE
+);
+-- INDEX tối ưu query
+CREATE INDEX idx_analytics_date ON analytics_daily(date);
+CREATE INDEX idx_analytics_stall ON analytics_daily(stall_id);
 
 
 -- ******************************************** DATA ***********************************************************************
