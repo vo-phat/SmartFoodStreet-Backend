@@ -42,6 +42,11 @@ public class FoodService implements IFood {
     }
 
     @Override
+    public List<FoodResponse> getByStall(Long stallId, String lang) {
+        return List.of();
+    }
+
+    @Override
     public List<FoodResponse> getByStall(Long stallId) {
         return repository.findByStallId(stallId)
                 .stream()

@@ -9,6 +9,8 @@ public interface IFood {
 
     FoodResponse create(FoodRequest request);
 
+    List<FoodResponse> getByStall(Long stallId, String lang);
+
     List<FoodResponse> getByStall(Long stallId);
 
     List<FoodResponse> getAll();

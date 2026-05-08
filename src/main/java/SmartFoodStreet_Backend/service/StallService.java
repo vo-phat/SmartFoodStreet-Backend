@@ -56,8 +56,21 @@ public class StallService implements IStall {
     }
 
     @Override
-    public StallResponse getById(Long id) {
-        return map(find(id));
+    public StallResponse getById(Long id, String lang) {
+        Stall stall = find(id);
+
+        StallResponse response = map(stall);
+
+        if (!lang.equals("vi")) {
+            String translatedScript =
+                    stallTranslationService.translate(stall.getId(), lang);
+
+            if (translatedScript != null) {
+                response.setScript(translatedScript);
+            }
+        }
+
+        return response;
     }
 
     @Override

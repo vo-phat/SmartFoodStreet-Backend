@@ -23,4 +23,6 @@ public interface IStallTranslation {
     void saveOrUpdate(Long stallId, String lang, String script);
  
     void deleteAllByStall(Long stallId);
- }
+
+    String translate(Long id, String lang);
+}

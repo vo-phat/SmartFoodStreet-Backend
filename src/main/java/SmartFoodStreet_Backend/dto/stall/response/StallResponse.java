@@ -26,4 +26,7 @@ public class StallResponse {
     Boolean isActive;
     
     Integer radius;
+
+    public void setScript(String translatedScript) {
+    }
 }

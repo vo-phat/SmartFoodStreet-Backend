@@ -25,9 +25,12 @@ public class FoodController {
     }
 
     @GetMapping("/stall/{stallId}")
-    public ApiResponse<List<FoodResponse>> getByStall(@PathVariable Long stallId) {
+    public ApiResponse<List<FoodResponse>> getByStall(
+            @PathVariable Long stallId,
+            @RequestParam(defaultValue = "vi") String lang
+    ) {
         return ApiResponse.<List<FoodResponse>>builder()
-                .result(foodService.getByStall(stallId))
+                .result(foodService.getByStall(stallId, lang))
                 .build();
     }
 

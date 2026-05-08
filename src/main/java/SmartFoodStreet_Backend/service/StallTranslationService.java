@@ -208,4 +208,9 @@ public class StallTranslationService implements IStallTranslation {
     public void deleteAllByStall(Long stallId) {
         repository.deleteByStallId(stallId);
     }
+
+    @Override
+    public String translate(Long id, String lang) {
+        return "";
+    }
 }

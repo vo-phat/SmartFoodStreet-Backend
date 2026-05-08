@@ -30,9 +30,12 @@ public class StallController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<StallResponse> getById(@PathVariable Long id) {
+    public ApiResponse<StallResponse> getById(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "vi") String lang
+    ) {
         return ApiResponse.<StallResponse>builder()
-                .result(stallService.getById(id))
+                .result(stallService.getById(id, lang))
                 .build();
     }
 

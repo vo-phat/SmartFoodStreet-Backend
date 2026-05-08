@@ -9,7 +9,7 @@ public interface IStall {
 
     StallResponse create(StallCreateRequest request);
 
-    StallResponse getById(Long id);
+    StallResponse getById(Long id, String lang);
 
     List<StallResponse> getByStreet(Long streetId);
 
