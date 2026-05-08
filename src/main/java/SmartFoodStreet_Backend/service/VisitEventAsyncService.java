@@ -10,14 +10,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class VisitEventAsyncService {
 
-   private final VisitEventRepository visitEventRepository;
+    private final VisitEventRepository visitEventRepository;
 
-   // @Async("qrExecutor")
-   public void logEventAsync(VisitEvent event) {
-      try {
-         visitEventRepository.save(event);
-      } catch (Exception e) {
-         System.out.println("Lỗi log Event: " + e.getMessage());
-      }
-   }
+    @Async
+    public void logEventAsync(VisitEvent event) {
+        visitEventRepository.save(event);
+    }
 }

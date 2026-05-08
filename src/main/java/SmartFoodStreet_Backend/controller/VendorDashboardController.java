@@ -2,15 +2,15 @@ package SmartFoodStreet_Backend.controller;
 
 import SmartFoodStreet_Backend.common.response.ApiResponse;
 import SmartFoodStreet_Backend.entity.VisitEvent;
+import SmartFoodStreet_Backend.enums.VisitEventType;
 import SmartFoodStreet_Backend.repository.VisitEventRepository;
+import SmartFoodStreet_Backend.service.AnalyticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @RestController
 @RequestMapping("/vendor/dashboard")
@@ -18,43 +18,140 @@ import java.util.stream.Collectors;
 @CrossOrigin("*")
 public class VendorDashboardController {
 
-    private final VisitEventRepository visitEventRepository;
+    private final VisitEventRepository
+            visitEventRepository;
+
+    private final AnalyticsService
+            analyticsService;
+
+    // =====================================================
+    // VENDOR STATS
+    // =====================================================
 
     @GetMapping("/stats/{stallId}")
     public ApiResponse<Map<String, Object>> getStats(
             @PathVariable Long stallId,
-            @RequestParam(defaultValue = "7") int days) {
-        
-        System.out.println("Vendor Analytics Request received for stallId: " + stallId);
+            @RequestParam(defaultValue = "7") int days
+    ) {
 
-        LocalDateTime end = LocalDateTime.now();
-        LocalDateTime start = end.minusDays(days);
+        LocalDateTime end =
+                LocalDateTime.now();
 
-        Map<String, Object> stats = new HashMap<>();
+        LocalDateTime start =
+                end.minusDays(days);
 
-        // Total Visits (Enter Geofence)
-        stats.put("totalVisits", visitEventRepository.countByStallAndTypeBetween(
-                stallId, VisitEvent.EventType.ENTER_GEOFENCE, start, end));
+        Map<String, Object> stats =
+                new HashMap<>();
 
-        // Audio Completes
-        stats.put("audioCompletes", visitEventRepository.countByStallAndTypeBetween(
-                stallId, VisitEvent.EventType.AUDIO_COMPLETE, start, end));
+        // =====================================================
+        // total qr scans
+        // =====================================================
 
-        // QR Scans
-        stats.put("qrScans", visitEventRepository.countByStallAndTypeBetween(
-                stallId, VisitEvent.EventType.QR_SCAN, start, end));
+        Long qrScans =
+                visitEventRepository.countByStallIdAndEventTypeAndCreatedAtBetween(
+                        stallId,
+                        VisitEventType.STALL_QR_SCAN,
+                        start,
+                        end
+                );
 
-        // Daily visits for chart
-        List<Object[]> dailyData = visitEventRepository.findDailyVisitsByStall(stallId, start, end);
-        stats.put("dailyVisits", dailyData.stream().map(d -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("day", d[0]);
-            map.put("count", d[1]);
-            return map;
-        }).collect(Collectors.toList()));
+        stats.put(
+                "qrScans",
+                qrScans
+        );
 
-        return ApiResponse.<Map<String, Object>>builder()
+        // =====================================================
+        // audio plays
+        // =====================================================
+
+        Long audioPlays =
+                visitEventRepository.countByStallIdAndEventTypeAndCreatedAtBetween(
+                        stallId,
+                        VisitEventType.AUDIO_PLAY,
+                        start,
+                        end
+                );
+
+        stats.put(
+                "audioPlays",
+                audioPlays
+        );
+
+        // =====================================================
+        // realtime audio counter
+        // =====================================================
+
+        stats.put(
+                "realtimeAudio",
+                analyticsService.getAudio(
+                        stallId
+                )
+        );
+
+        // =====================================================
+        // daily audio chart
+        // =====================================================
+
+        List<Map<String, Object>> chart =
+                new ArrayList<>();
+
+        LocalDate current =
+                start.toLocalDate();
+
+        while (
+                !current.isAfter(
+                        end.toLocalDate()
+                )
+        ) {
+
+            LocalDateTime dayStart =
+                    current.atStartOfDay();
+
+            LocalDateTime dayEnd =
+                    current.atTime(
+                            23,
+                            59,
+                            59
+                    );
+
+            Long count =
+                    visitEventRepository
+                            .countByStallIdAndEventTypeAndCreatedAtBetween(
+                                    stallId,
+                                    VisitEventType.AUDIO_PLAY,
+                                    dayStart,
+                                    dayEnd
+                            );
+
+            Map<String, Object> item =
+                    new HashMap<>();
+
+            item.put(
+                    "date",
+                    current.toString()
+            );
+
+            item.put(
+                    "audioCount",
+                    count
+            );
+
+            chart.add(item);
+
+            current =
+                    current.plusDays(1);
+        }
+
+        stats.put(
+                "audioChart",
+                chart
+        );
+
+        return ApiResponse
+                .<Map<String, Object>>builder()
+
                 .result(stats)
+
                 .build();
     }
 }

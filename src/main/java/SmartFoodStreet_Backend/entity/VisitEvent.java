@@ -1,5 +1,6 @@
 package SmartFoodStreet_Backend.entity;
 
+import SmartFoodStreet_Backend.enums.VisitEventType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,53 +14,20 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class VisitEvent {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
-    @Column(name = "session_id")
-    Long sessionId;
+    @Column(name = "device_id", nullable = false)
+    private String deviceId;
 
     @Column(name = "stall_id")
-    Long stallId;
+    private Long stallId;
 
     @Enumerated(EnumType.STRING)
-    EventType eventType;
+    @Column(name = "event_type", nullable = false)
+    private VisitEventType eventType;
 
-    @Column(name = "event_time")
-    LocalDateTime eventTime;
-
-    @Column(name = "qr_code")
-    String qrCode;
-
-    @Column(name = "ip_address")
-    String ipAddress;
-
-    @Column(name = "user_agent")
-    String userAgent;
-
-    @Column(name = "hour")
-    Integer hour;
-
-    @Column(name = "day")
-    Integer day;
-
-    @Column(name = "month")
-    Integer month;
-
-    @Column(name = "year")
-    Integer year;
-
-    public enum EventType {
-        ENTER_GEOFENCE,
-        EXIT_GEOFENCE,
-        AUDIO_START,
-        AUDIO_COMPLETE,
-        QR_SCAN,
-        VIEW_DETAIL,
-        VOUCHER_GENERATED,
-        VOUCHER_REDEEMED,
-        WEBSITE_VISIT
-    }
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }

@@ -15,16 +15,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DashboardController {
 
-    private final VisitEventRepository visitEventRepository;
-
-    @GetMapping("/stats")
-    public ApiResponse<Map<String, Object>> getStats() {
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("totalVisits", visitEventRepository.countTotalVisits());
-        stats.put("uniqueVisitors", visitEventRepository.countUniqueVisitors());
-        
-        return ApiResponse.<Map<String, Object>>builder()
-                .result(stats)
-                .build();
-    }
+//    private final VisitEventRepository visitEventRepository;
+//
+//    @GetMapping("/stats")
+//    public ApiResponse<Map<String, Object>> getStats() {
+//        Map<String, Object> stats = new HashMap<>();
+//        stats.put("totalVisits", visitEventRepository.countTotalVisits());
+//        stats.put("uniqueVisitors", visitEventRepository.countUniqueVisitors());
+//
+//        return ApiResponse.<Map<String, Object>>builder()
+//                .result(stats)
+//                .build();
+//    }
 }

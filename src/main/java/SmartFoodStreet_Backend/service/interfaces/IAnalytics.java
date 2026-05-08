@@ -5,52 +5,45 @@ import java.util.Map;
 public interface IAnalytics {
 
     /**
-     * Tăng lượt truy cập toàn hệ thống (gateway / homepage)
-     * Đồng thời track session online
+     * Track user truy cập web
+     * - total visits
+     * - online users
+     * - unique users
      */
-    void increaseVisit(String sessionId);
+    void increaseVisit(String sessionId, String ipAddress);
 
     /**
-     * Tăng lượt nghe audio của 1 stall
+     * Track audio play theo stall
      */
-    void increaseAudio(Long stallId);
-
     void increaseAudio(Long stallId, String sessionId);
 
     /**
-     * Tăng lượt ghé thăm 1 stall (enter geofence / scan QR)
+     * User disconnect / offline
      */
-    void increaseStallVisit(Long stallId);
+    void removeSession(String sessionId);
 
     /**
-     * Lấy số user đang online (unique session)
-     */
-    long getOnlineUsers();
-
-    /**
-     * Lấy thống kê realtime tổng quan (dashboard header)
-     * gồm:
-     * - totalVisits
-     * - gatewayVisits
-     * - onlineUsers
+     * Tổng quan realtime dashboard
      */
     Map<String, Object> getRealtimeStats();
 
     /**
-     * Lấy thống kê audio theo từng stall
-     * key = stallId, value = số lượt nghe
+     * Audio realtime theo stall
      */
     Map<Long, Integer> getAudioStats();
 
     /**
-     * (NEW - nên có) Lấy thống kê visit theo từng stall
-     * dùng cho biểu đồ heatmap / ranking
+     * Tổng visit realtime theo stall
      */
     Map<Long, Integer> getStallVisitStats();
 
     /**
-     * (NEW - production) remove session khi user disconnect
-     * tránh online user bị ảo
+     * Online users realtime
      */
-    void removeSession(String sessionId);
+    long getOnlineUsers();
+
+    /**
+     * Unique visitors realtime
+     */
+    long getUniqueVisitors();
 }

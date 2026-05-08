@@ -1,146 +1,106 @@
 package SmartFoodStreet_Backend.service;
 
-import SmartFoodStreet_Backend.service.interfaces.IAnalytics;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.Cursor;
-import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.util.*;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
-public class AnalyticsService implements IAnalytics {
+public class AnalyticsService {
 
     private final StringRedisTemplate redis;
 
-    // ===== KEY CHUẨN =====
-    private static final String WEB_TOTAL = "analytics:web:total";
-    private static final String WEB_UNIQUE = "analytics:web:unique";
+    // =====================================================
+    // redis keys
+    // =====================================================
 
-    private static final String GATEWAY_TOTAL = "analytics:gateway:total";
+    private static final String TOTAL_QR =
+            "analytics:total_qr";
 
-    // =====================
+    // =====================================================
+    // total qr
+    // =====================================================
 
-    @Override
-    public void increaseVisit(String sessionId) {
+    public void increaseTotalQr() {
 
-        // 1. Tổng toàn hệ thống
-        redis.opsForValue().increment(WEB_TOTAL);
-
-        // 2. Gateway (homepage / QR gateway)
-        redis.opsForValue().increment(GATEWAY_TOTAL);
-
-        // 3. Online user REAL (TTL-based)
-        if (sessionId != null && !sessionId.isBlank()) {
-            redis.opsForValue().set(
-                    "session:" + sessionId,
-                    "1",
-                    Duration.ofMinutes(5) // 🔥 auto expire
-            );
-        }
+        redis.opsForValue()
+                .increment(TOTAL_QR);
     }
 
-    @Override
-    public void increaseAudio(Long stallId) {
+    public Long getTotalQr() {
 
+        String value =
+                redis.opsForValue()
+                        .get(TOTAL_QR);
+
+        return value == null
+                ? 0L
+                : Long.valueOf(value);
     }
 
-    @Override
-    public void increaseAudio(Long stallId, String sessionId) {
-        String key = "analytics:stall:" + stallId + ":audio";
-        String uniqueKey = key + ":unique";
+    // =====================================================
+    // unique visitors
+    // =====================================================
 
-        redis.opsForValue().increment(key);
+    public void addUniqueHomeVisitor(
+            String deviceId
+    ) {
 
-        if (sessionId != null) {
-            redis.opsForSet().add(uniqueKey, sessionId);
-        }
+        String key =
+                "analytics:home_unique:"
+                        + LocalDate.now();
+
+        redis.opsForSet()
+                .add(key, deviceId);
     }
 
-    @Override
-    public void increaseStallVisit(Long stallId) {
-        redis.opsForValue().increment("analytics:stall:" + stallId + ":visits");
+    public Long getUniqueHomeVisitors() {
+
+        String key =
+                "analytics:home_unique:"
+                        + LocalDate.now();
+
+        Long size =
+                redis.opsForSet()
+                        .size(key);
+
+        return size == null
+                ? 0L
+                : size;
     }
 
-    @Override
-    public long getOnlineUsers() {
-//        Long size = redis.opsForSet().size(WEB_UNIQUE);
-//        return size != null ? size : 0;
-        return scanKeys("session:*").size();
+    // =====================================================
+    // audio
+    // =====================================================
+
+    public void increaseAudio(
+            Long stallId
+    ) {
+
+        redis.opsForValue()
+                .increment(
+                        "analytics:stall:"
+                                + stallId
+                                + ":audio"
+                );
     }
 
-    @Override
-    public Map<String, Object> getRealtimeStats() {
-        Map<String, Object> map = new HashMap<>();
+    public Long getAudio(
+            Long stallId
+    ) {
 
-        map.put("totalVisits", getInt(WEB_TOTAL));
-        map.put("gatewayVisits", getInt(GATEWAY_TOTAL));
-        map.put("onlineUsers", getOnlineUsers());
+        String value =
+                redis.opsForValue()
+                        .get(
+                                "analytics:stall:"
+                                        + stallId
+                                        + ":audio"
+                        );
 
-        return map;
-    }
-
-    @Override
-    public Map<Long, Integer> getAudioStats() {
-
-        Map<Long, Integer> result = new LinkedHashMap<>();
-
-        Set<String> keys = scanKeys("analytics:stall:*:audio");
-
-        for (String key : keys) {
-            Long stallId = extractStallId(key);
-            int value = getInt(key);
-            result.put(stallId, value);
-        }
-
-        return result;
-    }
-
-    @Override
-    public Map<Long, Integer> getStallVisitStats() {
-        return Map.of();
-    }
-
-    @Override
-    public void removeSession(String sessionId) {
-
-    }
-
-    // ===== HELPER =====
-
-    private int getInt(String key) {
-        String val = redis.opsForValue().get(key);
-        return val != null ? Integer.parseInt(val) : 0;
-    }
-
-    private Long extractStallId(String key) {
-        try {
-            return Long.parseLong(key.split(":")[2]);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private Set<String> scanKeys(String pattern) {
-        Set<String> keys = new HashSet<>();
-
-        ScanOptions options = ScanOptions.scanOptions()
-                .match(pattern)
-                .count(100)
-                .build();
-
-        redis.execute((RedisCallback<Void>) conn -> {
-            Cursor<byte[]> cursor = conn.scan(options);
-            while (cursor.hasNext()) {
-                keys.add(new String(cursor.next()));
-            }
-            return null;
-        });
-
-        return keys;
+        return value == null
+                ? 0L
+                : Long.valueOf(value);
     }
 }

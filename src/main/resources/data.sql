@@ -180,34 +180,21 @@ CREATE TABLE foods (
 -- =========================
 -- VISIT EVENTS
 -- =========================
--- Log các sự kiện trong session:
--- vào vùng, ra vùng, bắt đầu audio, kết thúc audio
+-- Lưu các sự kiện analytics:
+-- quét QR home, quét QR stall, nghe audio
 CREATE TABLE visit_events (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    session_id BIGINT,
-    stall_id BIGINT,
-    event_type ENUM(
-        'ENTER_GEOFENCE',
-        'EXIT_GEOFENCE',
-        'AUDIO_START',
-        'AUDIO_COMPLETE',
-        'QR_SCAN',
-        'VIEW_DETAIL',
-        'WEBSITE_VISIT'
-    ),
-    event_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-    qr_code VARCHAR(255),
-    ip_address VARCHAR(45),
-    user_agent TEXT,
-    hour INT,
-    day INT,
-    month INT,
-    year INT,
-    FOREIGN KEY (stall_id) REFERENCES stalls(id) ON DELETE CASCADE
+   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+   device_id CHAR(36) NOT NULL,
+   stall_id BIGINT NULL,
+   event_type ENUM('HOME_QR_SCAN', 'STALL_QR_SCAN', 'AUDIO_PLAY') NOT NULL,
+   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   FOREIGN KEY (stall_id) REFERENCES stalls(id) ON DELETE CASCADE
 );
-CREATE INDEX idx_visit_event_time ON visit_events(event_time);
-CREATE INDEX idx_visit_event_stall ON visit_events(stall_id);
 CREATE INDEX idx_visit_event_type ON visit_events(event_type);
+CREATE INDEX idx_visit_event_created_at ON visit_events(created_at);
+CREATE INDEX idx_visit_event_stall ON visit_events(stall_id);
+CREATE INDEX idx_visit_event_device ON visit_events(device_id);
+CREATE INDEX idx_visit_event_stall_type ON visit_events(stall_id, event_type);
 
 CREATE TABLE `qr_codes` (
   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -223,22 +210,6 @@ CREATE TABLE `qr_codes` (
 
 INSERT INTO qr_codes (id, code, name, is_active, scan_count, created_at, updated_at, stall_id)
 VALUES (1, 'STREET_GATEWAY', 'Cổng Chào Dự Án', 1, 0, NOW(), NOW(), NULL);
-
--- =========================
--- ANALYTICS DAILY
--- =========================
-CREATE TABLE analytics_daily (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    date DATE NOT NULL,
-    stall_id BIGINT,
-    total_visits INT DEFAULT 0,
-    total_audio_plays INT DEFAULT 0,
-    UNIQUE(date, stall_id),
-    FOREIGN KEY (stall_id) REFERENCES stalls(id) ON DELETE CASCADE
-);
--- INDEX tối ưu query
-CREATE INDEX idx_analytics_date ON analytics_daily(date);
-CREATE INDEX idx_analytics_stall ON analytics_daily(stall_id);
 
 
 -- ******************************************** DATA ***********************************************************************

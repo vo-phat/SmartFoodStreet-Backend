@@ -1,7 +1,5 @@
 package SmartFoodStreet_Backend.configuration;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,12 +16,14 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINT = { "/auth/**", "/foods/**", "/streets/**", "/stalls/**",
-            "/stall-translations/**", "/stall-trigger-config/**", "/qr/**", "/ws-qr-code/**" };
+    private final String[] PUBLIC_ENDPOINT = {"/auth/**", "/foods/**", "/streets/**", "/stalls/**",
+            "/stall-translations/**", "/stall-trigger-config/**"};
 
     @Autowired
     CustomJwtDecoder customJwtDecoder;
@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
-                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
 
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 .accessDeniedHandler(new JwtAccessDeniedHandler()));

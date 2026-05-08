@@ -7,6 +7,7 @@ import SmartFoodStreet_Backend.dto.qrcode.QRCodeResponse;
 import SmartFoodStreet_Backend.entity.QRCode;
 import SmartFoodStreet_Backend.entity.Stall;
 import SmartFoodStreet_Backend.entity.VisitEvent;
+import SmartFoodStreet_Backend.enums.VisitEventType;
 import SmartFoodStreet_Backend.mapper.QRCodeMapper;
 import SmartFoodStreet_Backend.repository.QRCodeRepository;
 import SmartFoodStreet_Backend.repository.StallRepository;
@@ -15,7 +16,6 @@ import SmartFoodStreet_Backend.service.interfaces.IQRCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,233 +26,428 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class QRCodeService implements IQRCode {
+
     private final AnalyticsService analyticsService;
+
     private final QRCodeRepository qrCodeRepository;
+
     private final VisitEventRepository visitEventRepository;
+
     private final VisitEventAsyncService visitEventAsyncService;
+
     private final StallRepository stallRepository;
+
     private final QRCodeMapper qrCodeMapper;
-    private final RedisTemplate<String, String> redis;
+
+    private final AnalyticsRealtimeService analyticsRealtimeService;
 
     @Override
     @Transactional
     public QRCodeResponse create(QRCodeCreateRequest request) {
+
         String code = request.getCode();
+
         if (code == null || code.isBlank()) {
             code = java.util.UUID.randomUUID().toString();
         }
 
         if (qrCodeRepository.findByCode(code).isPresent()) {
-            throw new RuntimeException("Mã QR code đã tồn tại");
+            throw new RuntimeException(
+                    "Mã QR code đã tồn tại"
+            );
         }
 
         Stall stall = null;
+
         if (request.getStallId() != null) {
-            if (qrCodeRepository.findByStallId(request.getStallId()).isPresent()) {
-                throw new RuntimeException("Gian hàng này đã có mã QR code. Mỗi gian hàng chỉ được có 1 mã duy nhất.");
+
+            if (
+                    qrCodeRepository
+                            .findByStallId(
+                                    request.getStallId()
+                            )
+                            .isPresent()
+            ) {
+
+                throw new RuntimeException(
+                        "Gian hàng này đã có mã QR code"
+                );
             }
-            stall = stallRepository.findById(request.getStallId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy gian hàng"));
+
+            stall = stallRepository
+                    .findById(request.getStallId())
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "Không tìm thấy gian hàng"
+                            )
+                    );
         }
 
         QRCode qrCode = QRCode.builder()
                 .name(request.getName())
                 .code(code)
                 .stall(stall)
-                .isActive(request.getIsActive() != null ? request.getIsActive() : true)
+                .isActive(
+                        request.getIsActive() != null
+                                ? request.getIsActive()
+                                : true
+                )
                 .scanCount(0)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        return qrCodeMapper.toResponse(qrCodeRepository.save(qrCode));
+        return qrCodeMapper.toResponse(
+                qrCodeRepository.save(qrCode)
+        );
     }
 
     @Override
     @Transactional
-    public QRCodeResponse update(Long id, QRCodeCreateRequest request) {
-        QRCode qrCode = qrCodeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy mã QR"));
+    public QRCodeResponse update(
+            Long id,
+            QRCodeCreateRequest request
+    ) {
 
-        if (request.getCode() != null && !request.getCode().equals(qrCode.getCode())) {
-            if (qrCodeRepository.findByCode(request.getCode()).isPresent()) {
-                throw new RuntimeException("Mã QR code này đã được sử dụng");
+        QRCode qrCode = qrCodeRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Không tìm thấy mã QR"
+                        )
+                );
+
+        if (
+                request.getCode() != null &&
+                        !request.getCode().equals(qrCode.getCode())
+        ) {
+
+            if (
+                    qrCodeRepository
+                            .findByCode(request.getCode())
+                            .isPresent()
+            ) {
+
+                throw new RuntimeException(
+                        "Mã QR code đã tồn tại"
+                );
             }
+
             qrCode.setCode(request.getCode());
         }
 
-        if (request.getStallId() != null && !request.getStallId().equals(qrCode.getStall().getId())) {
-            if (qrCodeRepository.findByStallId(request.getStallId()).isPresent()) {
-                throw new RuntimeException("Gian hàng mục tiêu đã có mã QR code");
+        if (
+                request.getStallId() != null &&
+                        (
+                                qrCode.getStall() == null ||
+                                        !request.getStallId().equals(
+                                                qrCode.getStall().getId()
+                                        )
+                        )
+        ) {
+
+            if (
+                    qrCodeRepository
+                            .findByStallId(
+                                    request.getStallId()
+                            )
+                            .isPresent()
+            ) {
+
+                throw new RuntimeException(
+                        "Gian hàng đã có QR code"
+                );
             }
-            Stall stall = stallRepository.findById(request.getStallId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy gian hàng"));
+
+            Stall stall = stallRepository
+                    .findById(request.getStallId())
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "Không tìm thấy gian hàng"
+                            )
+                    );
+
             qrCode.setStall(stall);
         }
 
-        if (request.getName() != null)
+        if (request.getName() != null) {
             qrCode.setName(request.getName());
-        if (request.getIsActive() != null)
+        }
+
+        if (request.getIsActive() != null) {
             qrCode.setIsActive(request.getIsActive());
+        }
 
         qrCode.setUpdatedAt(LocalDateTime.now());
 
-        return qrCodeMapper.toResponse(qrCodeRepository.save(qrCode));
+        return qrCodeMapper.toResponse(
+                qrCodeRepository.save(qrCode)
+        );
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
+
         if (!qrCodeRepository.existsById(id)) {
-            throw new RuntimeException("Không tìm thấy mã QR");
+
+            throw new RuntimeException(
+                    "Không tìm thấy mã QR"
+            );
         }
+
         qrCodeRepository.deleteById(id);
     }
 
     @Override
     @Transactional
     public QRCodeResponse toggleActive(Long id) {
-        QRCode qrCode = qrCodeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy mã QR"));
 
-        qrCode.setIsActive(!Boolean.TRUE.equals(qrCode.getIsActive()));
+        QRCode qrCode = qrCodeRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Không tìm thấy mã QR"
+                        )
+                );
+
+        qrCode.setIsActive(
+                !Boolean.TRUE.equals(
+                        qrCode.getIsActive()
+                )
+        );
+
         qrCode.setUpdatedAt(LocalDateTime.now());
 
-        return qrCodeMapper.toResponse(qrCodeRepository.save(qrCode));
+        return qrCodeMapper.toResponse(
+                qrCodeRepository.save(qrCode)
+        );
     }
 
     @Override
     @Transactional
     public QRCodeResponse regenerateCode(Long id) {
-        QRCode qrCode = qrCodeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy mã QR"));
 
-        qrCode.setCode(java.util.UUID.randomUUID().toString());
+        QRCode qrCode = qrCodeRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Không tìm thấy mã QR"
+                        )
+                );
+
+        qrCode.setCode(
+                java.util.UUID.randomUUID().toString()
+        );
+
         qrCode.setUpdatedAt(LocalDateTime.now());
 
-        return qrCodeMapper.toResponse(qrCodeRepository.save(qrCode));
+        return qrCodeMapper.toResponse(
+                qrCodeRepository.save(qrCode)
+        );
     }
 
     @Override
     public QRCodeResponse getById(Long id) {
-        return qrCodeRepository.findById(id)
+
+        return qrCodeRepository
+                .findById(id)
                 .map(qrCodeMapper::toResponse)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy mã QR"));
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Không tìm thấy mã QR"
+                        )
+                );
     }
 
     @Override
     public QRCodeResponse getByStall(Long stallId) {
-        return qrCodeRepository.findByStallId(stallId)
+
+        return qrCodeRepository
+                .findByStallId(stallId)
                 .map(qrCodeMapper::toResponse)
-                .orElseThrow(() -> new RuntimeException("Gian hàng này chưa có mã QR code"));
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Gian hàng chưa có QR code"
+                        )
+                );
     }
 
     @Override
     public List<QRCodeResponse> getAll() {
-        return qrCodeMapper.toResponseList(qrCodeRepository.findAll());
+
+        return qrCodeMapper.toResponseList(
+                qrCodeRepository.findAll()
+        );
     }
 
     @Override
     @Transactional
-    public String handleScan(String code, HttpServletRequest request, String sessionId) {
+    public String handleScan(
+            String code,
+            HttpServletRequest request,
+            String deviceId
+    ) {
 
-        // 1. Kiểm tra mã QR hợp lệ
+        // =====================================================
+        // validate
+        // =====================================================
+
         if (code == null || code.isBlank()) {
-            throw new RuntimeException("Mã QR không hợp lệ");
+
+            throw new RuntimeException(
+                    "Mã QR không hợp lệ"
+            );
         }
 
-        // 2. Tìm kiếm QR
-        QRCode qr = qrCodeRepository.findByCodeWithStall(code)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy mã QR"));
+        if (
+                deviceId == null ||
+                        deviceId.isBlank()
+        ) {
 
-        validateQrCode(qr);
+            throw new RuntimeException(
+                    "Thiếu device id"
+            );
+        }
+
+        // =====================================================
+        // find qr
+        // =====================================================
+
+        QRCode qr = qrCodeRepository
+                .findByCodeWithStall(code)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Không tìm thấy mã QR"
+                        )
+                );
+
+        if (
+                !Boolean.TRUE.equals(
+                        qr.getIsActive()
+                )
+        ) {
+
+            throw new RuntimeException(
+                    "Mã QR hiện đang bị khóa"
+            );
+        }
+
         Stall stall = qr.getStall();
 
-        // 4. Chống spam
-        String ip = getClientIp(request);
-        if (isDuplicateScan(code, ip)) {
-            throw new AppException(ErrorCode.TOO_MANY_REQUESTS);
+        if (
+                stall != null &&
+                        !Boolean.TRUE.equals(
+                                stall.getIsActive()
+                        )
+        ) {
+
+            throw new RuntimeException(
+                    "Gian hàng hiện không hoạt động"
+            );
         }
 
-        // 5. Ghi nhận sự kiện (MySQL) - Đảm bảo buildEvent xử lý null sessionId an toàn
-        VisitEvent event = buildEvent(qr, request, ip, sessionId);
-        visitEventAsyncService.logEventAsync(event);
+        // =====================================================
+        // anti spam
+        // =====================================================
 
-        // 6. Cập nhật DB MySQL
-        qrCodeRepository.incrementScanCount(qr.getId());
+        LocalDateTime thirtySecondsAgo =
+                LocalDateTime.now()
+                        .minusSeconds(30);
 
-        // --- PHẦN FIX LỖI ---
+        VisitEventType eventType =
+                stall == null
+                        ? VisitEventType.HOME_QR_SCAN
+                        : VisitEventType.STALL_QR_SCAN;
 
-        // 7. Cập nhật vào Redis
-        // CHỈ gọi một lần duy nhất với sessionId thực tế
-        analyticsService.increaseVisit(sessionId);
+        boolean duplicated =
+                visitEventRepository
+                        .existsByDeviceIdAndEventTypeAndCreatedAtAfter(
+                                deviceId,
+                                eventType,
+                                thirtySecondsAgo
+                        );
 
-        if (stall != null) {
-            // Nếu quét tại gian hàng, tăng cả chỉ số gian hàng
-            analyticsService.increaseAudio(stall.getId());
-            analyticsService.increaseStallVisit(stall.getId());
+        if (duplicated) {
 
-            if (!Boolean.TRUE.equals(stall.getIsActive())) {
-                throw new RuntimeException("Gian hàng hiện không hoạt động");
-            }
-        } else {
-            analyticsService.increaseVisit(sessionId);
-
+            throw new AppException(
+                    ErrorCode.TOO_MANY_REQUESTS
+            );
         }
 
-        // 8. Điều hướng
-        return (stall == null) ? "/home" : "/home/stall/" + stall.getId();
-    }
+        // =====================================================
+        // build event
+        // =====================================================
 
-    private boolean isDuplicateScan(String code, String ip) {
-        LocalDateTime thirtySecondsAgo = LocalDateTime.now().minusSeconds(30);
-        return visitEventRepository.existsByQrCodeAndIpAddressAndEventTimeAfter(
-                code,
-                ip,
-                thirtySecondsAgo);
-    }
+        VisitEvent event =
+                VisitEvent.builder()
 
-    private VisitEvent buildEvent(QRCode qr, HttpServletRequest request, String ip, String sessionId) {
-        Long sid = null;
+                        .deviceId(deviceId)
+
+                        .stallId(
+                                stall != null
+                                        ? stall.getId()
+                                        : null
+                        )
+
+                        .eventType(eventType)
+
+                        .createdAt(LocalDateTime.now())
+
+                        .build();
+
+        // =====================================================
+        // async save mysql
+        // =====================================================
+
+        visitEventAsyncService
+                .logEventAsync(event);
+
+        // =====================================================
+        // mysql qr counter
+        // =====================================================
+
+        qrCodeRepository.incrementScanCount(
+                qr.getId()
+        );
+
+        // =====================================================
+        // realtime analytics
+        // =====================================================
+
+        analyticsService.increaseTotalQr();
+
+        if (stall == null) {
+
+            analyticsService
+                    .addUniqueHomeVisitor(
+                            deviceId
+                    );
+        }
+
+        // =====================================================
+        // websocket realtime
+        // =====================================================
+
         try {
-            if (sessionId != null && !sessionId.isBlank()) {
-                sid = Long.valueOf(sessionId);
-            }
-        } catch (NumberFormatException e) {
-            // Log lỗi hoặc gán mặc định nếu cần
+
+            analyticsRealtimeService
+                    .pushRealtime();
+
+        } catch (Exception e) {
+
+            log.error(
+                    "Push realtime failed",
+                    e
+            );
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        return VisitEvent.builder()
-                .stallId(qr.getStall() != null ? qr.getStall().getId() : null)
-                .qrCode(qr.getCode())
-                .eventType(qr.getStall() == null ? VisitEvent.EventType.WEBSITE_VISIT : VisitEvent.EventType.QR_SCAN)
-                .eventTime(now)
-                .ipAddress(ip)
-                .userAgent(request.getHeader("User-Agent"))
-                .sessionId(sid) // Dùng biến đã kiểm tra
-                .hour(now.getHour())
-                .day(now.getDayOfMonth())
-                .month(now.getMonthValue())
-                .year(now.getYear())
-                .build();
-    }
+        // =====================================================
+        // redirect
+        // =====================================================
 
-    private String getClientIp(HttpServletRequest request) {
-        String remoteAddr = "";
-        if (request != null) {
-            remoteAddr = request.getHeader("X-FORWARDED-FOR");
-            if (remoteAddr == null || "".equals(remoteAddr)) {
-                remoteAddr = request.getRemoteAddr();
-            }
-        }
-        return remoteAddr;
-    }
-
-    private boolean validateQrCode(QRCode qr) {
-        if (!Boolean.TRUE.equals(qr.getIsActive())) {
-            throw new RuntimeException("Mã QR này hiện đang bị khóa");
-        }
-        return true;
+        return stall == null
+                ? "/home"
+                : "/home/stall/" + stall.getId();
     }
 }
