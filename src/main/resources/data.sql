@@ -178,33 +178,21 @@ CREATE TABLE foods (
 );
 
 -- =========================
--- VISIT EVENTS
+-- VISIT EVENTS: quét QR home, quét QR stall, nghe audio
 -- =========================
--- Log các sự kiện trong session:
--- vào vùng, ra vùng, bắt đầu audio, kết thúc audio
 CREATE TABLE visit_events (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    session_id BIGINT,
-    stall_id BIGINT,
-    event_type ENUM(
-        'ENTER_GEOFENCE',
-        'EXIT_GEOFENCE',
-        'AUDIO_START',
-        'AUDIO_COMPLETE',
-        'QR_SCAN',
-        'VIEW_DETAIL',
-        'WEBSITE_VISIT'
-    ),
-    event_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-    qr_code VARCHAR(255),
-    ip_address VARCHAR(45),
-    user_agent TEXT,
-    hour INT,
-    day INT,
-    month INT,
-    year INT,
-    FOREIGN KEY (stall_id) REFERENCES stalls(id) ON DELETE CASCADE
+   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+   device_id CHAR(36) NOT NULL,
+   stall_id BIGINT NULL,
+   event_type ENUM('HOME_QR_SCAN', 'STALL_QR_SCAN', 'AUDIO_PLAY') NOT NULL,
+   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   FOREIGN KEY (stall_id) REFERENCES stalls(id) ON DELETE CASCADE
 );
+CREATE INDEX idx_visit_event_type ON visit_events(event_type);
+CREATE INDEX idx_visit_event_created_at ON visit_events(created_at);
+CREATE INDEX idx_visit_event_stall ON visit_events(stall_id);
+CREATE INDEX idx_visit_event_device ON visit_events(device_id);
+CREATE INDEX idx_visit_event_stall_type ON visit_events(stall_id, event_type);
 
 CREATE TABLE `qr_codes` (
   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -466,13 +454,13 @@ UPDATE stalls SET latitude = 10.757600, longitude = 106.703950 WHERE id = 10; --
 
 INSERT INTO stall_trigger_config (stall_id, trigger_type, radius, trigger_distance, cooldown_seconds, priority)
 VALUES 
-(1, 'GEOFENCE', 40, 5, 10, 4), -- Lãng Quán (BBQ lớn, ưu tiên cao, cooldown lâu để tránh lặp)
-(2, 'GEOFENCE', 35, 4.5, 10, 5), -- Ốc Oanh (Rất nổi tiếng, ưu tiên cao nhất)
-(3, 'GEOFENCE', 30, 4, 10, 2), -- Quán Dê Chung
-(4, 'GEOFENCE', 30, 4, 10, 3), -- Bò nướng ngói 154
-(5, 'GEOFENCE', 30, 4, 10, 2), -- Hải sản 5 Rảnh
-(6, 'GEOFENCE', 20, 3, 10, 3), -- Phá lấu Cô Thảo (Quán nhỏ, vùng hẹp)
-(7, 'GEOFENCE', 20, 3, 10,  1), -- Trà sữa Vĩnh Khánh (Quán nhỏ)
-(8, 'GEOFENCE', 25, 3.5, 10, 2), -- Bánh tráng nướng Đà Lạt
-(9, 'GEOFENCE', 25, 3.5, 10, 1), -- Xiên que nướng 79
-(10, 'GEOFENCE', 30, 4, 10, 1); -- Cháo hải sản đêm
+(1, 'GEOFENCE', 20, 5, 10, 4), -- Lãng Quán (BBQ lớn, ưu tiên cao, cooldown lâu để tránh lặp)
+(2, 'GEOFENCE', 3, 4.5, 10, 5), -- Ốc Oanh (Rất nổi tiếng, ưu tiên cao nhất)
+(3, 'GEOFENCE', 3, 4, 10, 2), -- Quán Dê Chung
+(4, 'GEOFENCE', 3, 4, 10, 4), -- Bò nướng ngói 154
+(5, 'GEOFENCE', 3, 4, 10, 2), -- Hải sản 5 Rảnh
+(6, 'GEOFENCE', 2, 3, 10, 3), -- Phá lấu Cô Thảo (Quán nhỏ, vùng hẹp)
+(7, 'GEOFENCE', 2, 3, 10,  1), -- Trà sữa Vĩnh Khánh (Quán nhỏ)
+(8, 'GEOFENCE', 2, 3.5, 10, 2), -- Bánh tráng nướng Đà Lạt
+(9, 'GEOFENCE', 2, 3.5, 10, 1), -- Xiên que nướng 79
+(10, 'GEOFENCE', 3, 4, 10, 1); -- Cháo hải sản đêm
