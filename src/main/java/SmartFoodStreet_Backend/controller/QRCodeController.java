@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -22,6 +23,9 @@ import java.util.List;
 public class QRCodeController {
 
     private final QRCodeService qrCodeService;
+
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
 
     @PostMapping
     public ApiResponse<QRCodeResponse> create(@Valid @RequestBody QRCodeCreateRequest request) {
@@ -90,23 +94,57 @@ public class QRCodeController {
                 .build();
     }
 
-    @GetMapping("/scan/{code}")
-    public void scanQRCode(
+    /**
+     * API quét mã QR.
+     * Trả về HTML + JS để điều hướng phía Client nhằm TRÁNH LỖI 404 CACHE.
+     */
+    @GetMapping(value = "/scan/{code}", produces = "text/html; charset=UTF-8")
+    @ResponseBody
+    public String scanQRCode(
             @PathVariable String code,
             @RequestParam(required = false) String sessionId,
-            HttpServletRequest request,
-            HttpServletResponse response) throws IOException {
+            HttpServletRequest request) {
 
         try {
-            String targetUrl = qrCodeService.handleScan(code, request, sessionId);
+            String targetPath = qrCodeService.handleScan(code, request, sessionId);
 
-            response.sendRedirect(targetUrl);
+            // Tạo link tuyệt đối + Cache busting (t=timestamp)
+            String separator = targetPath.contains("?") ? "&" : "?";
+            String finalUrl = (frontendUrl.endsWith("/") ? frontendUrl : frontendUrl + "/")
+                    + (targetPath.startsWith("/") ? targetPath.substring(1) : targetPath)
+                    + separator + "t=" + System.currentTimeMillis();
+
+            // Trả về mã HTML để ép trình duyệt chuyển hướng bằng JavaScript
+            return "<html>" +
+                    "<head><title>Redirecting...</title></head>" +
+                    "<body style='background:#0f172a; color:white; font-family:sans-serif; display:flex; align-items:center; justify-content:center; height:100vh;'>" +
+                    "  <div style='text-align:center;'>" +
+                    "    <div style='border:4px solid #f97316; border-top:4px solid transparent; border-radius:50%; width:40px; height:40px; animate:spin 1s linear infinite; margin:0 auto 20px;'></div>" +
+                    "    <p style='font-weight:bold; letter-spacing:0.1em; font-size:12px;'>ĐANG CHUYỂN HƯỚNG ĐẾN SMART FOOD STREET...</p>" +
+                    "  </div>" +
+                    "  <script type='text/javascript'>" +
+                    "    window.location.replace('" + finalUrl + "');" +
+                    "  </script>" +
+                    "  <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>" +
+                    "</body>" +
+                    "</html>";
 
         } catch (Exception e) {
-            String errorMessage = e.getMessage();
-            String redirectUrl = "/error?message="
-                    + URLEncoder.encode(errorMessage, StandardCharsets.UTF_8);
-            response.sendRedirect(redirectUrl);
+            String errorUrl = frontendUrl + "/error?message=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+            return "<html><body><script>window.location.replace('" + errorUrl + "');</script></body></html>";
         }
+    }
+
+    /**
+     * API xác nhận thành công từ Frontend
+     */
+    @PostMapping("/confirm-success/{qrId}")
+    public ApiResponse<Void> confirmSuccess(
+            @PathVariable Long qrId,
+            @RequestParam(required = false) String sessionId,
+            HttpServletRequest request) {
+
+        qrCodeService.confirmAndCount(qrId, request, sessionId);
+        return ApiResponse.<Void>builder().message("Xác nhận thành công").build();
     }
 }

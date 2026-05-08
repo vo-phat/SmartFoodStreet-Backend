@@ -147,94 +147,82 @@ public class QRCodeService implements IQRCode {
       return qrCodeMapper.toResponseList(qrCodeRepository.findAll());
    }
 
-   @Override
-   @Transactional
-   public String handleScan(String code, HttpServletRequest request, String sessionId) {
+    /**
+     * Bước 1: Chỉ kiểm tra và trả về đường dẫn điều hướng kèm ID xác nhận
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public String handleScan(String code, HttpServletRequest request, String sessionId) {
+        if (code == null || code.isBlank()) throw new RuntimeException("Mã QR không hợp lệ");
 
-      // 1. Kiểm tra mã QR hợp lệ
-      if (code == null || code.isBlank()) {
-         throw new RuntimeException("Mã QR không hợp lệ");
-      }
+        QRCode qr = qrCodeRepository.findByCodeWithStall(code)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy mã QR"));
 
-      // 2. Tìm kiếm QR trong database
-      QRCode qr = qrCodeRepository.findByCodeWithStall(code)
-            .orElseThrow(() -> new RuntimeException("Không tìm thấy mã QR"));
+        if (!Boolean.TRUE.equals(qr.getIsActive())) throw new RuntimeException("Mã QR này hiện đang bị khóa");
 
-      validateQrCode(qr);
+        Stall stall = qr.getStall();
+        String path = (stall == null) ? "/home" : "/home/stall/" + stall.getId();
 
-      // 4. Lấy thông tin Gian hàng (Stall)
-      Stall stall = qr.getStall();
-      
-      String ip = getClientIp(request);
+        // Trả về Path kèm qr_confirm_id để Frontend gọi lại confirm
+        return path + (path.contains("?") ? "&" : "?") + "qr_confirm_id=" + qr.getId();
+    }
 
-      // 4. Chống spam (quan trọng)
-      boolean isSpam = isDuplicateScan(qr.getCode(), ip);
-      if (isSpam) {
-         throw new AppException(ErrorCode.TOO_MANY_REQUESTS);
-      }
+    /**
+     * Bước 2: Khi Frontend load trang thành công, gọi hàm này để chính thức đếm lượt
+     */
+    @Transactional
+    public void confirmAndCount(Long qrId, HttpServletRequest request, String sessionId) {
+        QRCode qr = qrCodeRepository.findById(qrId)
+                .orElseThrow(() -> new RuntimeException("Xác nhận QR thất bại: Không tìm thấy ID"));
 
-      // 5. Ghi nhận sự kiện quét mã QR
-      VisitEvent event = buildEvent(qr, request, ip, sessionId);
-      visitEventAsyncService.logEventAsync(event);
+//      nếu muốn đếm cả lượt vào stall thì bỏ if
+        if (qr.getStall() == null) {
+            String ip = getClientIp(request);
 
-      // 6. Cập nhật lượt quét
-      qrCodeRepository.incrementScanCount(qr.getId());
+            // Chống spam trong 10 giây
+            if (isDuplicateScan(qr.getCode(), ip)) return;
 
-      if (stall == null) {
-          return "/home";
-      }
+            // Lưu log sự kiện Website Visit
+            VisitEvent event = buildEvent(qr, request, ip, sessionId);
+            visitEventRepository.save(event);
 
-      if (!Boolean.TRUE.equals(stall.getIsActive())) {
-         throw new RuntimeException("Gian hàng hiện không hoạt động");
-      }
-
-      return "home/stall/" + stall.getId();
-   }
-
-   private boolean isDuplicateScan(String code, String ip) {
-      LocalDateTime thirtySecondsAgo = LocalDateTime.now().minusSeconds(30);
-      return visitEventRepository.existsByQrCodeAndIpAddressAndEventTimeAfter(
-            code,
-            ip,
-            thirtySecondsAgo);
-   }
-
-   private VisitEvent buildEvent(QRCode qr, HttpServletRequest request, String ip, String sessionId) {
-      Long sid = null;
-        try {
-            if (sessionId != null && !sessionId.isBlank()) {
-                sid = Long.valueOf(sessionId);
-            }
-        } catch (NumberFormatException e) {
-            // Log lỗi hoặc gán mặc định nếu cần
+            // Tăng lượt quét cho mã Gateway
+            qrCodeRepository.incrementScanCount(qr.getId());
+        } else {
+            // Nếu là mã Stall, chúng ta có thể bỏ qua không đếm,
+            // hoặc chỉ ghi log mà không tăng scanCount tùy bạn.
+            System.out.println("Bỏ qua đếm lượt cho mã QR gian hàng ID: " + qrId);
         }
+    }
 
-      LocalDateTime now = LocalDateTime.now();
-      return VisitEvent.builder()
-            .stallId(qr.getStall() != null ? qr.getStall().getId() : null)
-            .qrCode(qr.getCode())
-            .eventType(qr.getStall() == null ? VisitEvent.EventType.WEBSITE_VISIT : VisitEvent.EventType.QR_SCAN)
-            .eventTime(now)
-            .ipAddress(ip)
-            .userAgent(request.getHeader("User-Agent"))
-            .sessionId(sid) // Dùng biến đã kiểm tra
-            .hour(now.getHour())
-            .day(now.getDayOfMonth())
-            .month(now.getMonthValue())
-            .year(now.getYear())
-            .build();
-   }
+    private boolean isDuplicateScan(String code, String ip) {
+        LocalDateTime delay = LocalDateTime.now().minusSeconds(10); // Giảm xuống 10s để test dễ hơn
+        return visitEventRepository.existsByQrCodeAndIpAddressAndEventTimeAfter(code, ip, delay);
+    }
 
-   private String getClientIp(HttpServletRequest request) {
-      String remoteAddr = "";
-      if (request != null) {
-         remoteAddr = request.getHeader("X-FORWARDED-FOR");
-         if (remoteAddr == null || "".equals(remoteAddr)) {
-            remoteAddr = request.getRemoteAddr();
-         }
-      }
-      return remoteAddr;
-   }
+    private VisitEvent buildEvent(QRCode qr, HttpServletRequest request, String ip, String sessionId) {
+        Long sid = null;
+        try {
+            if (sessionId != null && !sessionId.isBlank()) sid = Long.valueOf(sessionId);
+        } catch (Exception e) { /* Ignore */ }
+
+        LocalDateTime now = LocalDateTime.now();
+        return VisitEvent.builder()
+                .stallId(qr.getStall() != null ? qr.getStall().getId() : null)
+                .qrCode(qr.getCode())
+                .eventType(qr.getStall() == null ? VisitEvent.EventType.WEBSITE_VISIT : VisitEvent.EventType.QR_SCAN)
+                .eventTime(now)
+                .ipAddress(ip)
+                .userAgent(request.getHeader("User-Agent"))
+                .sessionId(sid)
+                .hour(now.getHour()).day(now.getDayOfMonth()).month(now.getMonthValue()).year(now.getYear())
+                .build();
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-FORWARDED-FOR");
+        return (ip == null || ip.isEmpty()) ? request.getRemoteAddr() : ip.split(",")[0];
+    }
 
    private boolean validateQrCode(QRCode qr) {
       if (!Boolean.TRUE.equals(qr.getIsActive())) {

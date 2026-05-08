@@ -99,3 +99,8 @@ cloudinary:
   cloud_name: ${CLOUDINARY_NAME}
   api_key: ${CLOUDINARY_KEY}
   api_secret: ${CLOUDINARY_SECRET}
+
+# Thay bằng địa chỉ thực tế của React (Local hoặc Ngrok của FE)
+app:
+  frontend:
+    url: "https://indiscretionary-penciliform-rosette.ngrok-free.dev"
