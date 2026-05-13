@@ -390,15 +390,15 @@ Holding a hot skewer while chatting with friends perfectly captures the joy of s
 (9,'en','Seafood Porridge','On a cool evening, a warm bowl of seafood porridge can be incredibly comforting. With the natural sweetness of shrimp and squid, it’s a popular late-night choice.
 Light yet nourishing, it’s a perfect way to end your food journey','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448168/ChaoHaiSan_en_za8ffq.mp3','COMPLETED'),
 (9,'zh-CN','Porridge','在夜晚来一碗热腾腾的海鲜粥，会让人感到非常温暖。粥中融合了虾和鱿鱼的天然鲜甜，是许多人喜爱的宵夜选择。
-清淡却营养丰富，非常适合为一天的美食之旅画上句号','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448170/ChaoHaiSan_zh_tgk7ca.mp3','COMPLETED'),
+清淡却营养丰富，非常适合为一天的美食之旅画上句号','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448170/ChaoHaiSan_zh_tgk7ca.mp3','COMPLETED');
 
 -- ================= 10. SÒ ĐIỆP =================
-(10,'vi','Sò điệp nướng mỡ hành','Hương thơm béo ngậy của mỡ hành đang lan tỏa từ những con sò điệp nướng. Thịt sò mềm, ngọt, kết hợp cùng đậu phộng bùi tạo nên hương vị khó quên.
-Đây là món ăn bạn nên thử ít nhất một lần khi ghé phố ẩm thực này','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448503/SoDiepNuong_vi_b3bkae.mp3','COMPLETED'),
-(10,'en','Grilled Scallops','The rich aroma of scallion oil spreads from the grilled scallops. The tender, sweet scallop meat blends perfectly with the nutty flavor of peanuts.
-It’s a dish you should try at least once when visiting this food street.','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448177/SoDiepNuong_en_dphsvo.mp3','COMPLETED'),
-(10,'zh-CN','Scallops','葱油的香气从烤扇贝中散发出来，令人食欲大开。扇贝肉质鲜嫩甘甜，搭配花生的香味，口感层次丰富。
-来到这里，这道菜绝对值得你尝试一次','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448503/SoDiepNuong_zh_r7gdht.mp3','COMPLETED');
+-- (10,'vi','Sò điệp nướng mỡ hành','Hương thơm béo ngậy của mỡ hành đang lan tỏa từ những con sò điệp nướng. Thịt sò mềm, ngọt, kết hợp cùng đậu phộng bùi tạo nên hương vị khó quên.
+-- Đây là món ăn bạn nên thử ít nhất một lần khi ghé phố ẩm thực này','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448503/SoDiepNuong_vi_b3bkae.mp3','COMPLETED'),
+-- (10,'en','Grilled Scallops','The rich aroma of scallion oil spreads from the grilled scallops. The tender, sweet scallop meat blends perfectly with the nutty flavor of peanuts.
+-- It’s a dish you should try at least once when visiting this food street.','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448177/SoDiepNuong_en_dphsvo.mp3','COMPLETED'),
+-- (10,'zh-CN','Scallops','葱油的香气从烤扇贝中散发出来，令人食欲大开。扇贝肉质鲜嫩甘甜，搭配花生的香味，口感层次丰富。
+-- 来到这里，这道菜绝对值得你尝试一次','https://res.cloudinary.com/dg8idf5y5/video/upload/v1776448503/SoDiepNuong_zh_r7gdht.mp3','COMPLETED');
 
 INSERT INTO foods (stall_id, name, price, description, image)
 VALUES
