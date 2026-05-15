@@ -3,6 +3,7 @@ package SmartFoodStreet_Backend.service;
 import SmartFoodStreet_Backend.common.response.CloudinaryResponse;
 import SmartFoodStreet_Backend.entity.StallTranslation;
 import SmartFoodStreet_Backend.enums.AudioStatus;
+import SmartFoodStreet_Backend.enums.LanguageCode;
 import SmartFoodStreet_Backend.repository.StallTranslationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,17 +30,37 @@ public class AudioProcessorService {
 
          String scriptToRead = stallTranslation.getTtsScript();
 
-         // 1. DỊCH (Nếu kịch bản đang trống)
-         if (scriptToRead == null || scriptToRead.trim().isEmpty()) {
-            StallTranslation baseTranslation = repository.findByStallIdAndLanguageCode(stallId, "vi")
-                  .orElseThrow(() -> new RuntimeException("Không tìm thấy bản gốc tiếng Việt để dịch"));
+            // 1. DỊCH (Nếu kịch bản đang trống)
+          // CASE 1: Không có script -> lấy bản vi
+          if (scriptToRead == null || scriptToRead.trim().isEmpty()) {
 
-            scriptToRead = translationService.translateText(baseTranslation.getTtsScript(), "vi", targetLanguage);
-            stallTranslation.setTtsScript(scriptToRead); // Lưu lại bản dịch
-         }
+              StallTranslation baseTranslation =
+                      repository.findByStallIdAndLanguageCode(stallId, "vi-VN")
+                              .orElseThrow(() ->
+                                      new RuntimeException("Không tìm thấy bản gốc tiếng Việt"));
+
+              scriptToRead = baseTranslation.getTtsScript();
+          }
+
+            // CASE 2: Nếu language khác vi -> dịch
+          if (!targetLanguage.equalsIgnoreCase("vi-VN")) {
+
+              scriptToRead = translationService.translateText(
+                      scriptToRead,
+                      "vi-VN",
+                      targetLanguage
+              );
+          }
+
+            // lưu script cuối cùng
+          stallTranslation.setTtsScript(scriptToRead);
 
          // 2. LẤY GIỌNG ĐỌC
-         String voiceConfig = getVoiceConfigForLanguage(targetLanguage);
+//         String voiceConfig = getVoiceConfigForLanguage(targetLanguage);
+
+          LanguageCode language = LanguageCode.fromCode(targetLanguage);
+
+          String voiceConfig = language.getVoice();
 
          // 3. GEN AUDIO
          byte[] audio = ttsService.generate(scriptToRead, targetLanguage, voiceConfig);
@@ -70,13 +91,13 @@ public class AudioProcessorService {
       repository.save(stallTranslation);
    }
 
-   private String getVoiceConfigForLanguage(String languageCode) {
-      return switch (languageCode.toLowerCase()) {
-         case "vi" -> "vi-VN-Standard-A";
-         case "en-US" -> "en-US-Neural2-F";
-         case "ko" -> "ko-KR-Standard-A";
-         case "ja" -> "ja-JP-Standard-A";
-         default -> "en-US-Standard-A";
-      };
-   }
+//   private String getVoiceConfigForLanguage(String languageCode) {
+//      return switch (languageCode.toLowerCase()) {
+//         case "vi" -> "vi-VN-Standard-A";
+//         case "en-US" -> "en-US-Neural2-F";
+//         case "ko" -> "ko-KR-Standard-A";
+//         case "ja" -> "ja-JP-Standard-A";
+//         default -> "en-US-Standard-A";
+//      };
+//   }
 }
