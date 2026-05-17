@@ -23,7 +23,7 @@ spring:
   # -----------------------
   data:
     redis:
-      host: localhost # Trỏ về localhost vì Docker đã map port 6379:6379
+      host: redis
       port: 6379
 
   # -----------------------

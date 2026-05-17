@@ -1,0 +1,53 @@
+package backend.controller;
+
+import backend.dto.food.request.FoodRequest;
+import backend.dto.food.response.FoodResponse;
+import backend.service.interfaces.IFood;
+import backend.common.response.ApiResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/foods")
+@RequiredArgsConstructor
+public class FoodController {
+
+    private final IFood foodService;
+
+    @PostMapping
+    public ApiResponse<FoodResponse> create(@Valid @RequestBody FoodRequest foodRequest) {
+        return ApiResponse.<FoodResponse>builder()
+                .result(foodService.create(foodRequest))
+                .build();
+    }
+
+    @GetMapping("/stall/{stallId}")
+    public ApiResponse<List<FoodResponse>> getByStall(@PathVariable Long stallId) {
+        return ApiResponse.<List<FoodResponse>>builder()
+                .result(foodService.getByStall(stallId))
+                .build();
+    }
+
+    @GetMapping
+    public ApiResponse<List<FoodResponse>> getAll() {
+        return ApiResponse.<List<FoodResponse>>builder()
+                .result(foodService.getAll())
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse<FoodResponse> update(@PathVariable Long id, @Valid @RequestBody FoodRequest foodRequest) {
+        return ApiResponse.<FoodResponse>builder()
+                .result(foodService.update(id, foodRequest))
+                .build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> delete(@PathVariable Long id) {
+        foodService.delete(id);
+        return ApiResponse.<Void>builder().build();
+    }
+}

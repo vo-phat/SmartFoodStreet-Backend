@@ -1,0 +1,18 @@
+package backend.mapper;
+
+import backend.dto.qrcode.QRCodeResponse;
+import backend.entity.QRCode;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+import java.util.List;
+
+@Mapper(componentModel = "spring")
+public interface QRCodeMapper {
+
+    @Mapping(target = "stallId", source = "stall.id")
+    @Mapping(target = "stallName", source = "stall.name")
+    QRCodeResponse toResponse(QRCode entity);
+
+    List<QRCodeResponse> toResponseList(List<QRCode> entities);
+}

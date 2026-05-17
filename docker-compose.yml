@@ -1,56 +1,61 @@
 services:
-  # 1. MySQL: Lưu dữ liệu
+  # 1. MySQL
   infra_mysql:
     image: mysql:8.0
     container_name: infra_mysql
     environment:
-      # Cho phép mật khẩu rỗng
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: smart_food_street
     ports:
-      - "3306:3306" # Giữ nguyên cổng 3307 theo ý bạn
+      - "3306:3306"
     volumes:
       - mysql_infra_data:/var/lib/mysql
     healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 5s
       retries: 10
 
-  # 2. Redis: Cache
+  # 2. Redis
   redis:
     image: redis:alpine
     container_name: infra_redis
     ports:
-      - "6379:6379" # Mở cổng để Spring Boot kết nối vào
+      - "6379:6379"
 
-  # 3. Ngrok: Tạo tunnel ra ngoài (để test mobile hoặc webhook)
+  # 3. Ngrok
   ngrok:
     image: ngrok/ngrok:latest
     container_name: infra_ngrok
-    # Quan trọng: Thêm dòng này để container nhận diện được IP của máy thật
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
       NGROK_AUTHTOKEN: "3Bx5wmT2FnR0yLemtNUSeFIUrZf_33BQP8FbrRF5saEptxQJP"
-#      NGROK_AUTHTOKEN: "3CXTXaEDHP5RYsA456BMB8A1ISj_2NPK6Y9XET4kyEoQUWZhu"
     command:
       - "http"
       - "host.docker.internal:80"
     ports:
-      - "4040:4040" # Để bạn có thể xem giao diện quản lý của Ngrok tại localhost:4040
+      - "4040:4040"
 
+  # 4. Backend
   be:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: ../Dockerfile
     container_name: app_be
     ports:
       - "8080:8080"
+
+    # mount env backend thật sự
     volumes:
-      - ./.env:/app/.env  # Dòng này sẽ ánh xạ file .env vào thư mục /app trong container
+      - ./backend/.env:/app/.env
+
     depends_on:
       infra_mysql:
-        condition: service_healthy # Chỉ chạy BE khi MySQL đã thực sự "khỏe"
-    restart: on-failure # Tự khởi động lại nếu bị crash do lỗi kết nối DB
+        condition: service_healthy
 
+    restart: on-failure
+
+  # 5. Nginx
   nginx:
     image: nginx:latest
     container_name: app_nginx

@@ -1,0 +1,26 @@
+package backend.dto.food.response;
+
+import lombok.*;
+
+import java.math.BigDecimal;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class FoodResponse {
+    Long id;
+
+    Long stallId;
+
+    String name;
+
+    BigDecimal price;
+
+    String description;
+
+    String image;
+
+    Boolean isAvailable;
+}
